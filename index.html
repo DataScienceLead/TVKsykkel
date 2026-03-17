@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Sykkelritt 2026 - Kartanalyse</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F4F6F9;
+            color: #194794;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ffffff 0%, #F4F6F9 100%);
+            padding: 24px 32px;
+            border-bottom: 3px solid #E2071D;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 2px 12px rgba(25, 71, 148, 0.08);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-img {
+            height: 56px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #194794;
+        }
+
+        .header h1 span {
+            color: #E2071D;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #4a6aa5;
+            margin-top: 2px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-box {
+            text-align: center;
+            background: rgba(25, 71, 148, 0.06);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(25, 71, 148, 0.12);
+        }
+
+        .stat-box .number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #E2071D;
+        }
+
+        .stat-box .label {
+            font-size: 11px;
+            color: #4a6aa5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 110px);
+        }
+
+        .sidebar {
+            width: 400px;
+            background: #ffffff;
+            overflow-y: auto;
+            border-right: 1px solid #dce3ed;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #dce3ed;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .filter-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid #b8c7de;
+            background: transparent;
+            color: #4a6aa5;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: #E2071D;
+            color: #E2071D;
+            background: rgba(226, 7, 29, 0.06);
+        }
+
+        .filter-btn.active-all {
+            background: #E2071D;
+            color: #ffffff;
+            border-color: #E2071D;
+            font-weight: 600;
+        }
+
+        .ritt-list {
+            padding: 8px;
+        }
+
+        .ritt-card {
+            background: #F4F6F9;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.25s;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ritt-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .ritt-card.cat-ncterr::before { background: #194794; }
+        .ritt-card.cat-bioracer::before { background: #E2071D; }
+        .ritt-card.cat-turritt::before { background: #2e7dd1; }
+        .ritt-card.cat-ncfranking::before { background: #c4163c; }
+        .ritt-card.cat-trening::before { background: #8a9cc2; }
+
+        .ritt-card:hover {
+            border-color: #b8c7de;
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(25, 71, 148, 0.1);
+        }
+
+        .ritt-card.highlighted {
+            border-color: #E2071D;
+            box-shadow: 0 0 16px rgba(226, 7, 29, 0.12);
+            background: #fff;
+        }
+
+        .ritt-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .ritt-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #194794;
+            padding-left: 8px;
+        }
+
+        .ritt-category-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .badge-ncterr { background: rgba(25, 71, 148, 0.1); color: #194794; border: 1px solid rgba(25, 71, 148, 0.25); }
+        .badge-bioracer { background: rgba(226, 7, 29, 0.08); color: #E2071D; border: 1px solid rgba(226, 7, 29, 0.2); }
+        .badge-turritt { background: rgba(46, 125, 209, 0.1); color: #2e7dd1; border: 1px solid rgba(46, 125, 209, 0.25); }
+        .badge-ncfranking { background: rgba(196, 22, 60, 0.08); color: #c4163c; border: 1px solid rgba(196, 22, 60, 0.2); }
+        .badge-trening { background: rgba(138, 156, 194, 0.12); color: #6b7fa5; border: 1px solid rgba(138, 156, 194, 0.25); }
+
+        .ritt-details {
+            padding-left: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            color: #4a6aa5;
+        }
+
+        .ritt-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ritt-detail-item svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 16px 20px;
+            z-index: 1000;
+            border: 1px solid #dce3ed;
+            min-width: 200px;
+            box-shadow: 0 4px 20px rgba(25, 71, 148, 0.1);
+        }
+
+        .legend h4 {
+            font-size: 13px;
+            color: #194794;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #3a5a8c;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 2px solid rgba(25, 71, 148, 0.15);
+        }
+
+        /* Custom popup styling */
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: #ffffff;
+            color: #194794;
+            border-radius: 12px;
+            border: 1px solid #dce3ed;
+            box-shadow: 0 10px 40px rgba(25, 71, 148, 0.15);
+        }
+
+        .custom-popup .leaflet-popup-tip {
+            background: #ffffff;
+            border: 1px solid #dce3ed;
+        }
+
+        .custom-popup .leaflet-popup-content {
+            margin: 14px 16px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .popup-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #194794;
+            margin-bottom: 8px;
+        }
+
+        .popup-info {
+            font-size: 12px;
+            color: #4a6aa5;
+            line-height: 1.8;
+        }
+
+        .popup-info strong {
+            color: #194794;
+        }
+
+        .popup-badge {
+            display: inline-block;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* Custom marker styles */
+        .custom-marker {
+            position: relative;
+        }
+
+        .marker-pin {
+            width: 32px;
+            height: 32px;
+            border-radius: 50% 50% 50% 0;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -20px 0 0 -16px;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .marker-pin .marker-number {
+            transform: rotate(45deg);
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .pulse-ring {
+            border-radius: 50%;
+            height: 40px;
+            width: 40px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -20px 0 0 -20px;
+            animation: pulsate 2s ease-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes pulsate {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .no-location-card {
+            background: linear-gradient(135deg, #ffffff, #F4F6F9);
+            border: 1px dashed #b8c7de;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
+
+        .no-location-card .ritt-name {
+            color: #8a9cc2;
+        }
+
+        .route-info {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 24px;
+            z-index: 1000;
+            border: 1px solid #dce3ed;
+            font-size: 13px;
+            color: #194794;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(25, 71, 148, 0.1);
+        }
+
+        .route-info strong {
+            color: #E2071D;
+        }
+
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #F4F6F9;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #b8c7de;
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #8a9cc2;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: 300px;
+            }
+            .header-stats {
+                display: none;
+            }
+            .route-info {
+                font-size: 11px;
+                padding: 8px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <!-- Logo: Legg TVK.png i samme mappe som denne HTML-filen -->
+        <img src="TVK.png" alt="TVK Logo" class="logo-img" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';" />
+        <div id="fallbackLogo" style="display:none; width:56px; height:56px; background:#194794; border-radius:50%; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:20px; flex-shrink:0; border:3px solid #E2071D;">TVK</div>
+        <div>
+            <h1>Sykkelritt <span>2026</span></h1>
+            <div class="header-subtitle">Trondhjems Velocipedklubb — Sesongplan med kartanalyse</div>
+        </div>
+    </div>
+    <div class="header-stats">
+        <div class="stat-box">
+            <div class="number">15</div>
+            <div class="label">Ritt totalt</div>
+        </div>
+        <div class="stat-box">
+            <div class="number">12</div>
+            <div class="label">Steder</div>
+        </div>
+        <div class="stat-box">
+            <div class="number">Apr–Sep</div>
+            <div class="label">Sesong</div>
+        </div>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div style="font-size: 14px; font-weight: 600; color: #194794;">Ritt & Arrangementer</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active-all" data-filter="all" onclick="filterRitt('all', this)">Alle</button>
+                <button class="filter-btn" data-filter="ncterr" onclick="filterRitt('ncterr', this)">NC Terreng</button>
+                <button class="filter-btn" data-filter="bioracer" onclick="filterRitt('bioracer', this)">Bioracer</button>
+                <button class="filter-btn" data-filter="turritt" onclick="filterRitt('turritt', this)">Turritt</button>
+                <button class="filter-btn" data-filter="ncfranking" onclick="filterRitt('ncfranking', this)">NCF Ranking</button>
+                <button class="filter-btn" data-filter="trening" onclick="filterRitt('trening', this)">Trening</button>
+            </div>
+        </div>
+        <div class="ritt-list" id="rittList"></div>
+    </div>
+
+    <div class="map-container">
+        <div id="map"></div>
+        <div class="route-info">
+            🚴 TVK Sesong 2026 — <strong>15 arrangementer</strong> fra <strong>Halden</strong> i sør til <strong>Stjørdal</strong> i nord
+        </div>
+        <div class="legend">
+            <h4>Kategorier</h4>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #194794;"></div>
+                Norges Cup Terreng
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #E2071D;"></div>
+                Bioracer-cup
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #2e7dd1;"></div>
+                Turritt
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #c4163c;"></div>
+                NCF Ranking Landevei
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #8a9cc2;"></div>
+                Trening / Samling
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rittData = [
+        {
+            id: 1,
+            name: "XC NC1-2",
+            category: "Norges Cup terreng",
+            catKey: "ncterr",
+            start: "18.04.2026",
+            end: "19.04.2026",
+            location: "Son",
+            club: "Soon CK",
+            lat: 59.5283,
+            lng: 10.6872,
+            color: "#194794"
+        },
+        {
+            id: 2,
+            name: "XC NC3-5",
+            category: "Norges Cup terreng",
+            catKey: "ncterr",
+            start: "25.04.2026",
+            end: "26.04.2026",
+            location: "Oslo",
+            club: "Rye",
+            lat: 59.9139,
+            lng: 10.7522,
+            color: "#194794"
+        },
+        {
+            id: 3,
+            name: "Bioracer-cup #1",
+            category: "Bioracer-cup",
+            catKey: "bioracer",
+            start: "06.05.2026",
+            end: "06.05.2026",
+            location: "Prestmoen",
+            club: "Stjørdals-blink",
+            lat: 63.4658,
+            lng: 10.9210,
+            color: "#E2071D"
+        },
+        {
+            id: 4,
+            name: "Bioracer-cup #2",
+            category: "Bioracer-cup",
+            catKey: "bioracer",
+            start: "20.05.2026",
+            end: "20.05.2026",
+            location: "Lånkebanen",
+            club: "Stjørdals-Blink",
+            lat: 63.4730,
+            lng: 10.8850,
+            color: "#E2071D"
+        },
+        {
+            id: 5,
+            name: "XC NC6-7 Terrengsykkelfestivalen",
+            category: "Norges Cup terreng",
+            catKey: "ncterr",
+            start: "06.06.2026",
+            end: "07.06.2026",
+            location: "Oslo",
+            club: "Frøy",
+            lat: 59.9200,
+            lng: 10.7400,
+            color: "#194794"
+        },
+        {
+            id: 6,
+            name: "L'etape Trondheim",
+            category: "Turritt",
+            catKey: "turritt",
+            start: "13.06.2026",
+            end: "13.06.2026",
+            location: "Trondheim",
+            club: "TVK",
+            lat: 63.4305,
+            lng: 10.3951,
+            color: "#2e7dd1"
+        },
+        {
+            id: 7,
+            name: "Vestfold 3Ds",
+            category: "NCF Ranking Landevei",
+            catKey: "ncfranking",
+            start: "19.06.2026",
+            end: "21.06.2026",
+            location: "Vestfold",
+            club: "Tønsberg",
+            lat: 59.2672,
+            lng: 10.4075,
+            color: "#c4163c"
+        },
+        {
+            id: 8,
+            name: "XC NC8-9",
+            category: "Norges Cup terreng",
+            catKey: "ncterr",
+            start: "27.06.2026",
+            end: "28.06.2026",
+            location: "Elverum",
+            club: "CK Elverum",
+            lat: 60.8818,
+            lng: 11.5613,
+            color: "#194794"
+        },
+        {
+            id: 9,
+            name: "Ferie",
+            category: "Treningsperiode",
+            catKey: "trening",
+            start: "29.06.2026",
+            end: "02.08.2026",
+            location: null,
+            club: "",
+            lat: null,
+            lng: null,
+            color: "#8a9cc2"
+        },
+        {
+            id: 10,
+            name: "Treningssamling UM",
+            category: "Treningsperiode",
+            catKey: "trening",
+            start: "01.08.2026",
+            end: "02.08.2026",
+            location: "Trondheim",
+            club: "TVK",
+            lat: 63.4250,
+            lng: 10.4000,
+            color: "#8a9cc2"
+        },
+        {
+            id: 11,
+            name: "Jokermesterskapet",
+            category: "NCF Ranking Landevei",
+            catKey: "ncfranking",
+            start: "08.08.2026",
+            end: "09.08.2026",
+            location: "Skien",
+            club: "Grenland SK",
+            lat: 59.2098,
+            lng: 9.6089,
+            color: "#c4163c"
+        },
+        {
+            id: 12,
+            name: "Stjørdalsdagene GP",
+            category: "NCF Ranking Landevei",
+            catKey: "ncfranking",
+            start: "14.08.2026",
+            end: "16.08.2026",
+            location: "Stjørdal",
+            club: "Stjørdals-Blink",
+            lat: 63.4692,
+            lng: 10.9116,
+            color: "#c4163c"
+        },
+        {
+            id: 13,
+            name: "UngdomsBirken",
+            category: "Turritt",
+            catKey: "turritt",
+            start: "29.08.2026",
+            end: "29.08.2026",
+            location: "Lillehammer",
+            club: "Lillehammer CK",
+            lat: 61.1153,
+            lng: 10.4662,
+            color: "#2e7dd1"
+        },
+        {
+            id: 14,
+            name: "XC NC10-11",
+            category: "Norges Cup terreng",
+            catKey: "ncterr",
+            start: "05.09.2026",
+            end: "06.09.2026",
+            location: "Nilsbyen Terrengsykkelpark",
+            club: "TVK",
+            lat: 63.4080,
+            lng: 10.3500,
+            color: "#194794"
+        },
+        {
+            id: 15,
+            name: "Lillehammer Sykkelfestival",
+            category: "NCF Ranking Landevei",
+            catKey: "ncfranking",
+            start: "11.09.2026",
+            end: "13.09.2026",
+            location: "Lillehammer",
+            club: "Lillehammer CK",
+            lat: 61.1200,
+            lng: 10.4700,
+            color: "#c4163c"
+        },
+        {
+            id: 16,
+            name: "XC 12-13 Karl XII rittet",
+            category: "Norges Cup terreng",
+            catKey: "ncterr",
+            start: "19.09.2026",
+            end: "20.09.2026",
+            location: "Halden",
+            club: "Halden CK",
+            lat: 59.1227,
+            lng: 11.3875,
+            color: "#194794"
+        }
+    ];
+
+    // Initialize map — using a light tile layer
+    const map = L.map('map', {
+        zoomControl: false
+    }).setView([61.5, 10.5], 6);
+
+    L.control.zoom({ position: 'topleft' }).addTo(map);
+
+    // Light map tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+
+    let markers = {};
+    let currentFilter = 'all';
+
+    function createIcon(color, number) {
+        return L.divIcon({
+            className: 'custom-marker',
+            html: `
+                <div class="pulse-ring" style="border: 3px solid ${color};"></div>
+                <div class="marker-pin" style="background: ${color};">
+                    <span class="marker-number">${number}</span>
+                </div>
+            `,
+            iconSize: [36, 36],
+            iconAnchor: [18, 36],
+            popupAnchor: [0, -36]
+        });
+    }
+
+    function getBadgeClass(catKey) {
+        const m = {
+            'ncterr': 'badge-ncterr',
+            'bioracer': 'badge-bioracer',
+            'turritt': 'badge-turritt',
+            'ncfranking': 'badge-ncfranking',
+            'trening': 'badge-trening'
+        };
+        return m[catKey] || 'badge-trening';
+    }
+
+    function getCatDisplayName(catKey) {
+        const m = {
+            'ncterr': 'NC Terreng',
+            'bioracer': 'Bioracer',
+            'turritt': 'Turritt',
+            'ncfranking': 'NCF Ranking',
+            'trening': 'Trening'
+        };
+        return m[catKey] || catKey;
+    }
+
+    function addMarkers() {
+        let rittNumber = 0;
+
+        rittData.forEach((ritt) => {
+            if (ritt.lat && ritt.lng) {
+                rittNumber++;
+                const icon = createIcon(ritt.color, rittNumber);
+
+                const popupContent = `
+                    <div class="popup-badge ${getBadgeClass(ritt.catKey)}">${ritt.category}</div>
+                    <div class="popup-title">${ritt.name}</div>
+                    <div class="popup-info">
+                        <strong>📍 Sted:</strong> ${ritt.location}<br>
+                        <strong>📅 Dato:</strong> ${ritt.start}${ritt.start !== ritt.end ? ' – ' + ritt.end : ''}<br>
+                        <strong>🏢 Arrangør:</strong> ${ritt.club}
+                    </div>
+                `;
+
+                const marker = L.marker([ritt.lat, ritt.lng], { icon: icon })
+                    .bindPopup(popupContent, { className: 'custom-popup', maxWidth: 280 })
+                    .addTo(map);
+
+                marker.on('click', () => {
+                    highlightCard(ritt.id);
+                });
+
+                markers[ritt.id] = marker;
+            }
+        });
+    }
+
+    function buildSidebar() {
+        const listEl = document.getElementById('rittList');
+        listEl.innerHTML = '';
+
+        let counter = 0;
+        rittData.forEach((ritt) => {
+            if (currentFilter !== 'all' && ritt.catKey !== currentFilter) return;
+
+            if (ritt.lat) counter++;
+
+            const card = document.createElement('div');
+
+            if (!ritt.lat) {
+                card.className = `no-location-card cat-${ritt.catKey}`;
+                card.innerHTML = `
+                    <div class="ritt-card-header">
+                        <div class="ritt-name" style="padding-left: 0;">${ritt.name}</div>
+                        <span class="ritt-category-badge ${getBadgeClass(ritt.catKey)}">${getCatDisplayName(ritt.catKey)}</span>
+                    </div>
+                    <div class="ritt-details" style="padding-left: 0;">
+                        <div class="ritt-detail-item">
+                            <svg fill="none" stroke="#8a9cc2" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            ${ritt.start}${ritt.start !== ritt.end ? ' – ' + ritt.end : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                card.className = `ritt-card cat-${ritt.catKey}`;
+                card.setAttribute('data-id', ritt.id);
+                card.onclick = () => flyToRitt(ritt.id);
+                card.innerHTML = `
+                    <div class="ritt-card-header">
+                        <div class="ritt-name">${counter}. ${ritt.name}</div>
+                        <span class="ritt-category-badge ${getBadgeClass(ritt.catKey)}">${getCatDisplayName(ritt.catKey)}</span>
+                    </div>
+                    <div class="ritt-details">
+                        <div class="ritt-detail-item">
+                            <svg fill="none" stroke="#4a6aa5" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            ${ritt.location}
+                        </div>
+                        <div class="ritt-detail-item">
+                            <svg fill="none" stroke="#4a6aa5" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            ${ritt.start}${ritt.start !== ritt.end ? ' – ' + ritt.end : ''}
+                        </div>
+                        <div class="ritt-detail-item">
+                            <svg fill="none" stroke="#4a6aa5" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            ${ritt.club}
+                        </div>
+                    </div>
+                `;
+            }
+            listEl.appendChild(card);
+        });
+    }
+
+    function flyToRitt(id) {
+        const ritt = rittData.find(r => r.id === id);
+        if (ritt && ritt.lat) {
+            map.flyTo([ritt.lat, ritt.lng], 11, { duration: 1 });
+            setTimeout(() => {
+                if (markers[id]) markers[id].openPopup();
+            }, 1100);
+            highlightCard(id);
+        }
+    }
+
+    function highlightCard(id) {
+        document.querySelectorAll('.ritt-card').forEach(c => c.classList.remove('highlighted'));
+        const card = document.querySelector(`.ritt-card[data-id="${id}"]`);
+        if (card) {
+            card.classList.add('highlighted');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    function filterRitt(catKey, btn) {
+        currentFilter = catKey;
+
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active', 'active-all');
+        });
+        if (catKey === 'all') {
+            btn.classList.add('active-all');
+        } else {
+            btn.classList.add('active');
+        }
+
+        Object.keys(markers).forEach(id => {
+            map.removeLayer(markers[id]);
+        });
+
+        const visiblePoints = [];
+        let counter = 0;
+
+        rittData.forEach(ritt => {
+            if (!ritt.lat) return;
+            if (catKey !== 'all' && ritt.catKey !== catKey) return;
+
+            counter++;
+            const icon = createIcon(ritt.color, counter);
+            markers[ritt.id].setIcon(icon);
+            markers[ritt.id].addTo(map);
+            visiblePoints.push([ritt.lat, ritt.lng]);
+        });
+
+        if (visiblePoints.length > 1) {
+            map.fitBounds(L.latLngBounds(visiblePoints), { padding: [50, 50] });
+        } else if (visiblePoints.length === 1) {
+            map.setView(visiblePoints[0], 10);
+        }
+
+        buildSidebar();
+    }
+
+    // Initialize
+    addMarkers();
+    buildSidebar();
+
+    const allPoints = rittData.filter(r => r.lat).map(r => [r.lat, r.lng]);
+    if (allPoints.length) {
+        map.fitBounds(L.latLngBounds(allPoints), { padding: [50, 50] });
+    }
+</script>
+
+</body>
+</html>
