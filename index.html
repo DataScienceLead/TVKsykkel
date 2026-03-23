@@ -3,920 +3,562 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sykkelritt 2026 - fra TVK-perspektiv</title>
-
-    <!-- Leaflet: Åpen kildekode-bibliotek for interaktive kart -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+    <title>TVK Sykkelritt 2026</title>
     <style>
         /* ===========================
-           GENERELT
-           Nullstiller margin/padding og setter box-sizing
-           slik at alle elementer oppfører seg likt
+           GENERELT — Felles stil for alle sider
            =========================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #F4F6F9;       /* Lys grå bakgrunn */
-            color: #194794;            /* TVK mørkeblå som standard tekstfarge */
+            background: #F4F6F9;
+            color: #194794;
         }
 
         /* ===========================
-           HEADER — Topplinje med logo, tittel og statistikk
+           NAVIGASJON — Felles toppmeny på alle sider.
+           Inneholder logo, sidenavn og navigasjonslenker.
            =========================== */
-        .header {
-            background: linear-gradient(135deg, #ffffff 0%, #F4F6F9 100%);
-            padding: 24px 32px;
-            border-bottom: 3px solid #E2071D;  /* TVK rød stripe under header */
+        .nav {
+            background: #ffffff;
+            border-bottom: 3px solid #E2071D;
+            padding: 0 32px;
             display: flex;
             align-items: center;
-            justify-content: space-between;    /* Logo til venstre, stats til høyre */
-            flex-wrap: wrap;                   /* Brytes på små skjermer */
-            gap: 16px;
+            justify-content: space-between;
+            height: 64px;
             box-shadow: 0 2px 12px rgba(25, 71, 148, 0.08);
+            position: sticky;          /* Navigasjonen følger med ved scrolling */
+            top: 0;
+            z-index: 1000;
         }
 
-        .header-left {
+        .nav-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
-        /* Logo — skaleres til 56px høyde, beholder proporsjoner */
-        .logo-img {
-            height: 56px;
+        /* Logo i navigasjonen — mindre enn på forsiden */
+        .nav-logo {
+            height: 40px;
             width: auto;
             object-fit: contain;
+        }
+
+        /* Fallback-logo vises hvis TVK.png mangler */
+        .nav-logo-fallback {
+            width: 40px;
+            height: 40px;
+            background: #194794;
+            border-radius: 50%;
+            display: none;             /* Skjult som standard, vises via JS onerror */
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            border: 2px solid #E2071D;
             flex-shrink: 0;
         }
 
-        .header h1 {
-            font-size: 26px;
+        .nav-title {
+            font-size: 18px;
             font-weight: 700;
             color: #194794;
         }
 
-        /* Årstallet i rød farge */
-        .header h1 span { color: #E2071D; }
+        .nav-title span { color: #E2071D; }
 
-        .header-subtitle {
+        /* Navigasjonslenker til høyre */
+        .nav-links {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
             color: #4a6aa5;
-            margin-top: 2px;
-        }
-
-        /* Statistikk-bokser øverst til høyre i header */
-        .header-stats {
-            display: flex;
-            gap: 24px;
-        }
-
-        .stat-box {
-            text-align: center;
-            background: rgba(25, 71, 148, 0.06);
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(25, 71, 148, 0.12);
-        }
-
-        .stat-box .number {
-            font-size: 24px;
-            font-weight: 800;
-            color: #E2071D;
-        }
-
-        .stat-box .label {
-            font-size: 11px;
-            color: #4a6aa5;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===========================
-           HOVEDLAYOUT
-           Sidebar til venstre + kart til høyre.
-           Fyller resten av skjermhøyden under header.
-           =========================== */
-        .main-container {
-            display: flex;
-            height: calc(100vh - 110px);
-        }
-
-        /* ===========================
-           SIDEBAR — Venstre panel med filtreknapper og rittliste
-           =========================== */
-        .sidebar {
-            width: 400px;
-            background: #ffffff;
-            overflow-y: auto;              /* Scrollbar når listen er lang */
-            border-right: 1px solid #dce3ed;
-            flex-shrink: 0;                /* Ikke krymp sidebar selv om kartet trenger plass */
-        }
-
-        /* Sticky header i sidebar — filter-knappene blir stående øverst ved scrolling */
-        .sidebar-header {
-            padding: 16px 20px;
-            background: #ffffff;
-            border-bottom: 1px solid #dce3ed;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        /* ===========================
-           FILTER-KNAPPER — Velg hvilke kategorier som vises
-           =========================== */
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 10px;
-        }
-
-        .filter-btn {
-            padding: 5px 12px;
-            border-radius: 20px;
-            border: 1px solid #b8c7de;
-            background: transparent;
-            color: #4a6aa5;
-            font-size: 11px;
-            cursor: pointer;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
-        /* Hover og aktiv-tilstand for enkelt-kategori */
-        .filter-btn:hover, .filter-btn.active {
-            border-color: #E2071D;
+        .nav-link:hover {
+            background: rgba(25, 71, 148, 0.06);
+            color: #194794;
+        }
+
+        /* Aktiv side markeres med rød understrek og mørkere tekst */
+        .nav-link.active {
             color: #E2071D;
             background: rgba(226, 7, 29, 0.06);
-        }
-
-        /* Spesiell stil for "Alle"-knappen når den er aktiv */
-        .filter-btn.active-all {
-            background: #E2071D;
-            color: #ffffff;
-            border-color: #E2071D;
             font-weight: 600;
         }
 
         /* ===========================
-           RITT-KORT — Hvert ritt i sidebar-listen
+           HERO — Stort velkomstbanner på forsiden
            =========================== */
-        .ritt-list { padding: 8px; }
-
-        .ritt-card {
-            background: #F4F6F9;
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.25s;         /* Myk animasjon ved hover */
-            border: 1px solid #e2e8f0;
+        .hero {
+            background: linear-gradient(135deg, #194794 0%, #2e5aa8 50%, #1a3d7a 100%);
+            color: #ffffff;
+            padding: 80px 32px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        /* Hover-effekt: kortet sklir litt til høyre og får skygge */
-        .ritt-card:hover {
-            border-color: #b8c7de;
-            transform: translateX(4px);
-            box-shadow: 0 4px 16px rgba(25, 71, 148, 0.1);
-        }
-
-        /* Uthevet kort — når bruker klikker på markør i kartet */
-        .ritt-card.highlighted {
-            border-color: #E2071D;
-            box-shadow: 0 0 16px rgba(226, 7, 29, 0.12);
-            background: #fff;
-        }
-
-        .ritt-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 6px;
-        }
-
-        .ritt-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #194794;
-            padding-left: 8px;
-        }
-
-        /* Kategori-merkelapp (badge) på hvert kort */
-        .ritt-category-badge {
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-weight: 600;
+        /* Dekorativ sykkellinje i bakgrunnen */
+        .hero::before {
+            content: '🚴  🚴  🚴  🚴  🚴  🚴  🚴  🚴';
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            font-size: 24px;
+            opacity: 0.1;
             white-space: nowrap;
-            flex-shrink: 0;
+            letter-spacing: 20px;
         }
 
-        /* Detaljer under rittnavn (sted, dato, klubb) */
-        .ritt-details {
-            padding-left: 8px;
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 span { color: #E2071D; }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        /* Hurtiglenker i hero-seksjonen */
+        .hero-buttons {
             display: flex;
+            gap: 16px;
+            justify-content: center;
             flex-wrap: wrap;
-            gap: 12px;
-            font-size: 12px;
-            color: #4a6aa5;
         }
 
-        .ritt-detail-item {
+        .hero-btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
         }
 
-        .ritt-detail-item svg {
-            width: 14px;
-            height: 14px;
-            flex-shrink: 0;
+        /* Primærknapp: rød med hvit tekst */
+        .hero-btn.primary {
+            background: #E2071D;
+            color: #ffffff;
+            border: 2px solid #E2071D;
         }
 
-        /* Kort for ritt uten stedsinformasjon (f.eks. "Ferie") */
-        .no-location-card {
-            background: linear-gradient(135deg, #ffffff, #F4F6F9);
-            border: 1px dashed #b8c7de;    /* Stiplet kant = ingen plassering */
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            opacity: 0.6;                  /* Dempet utseende */
+        .hero-btn.primary:hover {
+            background: #c4061a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(226, 7, 29, 0.3);
         }
 
-        .no-location-card .ritt-name { color: #8a9cc2; }
+        /* Sekundærknapp: gjennomsiktig med hvit kant */
+        .hero-btn.secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .hero-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateY(-2px);
+        }
 
         /* ===========================
-           KART-CONTAINER — Wrapper rundt Leaflet-kartet
+           INNHOLDSSEKSJONER — Kort-rutenett under hero
            =========================== */
-        .map-container {
-            flex: 1;                       /* Fyller all tilgjengelig plass */
-            position: relative;            /* Ankerpunkt for legend og route-info */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 32px;
         }
 
-        #map { width: 100%; height: 100%; }
-
-        /* ===========================
-           LEGENDE — Forklaring av fargekoder, flyter over kartet
-           =========================== */
-        .legend {
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(10px);   /* Frosted glass-effekt */
-            border-radius: 14px;
-            padding: 16px 20px;
-            z-index: 1000;                 /* Over kartet */
-            border: 1px solid #dce3ed;
-            min-width: 200px;
-            box-shadow: 0 4px 20px rgba(25, 71, 148, 0.1);
-        }
-
-        .legend h4 {
-            font-size: 13px;
-            color: #194794;
-            margin-bottom: 10px;
+        .section-title {
+            font-size: 28px;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-            font-size: 12px;
-            color: #3a5a8c;
-        }
-
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            border: 2px solid rgba(25, 71, 148, 0.15);
-        }
-
-        /* ===========================
-           RUTE-INFO — Tekstboks som flyter øverst på kartet
-           =========================== */
-        .route-info {
-            position: absolute;
-            top: 24px;
-            left: 50%;
-            transform: translateX(-50%);   /* Sentrert horisontalt */
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 12px 24px;
-            z-index: 1000;
-            border: 1px solid #dce3ed;
-            font-size: 13px;
             color: #194794;
             text-align: center;
-            white-space: nowrap;
-            box-shadow: 0 4px 20px rgba(25, 71, 148, 0.1);
+            margin-bottom: 8px;
         }
 
-        .route-info strong { color: #E2071D; }
-
-        /* ===========================
-           POPUP — Informasjonsvindu som åpnes ved klikk på markør
-           Overskriver Leaflets standard popup-stil
-           =========================== */
-        .custom-popup .leaflet-popup-content-wrapper {
-            background: #ffffff;
-            color: #194794;
-            border-radius: 12px;
-            border: 1px solid #dce3ed;
-            box-shadow: 0 10px 40px rgba(25, 71, 148, 0.15);
-        }
-
-        .custom-popup .leaflet-popup-tip {
-            background: #ffffff;
-            border: 1px solid #dce3ed;
-        }
-
-        .custom-popup .leaflet-popup-content {
-            margin: 14px 16px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .popup-title {
+        .section-subtitle {
             font-size: 15px;
-            font-weight: 700;
-            color: #194794;
-            margin-bottom: 8px;
-        }
-
-        .popup-info {
-            font-size: 12px;
             color: #4a6aa5;
-            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .popup-info strong { color: #194794; }
-
-        .popup-badge {
-            display: inline-block;
-            font-size: 10px;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        /* Rutenett med tre kolonner for navigasjonskort */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
         }
 
-        /* ===========================
-           KART-MARKØRER — Egendefinerte markører med nummer
-           Erstatter Leaflets standard blå markør.
-           Formen er en sirkel med "dråpe-spiss" som peker ned.
-           =========================== */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
 
-        /* Selve markør-pinnen: rotert 45° for dråpeform */
-        .marker-pin {
-            width: 32px;
-            height: 32px;
-            border-radius: 50% 50% 50% 0;     /* Tre runde hjørner + ett skarpt = dråpe */
-            position: absolute;
-            transform: rotate(-45deg);          /* Roterer slik at spissen peker ned */
-            left: 50%;
-            top: 50%;
-            margin: -20px 0 0 -16px;
-            border: 3px solid rgba(255, 255, 255, 0.7);
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(25, 71, 148, 0.12);
+            border-color: #b8c7de;
+        }
+
+        /* Ikon-sirkel øverst på kortet */
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            font-size: 28px;
+            margin-bottom: 16px;
         }
 
-        /* Nummeret inne i markøren: rotert tilbake slik at det er lesbart */
-        .marker-pin .marker-number {
-            transform: rotate(45deg);           /* Motvirker pinne-rotasjonen */
-            font-size: 12px;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        .card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #194794;
+            margin-bottom: 8px;
         }
 
-        /* Pulserende ring rundt markøren — gir subtil oppmerksomhetseffekt */
-        .pulse-ring {
-            border-radius: 50%;
-            height: 40px;
-            width: 40px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin: -20px 0 0 -20px;
-            animation: pulsate 2s ease-out infinite;
-            opacity: 0;
+        .card p {
+            font-size: 14px;
+            color: #4a6aa5;
+            line-height: 1.6;
+            margin-bottom: 16px;
         }
 
-        /* Puls-animasjon: vokser ut fra sentrum og fader ut */
-        @keyframes pulsate {
-            0%   { transform: scale(0.5); opacity: 0; }
-            50%  { opacity: 0.2; }
-            100% { transform: scale(1.5); opacity: 0; }
+        /* "Gå til side"-pil nederst på kortet */
+        .card-arrow {
+            font-size: 13px;
+            font-weight: 600;
+            color: #E2071D;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* ===========================
-           SCROLLBAR — Tilpasset utseende i sidebar (kun WebKit/Chrome/Edge)
+           KOMMENDE RITT — Tidslinje på forsiden
+           Viser de neste rittene i kronologisk rekkefølge
            =========================== */
-        .sidebar::-webkit-scrollbar { width: 6px; }
-        .sidebar::-webkit-scrollbar-track { background: #F4F6F9; }
-        .sidebar::-webkit-scrollbar-thumb { background: #b8c7de; border-radius: 3px; }
-        .sidebar::-webkit-scrollbar-thumb:hover { background: #8a9cc2; }
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            align-items: flex-start;
+        }
+
+        .timeline-item:last-child { border-bottom: none; }
+
+        /* Datokolonne til venstre */
+        .timeline-date {
+            min-width: 80px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .timeline-date .day {
+            font-size: 28px;
+            font-weight: 800;
+            color: #E2071D;
+            line-height: 1;
+        }
+
+        .timeline-date .month {
+            font-size: 12px;
+            color: #4a6aa5;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Farget prikk som viser kategori */
+        .timeline-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 6px;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 1px #dce3ed;
+        }
+
+        .timeline-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #194794;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            font-size: 13px;
+            color: #4a6aa5;
+        }
+
+        /* Kategori-merkelapp i tidslinje */
+        .timeline-badge {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
 
         /* ===========================
-           RESPONSIVT DESIGN — Tilpasning for mobil/nettbrett
-           Under 768px: sidebar legges over kartet i stedet for ved siden av
+           FOOTER — Bunntekst på alle sider
+           =========================== */
+        .footer {
+            background: #194794;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 24px 32px;
+            font-size: 13px;
+        }
+
+        .footer strong {
+            color: #ffffff;
+        }
+
+        /* ===========================
+           RESPONSIVT — Tilpasning for mobil
            =========================== */
         @media (max-width: 768px) {
-            .main-container { flex-direction: column; }
-            .sidebar { width: 100%; height: 300px; }
-            .header-stats { display: none; }           /* Skjul stats på mobil */
-            .route-info { font-size: 11px; padding: 8px 14px; }
+            .nav {
+                padding: 0 16px;
+                height: auto;
+                flex-wrap: wrap;
+                padding: 12px 16px;
+                gap: 8px;
+            }
+            .nav-links { width: 100%; justify-content: center; }
+            .hero { padding: 48px 16px; }
+            .hero h1 { font-size: 32px; }
+            .content { padding: 32px 16px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+
+            /* Hamburgermeny er ikke implementert — knappene brytes til ny linje */
         }
     </style>
 </head>
 <body>
 
 <!-- ============================
-     HEADER
-     Inneholder logo, tittel og oppsummeringsstatistikk.
-     Stats-tallene fylles inn dynamisk av JavaScript.
+     NAVIGASJON — Identisk på alle tre sider.
+     .nav-link.active markerer hvilken side man er på.
      ============================ -->
-<div class="header">
-    <div class="header-left">
-        <!-- Logo: Forsøker å laste TVK.png. Hvis filen mangler, vises en
-             sirkulær fallback med teksten "TVK" (styrt av onerror-attributtet) -->
-        <img src="TVK.png" alt="TVK Logo" class="logo-img"
-             onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';" />
-        <div id="fallbackLogo"
-             style="display:none; width:56px; height:56px; background:#194794; border-radius:50%;
-                    align-items:center; justify-content:center; color:#fff; font-weight:800;
-                    font-size:20px; flex-shrink:0; border:3px solid #E2071D;">TVK</div>
-        <div>
-            <h1>Sykkelritt <span>2026</span></h1>
-            <div class="header-subtitle">Trondhjems Velocipedklubb — Sesongplan med kartanalyse</div>
-        </div>
+<nav class="nav">
+    <div class="nav-left">
+        <img src="TVK.png" alt="TVK" class="nav-logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="nav-logo-fallback">TVK</div>
+        <div class="nav-title">TVK <span>2026</span></div>
     </div>
-    <!-- Stats fylles av buildHeaderStats() -->
-    <div class="header-stats" id="headerStats"></div>
+    <div class="nav-links">
+        <!-- active-klassen flyttes til riktig lenke på hver side -->
+        <a href="index.html" class="nav-link active">🏠 Hjem</a>
+        <a href="terminliste.html" class="nav-link">Terminliste</a>
+        <a href="trening.html" class="nav-link">Trening</a>
+    </div>
+</nav>
+
+<!-- ============================
+     HERO — Stort velkomstbanner
+     ============================ -->
+<div class="hero">
+    <h1>Sykkelritt <span>2026</span></h1>
+    <p>Trondhjems Velocipedklubb — Din komplette oversikt over sesongens ritt, treninger og planer</p>
+    <div class="hero-buttons">
+        <a href="terminliste.html" class="hero-btn primary">Se terminliste på kart</a>
+        <a href="trening.html" class="hero-btn secondary">Treningsplaner</a>
+    </div>
 </div>
 
 <!-- ============================
-     HOVEDDEL
-     Sidebar (venstre) + Kart (høyre)
+     NAVIGASJONSKORT — Tre kort som lenker til undersidene
      ============================ -->
-<div class="main-container">
+<div class="content">
+    <div class="section-title">Sesong 2026</div>
+    <div class="section-subtitle">Alt du trenger for en god sykkelsesong</div>
 
-    <!-- SIDEBAR: Filterknapper + scrollbar rittliste -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div style="font-size: 14px; font-weight: 600; color: #194794;">Ritt & Arrangementer</div>
-            <!-- Filter-knapper genereres av buildFilterButtons() -->
-            <div class="filter-buttons" id="filterButtons"></div>
-        </div>
-        <!-- Rittlisten genereres av buildSidebar() -->
-        <div class="ritt-list" id="rittList"></div>
+    <div class="cards-grid">
+        <!-- Kort 1: Terminliste -->
+        <a href="terminliste.html" class="card">
+            <div class="card-icon" style="background: rgba(25, 71, 148, 0.08);">🗺️</div>
+            <h3>Terminliste</h3>
+            <p>Interaktivt kart over alle ritt i sesongen. Filtrer på kategori og se hvor og når hvert ritt arrangeres.</p>
+            <div class="card-arrow">Se kart →</div>
+        </a>
+
+        <!-- Kort 2: Treningsplaner -->
+        <a href="trening.html" class="card">
+            <div class="card-icon" style="background: rgba(226, 7, 29, 0.08);">💪</div>
+            <h3>Treningsplaner</h3>
+            <p>Tilpassede treningsplaner for ulike aldersgrupper. Fra U11 til junior — finn planen som passer deg.</p>
+            <div class="card-arrow">Se planer →</div>
+        </a>
+
+        <!-- Kort 3: Klubbinfo -->
+        <a href="#kommende" class="card">
+            <div class="card-icon" style="background: rgba(46, 125, 209, 0.08);">🚴</div>
+            <h3>Kommende ritt</h3>
+            <p>Se hva som skjer de neste ukene. Hold deg oppdatert på ritt, samlinger og treninger.</p>
+            <div class="card-arrow">Se oversikt ↓</div>
+        </a>
     </div>
 
-    <!-- KART med flytende info-bokser -->
-    <div class="map-container">
-        <div id="map"></div>
-        <!-- Rute-info øverst på kartet — fylles av buildRouteInfo() -->
-        <div class="route-info" id="routeInfo"></div>
-        <!-- Legende nederst til høyre — fylles av buildLegend() -->
-        <div class="legend" id="legendBox"></div>
+    <!-- ============================
+         KOMMENDE RITT — Tidslinje
+         De første 6 rittene vises her. Genereres av JavaScript.
+         ============================ -->
+    <div id="kommende">
+        <div class="section-title">Kommende arrangementer</div>
+        <div class="section-subtitle">De neste rittene og samlingene i sesongen</div>
+        <div class="timeline" id="timeline"></div>
     </div>
 </div>
 
+<!-- FOOTER -->
+<div class="footer">
+    <strong>Trondhjems Velocipedklubb</strong> — Sesong 2026 | Stiftet 1893
+</div>
+
 <script>
-// =============================================================
-//
-//  KATEGORIER — Alle ritt-typer defineres her.
-//
-//  Dette er det ENESTE stedet du trenger å endre for å:
-//   - Endre farge på en kategori
-//   - Endre visningsnavn
-//   - Legge til en helt ny kategori
-//
-//  Nøkkelen (f.eks. "ncterr") brukes som catKey i rittdataene.
-//  Label er det som vises i filtreknapper, legende og badges.
-//  Color brukes i kart-markører, sidebar-striper og badges.
-//
-// =============================================================
-const CATEGORIES = {
-    ncterr:     { label: 'NC Terreng',  color: '#194794' },   // TVK mørkeblå
-    bioracer:   { label: 'Bioracer',    color: '#E2071D' },   // TVK rød
-    turritt:    { label: 'Turritt',     color: '#2e7dd1' },   // Lys blå
-    ncfranking: { label: 'NCF Ranking', color: '#c4163c' },   // Mørk rød
-    trening:    { label: 'Trening',     color: '#8a9cc2' }    // Dempet blågrå
-};
+    // ===========================
+    //  Samme kategorier og rittdata som i terminliste.html
+    //  Hold disse oppdatert i begge filer!
+    //  (Alternativt kan de legges i en felles JS-fil)
+    // ===========================
+    const CATEGORIES = {
+        ncterr:     { label: 'NC Terreng',  color: '#194794' },
+        bioracer:   { label: 'Bioracer',    color: '#E2071D' },
+        turritt:    { label: 'Turritt',     color: '#2e7dd1' },
+        ncfranking: { label: 'NCF Ranking', color: '#c4163c' },
+        trening:    { label: 'Trening',     color: '#8a9cc2' }
+    };
 
+    const rittData = [
+        { name: "XC NC1-2",                         catKey: "ncterr",     start: "18.04.2026", end: "19.04.2026", location: "Son",                       club: "Soon CK"         },
+        { name: "XC NC3-5",                         catKey: "ncterr",     start: "01.05.2026", end: "01.05.2026", location: "Oslo",                      club: "Rye"             },
+        { name: "Rogaland 3Ds",                     catKey: "ncfranking", start: "01.05.2026", end: "03.05.2026", location: "Rogaland",                  club: "Stavanger SK"    },
+        { name: "Bioracer-cup #1",                  catKey: "bioracer",   start: "06.05.2026", end: "06.05.2026", location: "Prestmoen",                 club: "Stjørdals-Blink" },
+        { name: "Bioracer-cup #2",                  catKey: "bioracer",   start: "20.05.2026", end: "20.05.2026", location: "Lånkebanen",                club: "Stjørdals-Blink" },
+        { name: "XC NM",                            catKey: "ncterr",     start: "30.05.2026", end: "31.05.2026", location: "Sande",                     club: "Sande SK"        },
+        { name: "XC NC6-7 Terrengsykkelfestivalen", catKey: "ncterr",     start: "06.06.2026", end: "07.06.2026", location: "Oslo",                      club: "Frøy"            },
+        { name: "Follo 2D",                         catKey: "ncfranking", start: "12.06.2026", end: "14.06.2026", location: "Follo",                     club: "Follo"           },
+        { name: "L'etape Trondheim",                catKey: "turritt",    start: "13.06.2026", end: "13.06.2026", location: "Trondheim",                 club: "TVK"             },
+        { name: "Vestfold 3Ds",                     catKey: "ncfranking", start: "19.06.2026", end: "21.06.2026", location: "Vestfold",                  club: "Tønsberg"        },
+        { name: "XC NC8-9",                         catKey: "ncterr",     start: "27.06.2026", end: "28.06.2026", location: "Elverum",                   club: "CK Elverum"      },
+        { name: "Ferie",                            catKey: "trening",    start: "29.06.2026", end: "02.08.2026" },
+        { name: "Treningssamling UM",               catKey: "trening",    start: "07.08.2026", end: "08.08.2026", location: "Trondheim",                 club: "TVK"             },
+        { name: "IF Frøys Jokerfestival",           catKey: "ncfranking", start: "08.08.2026", end: "09.08.2026", location: "Ås",                        club: "Frøy SK"         },
+        { name: "Stjørdalsdagene GP",               catKey: "ncfranking", start: "14.08.2026", end: "16.08.2026", location: "Stjørdal",                  club: "Stjørdals-Blink" },
+        { name: "Jokermesterskapet UM",             catKey: "ncfranking", start: "15.08.2026", end: "16.08.2026", location: "Skien",                     club: "Grenland SK"     },
+        { name: "UngdomsBirken",                    catKey: "turritt",    start: "29.08.2026", end: "29.08.2026", location: "Lillehammer",               club: "Lillehammer CK"  },
+        { name: "XC NC10-11",                       catKey: "ncterr",     start: "05.09.2026", end: "06.09.2026", location: "Nilsbyen Terrengsykkelpark", club: "TVK"             },
+        { name: "Lillehammer Sykkelfestival",        catKey: "ncfranking", start: "11.09.2026", end: "13.09.2026", location: "Lillehammer",               club: "Lillehammer CK"  },
+        { name: "XC 12-13 Karl XII rittet",         catKey: "ncterr",     start: "19.09.2026", end: "20.09.2026", location: "Halden",                    club: "Halden CK"       },
+    ];
 
-// =============================================================
-//
-//  RITTDATA — Alle ritt i sesongen.
-//
-//  VIKTIG: Du kan legge til nye ritt HVOR SOM HELST i listen!
-//  Koden sorterer automatisk etter startdato og tildeler
-//  løpenummer (ID). Du trenger altså IKKE:
-//   - Sette inn rittet på riktig plass kronologisk
-//   - Oppgi en ID
-//   - Oppgi farge (den hentes fra CATEGORIES basert på catKey)
-//
-//  ─────────────────────────────────────────────────────────
-//  MAL — kopier denne linjen og fyll inn:
-//
-//  { name: "Rittnavn", catKey: "ncterr", start: "DD.MM.ÅÅÅÅ", end: "DD.MM.ÅÅÅÅ", location: "Sted", club: "Klubb", lat: 00.0000, lng: 00.0000 },
-//
-//  For ritt uten sted (f.eks. ferie/pause):
-//
-//  { name: "Ferie", catKey: "trening", start: "DD.MM.ÅÅÅÅ", end: "DD.MM.ÅÅÅÅ" },
-//
-//  Gyldige catKey-verdier:  ncterr | bioracer | turritt | ncfranking | trening
-//  ─────────────────────────────────────────────────────────
-//
-// =============================================================
-const rittData = [
-    { name: "XC NC1-2",                         catKey: "ncterr",     start: "18.04.2026", end: "19.04.2026", location: "Son",                       club: "Soon CK",         lat: 59.5283, lng: 10.6872 },
-    { name: "XC NC3-5",                         catKey: "ncterr",     start: "01.05.2026", end: "03.05.2026", location: "Oslo",                      club: "Rye",             lat: 59.96985, lng: 10.7927 },
-    { name: "Rogaland 3Ds",                     catKey: "ncfranking", start: "01.05.2026", end: "03.05.2026", location: "Rogaland",                  club: "Stavanger SK",    lat: 58.8963, lng: 5.6676  },
-    { name: "Bioracer-cup #1",                  catKey: "bioracer",   start: "06.05.2026", end: "06.05.2026", location: "Prestmoen",                 club: "Stjørdals-Blink", lat: 63.451815, lng: 10.991306 },
-    { name: "Bioracer-cup #2",                  catKey: "bioracer",   start: "20.05.2026", end: "20.05.2026", location: "Lånkebanen",                club: "Stjørdals-Blink", lat: 63.406884, lng: 10.913933 },
-    { name: "XC NM",                            catKey: "ncterr",     start: "30.05.2026", end: "31.05.2026", location: "Sande",                     club: "Sande SK",        lat: 59.5887, lng: 10.2416 },
-    { name: "XC NC6-7 Terrengsykkelfestivalen", catKey: "ncterr",     start: "06.06.2026", end: "07.06.2026", location: "Oslo",                      club: "Frøy",            lat: 59.9200, lng: 10.7400 },
-    { name: "Follo 2D",                         catKey: "ncfranking", start: "12.06.2026", end: "14.06.2026", location: "Follo",                     club: "Follo",           lat: 59.6605, lng: 10.7801 },
-    { name: "L'etape Trondheim",                catKey: "turritt",    start: "13.06.2026", end: "13.06.2026", location: "Trondheim",                 club: "TVK",             lat: 63.4305, lng: 10.3951 },
-    { name: "Vestfold 3Ds",                     catKey: "ncfranking", start: "19.06.2026", end: "21.06.2026", location: "Vestfold",                  club: "Tønsberg",        lat: 59.2672, lng: 10.4075 },
-    { name: "XC NC8-9",                         catKey: "ncterr",     start: "27.06.2026", end: "28.06.2026", location: "Elverum",                   club: "CK Elverum",      lat: 60.8818, lng: 11.5613 },
-    { name: "Ferie",                            catKey: "trening",    start: "29.06.2026", end: "02.08.2026" },
-    { name: "Treningssamling UM",               catKey: "trening",    start: "07.08.2026", end: "08.08.2026", location: "Trondheim",                 club: "TVK",             lat: 63.4250, lng: 10.4000 },
-    { name: "IF Frøys Jokerfestival",           catKey: "ncfranking", start: "08.08.2026", end: "09.08.2026", location: "Ås",                        club: "Frøy SK",         lat: 59.6655, lng: 10.7891 },
-    // { name: "Stjørdalsdagene GP",               catKey: "ncfranking", start: "14.08.2026", end: "16.08.2026", location: "Stjørdal",                  club: "Stjørdals-Blink", lat: 63.4692, lng: 10.9116 },
-    { name: "Jokermesterskapet UM",             catKey: "ncfranking", start: "15.08.2026", end: "16.08.2026", location: "Skien",                     club: "Grenland SK",     lat: 59.2098, lng: 9.6089  },
-    { name: "UngdomsBirken",                    catKey: "turritt",    start: "29.08.2026", end: "29.08.2026", location: "Lillehammer",               club: "Lillehammer CK",  lat: 61.1153, lng: 10.4662 },
-    { name: "XC NC10-11 Nilsbyen",                       catKey: "ncterr",     start: "05.09.2026", end: "06.09.2026", location: "Nilsbyen Terrengsykkelpark", club: "TVK",             lat: 63.4080, lng: 10.3500 },
-    { name: "Lillehammer Sykkelfestival",        catKey: "ncfranking", start: "11.09.2026", end: "13.09.2026", location: "Lillehammer",               club: "Lillehammer CK",  lat: 61.1200, lng: 10.4700 },
-    { name: "XC 12-13 Karl XII rittet",         catKey: "ncterr",     start: "19.09.2026", end: "20.09.2026", location: "Halden",                    club: "Halden CK",       lat: 59.1227, lng: 11.3875 },
-    { name: "Nerskogrittet  ",         catKey: "turritt",     start: "20.06.2026", end: "20.06.2026", location: "Nerskogen",                    club: "Rennebu IL",       lat: 62.799549, lng:9.650608}, 
-];
+    // Norske månedsnavn for tidslinje-visningen
+    const MONTHS = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun',
+                    'jul', 'aug', 'sep', 'okt', 'nov', 'des'];
 
+    /** Konverterer "DD.MM.ÅÅÅÅ" til Date-objekt */
+    function parseDate(str) {
+        const [d, m, y] = str.split('.');
+        return new Date(y, m - 1, d);
+    }
 
-// =============================================================
-//  HJELPEFUNKSJONER
-//  Små verktøy som brukes flere steder i koden.
-// =============================================================
+    /** Inline badge-stil basert på kategorifarge */
+    function badgeStyle(catKey) {
+        const c = (CATEGORIES[catKey] || CATEGORIES.trening).color;
+        return `background:${c}14; color:${c}; border:1px solid ${c}40;`;
+    }
 
-/**
- * Gjør om dato-streng "DD.MM.ÅÅÅÅ" til et JavaScript Date-objekt.
- * Brukes for å kunne sortere ritt kronologisk.
- */
-function parseDate(str) {
-    const [d, m, y] = str.split('.');
-    return new Date(y, m - 1, d);    // m - 1 fordi JS teller måneder fra 0
-}
+    /**
+     * Bygger tidslinjen med de neste 6 kommende arrangementene.
+     * Sorterer etter dato og viser kun ritt som ikke er passert.
+     */
+    function buildTimeline() {
+        const el = document.getElementById('timeline');
+        const now = new Date();
 
-/**
- * Sorterer rittlisten etter startdato og tildeler automatisk ID.
- * Setter også standardverdier for valgfrie felt (location, club, lat, lng)
- * slik at koden ikke krasjer om de mangler.
- */
-function prepareData(data) {
-    return data
-        .sort((a, b) => parseDate(a.start) - parseDate(b.start))
-        .map((ritt, i) => ({
-            ...ritt,                       // Kopierer alle eksisterende felt
-            id: i + 1,                     // Automatisk løpenummer
-            location: ritt.location || null,
-            club: ritt.club || '',
-            lat: ritt.lat || null,
-            lng: ritt.lng || null
-        }));
-}
+        // Sorter etter startdato, filtrer bort passerte, ta de 6 neste
+        const upcoming = rittData
+            .map(r => ({ ...r, dateObj: parseDate(r.start) }))
+            .sort((a, b) => a.dateObj - b.dateObj)
+            .filter(r => r.dateObj >= now)
+            .slice(0, 6);
 
-// Klargjort og sortert rittliste — brukes i resten av koden
-const ritts = prepareData(rittData);
-
-/**
- * Slår opp kategori-info fra CATEGORIES.
- * Faller tilbake til "trening" hvis nøkkelen ikke finnes.
- */
-const getCat = (key) => CATEGORIES[key] || CATEGORIES.trening;
-
-/** Sjekker om et ritt har gyldig kartposisjon */
-const hasLocation = (r) => r.lat != null && r.lng != null;
-
-/** Formaterer datointervall: viser én dato hvis start = slutt, ellers "start – slutt" */
-const dateRange = (s, e) => s === e ? s : `${s} – ${e}`;
-
-/**
- * Genererer inline CSS for kategori-badge.
- * Bruker kategoriens farge med ulik opacity for bakgrunn og kant.
- * "14" og "40" etter fargen er hex-verdier for alpha (8% og 25%).
- */
-function badgeStyle(catKey) {
-    const c = getCat(catKey).color;
-    return `background:${c}14; color:${c}; border:1px solid ${c}40;`;
-}
-
-/**
- * SVG-ikoner brukt i rittdetaljer.
- * Definert som strenger for gjenbruk — unngår å duplisere SVG-kode.
- * calendar-ikonet tar en valgfri fargeparameter.
- */
-const ICONS = {
-    pin:    `<svg fill="none" stroke="#4a6aa5" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-    cal:    (c = '#4a6aa5') => `<svg fill="none" stroke="${c}" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-    person: `<svg fill="none" stroke="#4a6aa5" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`
-};
-
-
-// =============================================================
-//  DYNAMISK UI-OPPSETT
-//  Disse funksjonene bygger opp grensesnittet basert på dataene.
-//  De kalles én gang ved oppstart (se INIT nederst).
-// =============================================================
-
-/** Beregner og viser statistikk i header (antall ritt, antall steder) */
-function buildHeaderStats() {
-    const medSted = ritts.filter(hasLocation);
-    const steder  = new Set(medSted.map(r => r.location)).size;  // Set gir unike verdier
-    document.getElementById('headerStats').innerHTML = `
-        <div class="stat-box"><div class="number">${ritts.length}</div><div class="label">Ritt totalt</div></div>
-        <div class="stat-box"><div class="number">${steder}</div><div class="label">Steder</div></div>
-        <div class="stat-box"><div class="number">Apr–Sep</div><div class="label">Sesong</div></div>`;
-}
-
-/**
- * Bygger filter-knapper fra CATEGORIES.
- * Legger til "Alle"-knapp først, deretter én knapp per kategori.
- * Hver knapp får en click-handler som filtrerer ritt.
- */
-function buildFilterButtons() {
-    const el = document.getElementById('filterButtons');
-    el.innerHTML = `<button class="filter-btn active-all" data-filter="all">Alle</button>` +
-        Object.entries(CATEGORIES).map(([k, v]) =>
-            `<button class="filter-btn" data-filter="${k}">${v.label}</button>`
-        ).join('');
-    el.querySelectorAll('.filter-btn').forEach(btn =>
-        btn.addEventListener('click', () => filterRitt(btn.dataset.filter, btn))
-    );
-}
-
-/** Bygger fargelegende for kartet fra CATEGORIES */
-function buildLegend() {
-    document.getElementById('legendBox').innerHTML = '<h4>Kategorier</h4>' +
-        Object.values(CATEGORIES).map(c =>
-            `<div class="legend-item"><div class="legend-dot" style="background:${c.color}"></div>${c.label}</div>`
-        ).join('');
-}
-
-/** Viser oppsummeringsinfo øverst på kartet */
-function buildRouteInfo() {
-    document.getElementById('routeInfo').innerHTML =
-        `🚴 TVK Sesong 2026 — <strong>${ritts.length} arrangementer</strong> over hele Norge`;
-}
-
-
-// =============================================================
-//  KART — Oppsett av Leaflet-kartet
-// =============================================================
-
-// Oppretter kart sentrert på Midt-Norge, uten standard zoom-kontroll
-const map = L.map('map', { zoomControl: false }).setView([61.5, 10.5], 6);
-
-// Legger til zoom-knapper øverst til venstre
-L.control.zoom({ position: 'topleft' }).addTo(map);
-
-// Kartfliser fra CARTO — et lyst, diskret bakgrunnskart
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
-}).addTo(map);
-
-// Lagrer alle markører med ritt-ID som nøkkel, slik at vi kan
-// vise/skjule dem ved filtrering og åpne popup ved klikk
-const markers = {};
-
-// Holder styr på aktivt filter ("all" = vis alt)
-let currentFilter = 'all';
-
-/**
- * Lager et egendefinert kart-ikon med farge og nummer.
- * Inneholder en pulserende ring (animasjon) og selve "pinnen".
- */
-function createIcon(color, num) {
-    return L.divIcon({
-        className: 'custom-marker',
-        html: `<div class="pulse-ring" style="border:3px solid ${color}"></div>
-               <div class="marker-pin" style="background:${color}"><span class="marker-number">${num}</span></div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 36],      // Bunnen av "dråpen" treffer koordinaten
-        popupAnchor: [0, -36]      // Popup åpnes over markøren
-    });
-}
-
-/**
- * Genererer HTML-innhold for popup som vises ved klikk på markør.
- * Viser kategori-badge, rittnavn, sted, dato og arrangør.
- */
-function popupHTML(r) {
-    return `
-        <div class="popup-badge" style="${badgeStyle(r.catKey)}">${getCat(r.catKey).label}</div>
-        <div class="popup-title">${r.name}</div>
-        <div class="popup-info">
-            <strong>📍 Sted:</strong> ${r.location}<br>
-            <strong>📅 Dato:</strong> ${dateRange(r.start, r.end)}<br>
-            <strong>🏢 Arrangør:</strong> ${r.club}
-        </div>`;
-}
-
-/**
- * Oppretter markører for alle ritt med stedsinformasjon
- * og legger dem til kartet. Hopper over ritt uten lat/lng.
- */
-function addMarkers() {
-    let n = 0;
-    ritts.forEach(r => {
-        if (!hasLocation(r)) return;       // Hopp over ritt uten sted
-        n++;
-        const m = L.marker([r.lat, r.lng], { icon: createIcon(getCat(r.catKey).color, n) })
-            .bindPopup(popupHTML(r), { className: 'custom-popup', maxWidth: 280 })
-            .addTo(map);
-
-        // Når bruker klikker markør: uthev tilhørende kort i sidebar
-        m.on('click', () => highlightCard(r.id));
-
-        markers[r.id] = m;
-    });
-}
-
-
-// =============================================================
-//  SIDEBAR — Bygger rittlisten i venstre panel
-// =============================================================
-
-/**
- * Bygger hele rittlisten på nytt basert på aktivt filter.
- * Kalles ved oppstart og hver gang filter endres.
- * Ritt med stedsinformasjon får klikkbare kort med nummer.
- * Ritt uten sted (f.eks. "Ferie") vises som dempede kort.
- */
-function buildSidebar() {
-    const el = document.getElementById('rittList');
-    el.innerHTML = '';           // Tøm eksisterende liste
-    let counter = 0;            // Løpenummer for ritt med sted
-
-    ritts.forEach(r => {
-        // Filtrer bort ritt som ikke matcher valgt kategori
-        if (currentFilter !== 'all' && r.catKey !== currentFilter) return;
-
-        const cat  = getCat(r.catKey);
-        const dato = dateRange(r.start, r.end);
-
-        // --- Ritt UTEN sted: enklere kort, dempet stil ---
-        if (!hasLocation(r)) {
-            el.insertAdjacentHTML('beforeend', `
-                <div class="no-location-card">
-                    <div class="ritt-card-header">
-                        <div class="ritt-name" style="padding-left:0">${r.name}</div>
-                        <span class="ritt-category-badge" style="${badgeStyle(r.catKey)}">${cat.label}</span>
-                    </div>
-                    <div class="ritt-details" style="padding-left:0">
-                        <div class="ritt-detail-item">${ICONS.cal('#8a9cc2')} ${dato}</div>
-                    </div>
-                </div>`);
+        if (upcoming.length === 0) {
+            el.innerHTML = '<p style="text-align:center; color:#4a6aa5; padding:32px;">Ingen kommende ritt i kalenderen.</p>';
             return;
         }
 
-        // --- Ritt MED sted: fullt kort med alle detaljer ---
-        counter++;
-        const card = document.createElement('div');
-        card.className = 'ritt-card';
-        card.dataset.id = r.id;
+        el.innerHTML = upcoming.map(r => {
+            const cat = CATEGORIES[r.catKey] || CATEGORIES.trening;
+            const day = r.dateObj.getDate();
+            const month = MONTHS[r.dateObj.getMonth()];
+            const dateStr = r.start === r.end ? r.start : `${r.start} – ${r.end}`;
 
-        // Farget venstrekant viser kategori visuelt
-        card.style.borderLeft = `4px solid ${cat.color}`;
-
-        // Klikk på kort → flytt kartet til dette rittet
-        card.onclick = () => flyToRitt(r.id);
-
-        card.innerHTML = `
-            <div class="ritt-card-header">
-                <div class="ritt-name">${counter}. ${r.name}</div>
-                <span class="ritt-category-badge" style="${badgeStyle(r.catKey)}">${cat.label}</span>
-            </div>
-            <div class="ritt-details">
-                <div class="ritt-detail-item">${ICONS.pin} ${r.location}</div>
-                <div class="ritt-detail-item">${ICONS.cal()} ${dato}</div>
-                <div class="ritt-detail-item">${ICONS.person} ${r.club}</div>
-            </div>`;
-        el.appendChild(card);
-    });
-}
-
-
-// =============================================================
-//  INTERAKSJON — Funksjoner som kobler kart og sidebar
-// =============================================================
-
-/**
- * Flyr kartet til et bestemt ritt og åpner popup-en.
- * Kalles når bruker klikker på et kort i sidebar.
- */
-function flyToRitt(id) {
-    const r = ritts.find(x => x.id === id);
-    if (!r || !hasLocation(r)) return;
-
-    // Animer kartbevegelsen (1 sekund)
-    map.flyTo([r.lat, r.lng], 11, { duration: 1 });
-
-    // Vent til animasjonen er ferdig, så åpne popup
-    setTimeout(() => markers[id]?.openPopup(), 1100);
-
-    highlightCard(id);
-}
-
-/**
- * Uthever et kort i sidebar-listen.
- * Fjerner uthevning fra alle andre kort først.
- * Scroller kortet inn i synsfeltet hvis det er utenfor.
- */
-function highlightCard(id) {
-    // Fjern eksisterende uthevning
-    document.querySelectorAll('.ritt-card').forEach(c => c.classList.remove('highlighted'));
-
-    // Legg til uthevning på riktig kort
-    const card = document.querySelector(`.ritt-card[data-id="${id}"]`);
-    if (card) {
-        card.classList.add('highlighted');
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return `
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <div class="day">${day}</div>
+                        <div class="month">${month}</div>
+                    </div>
+                    <div class="timeline-dot" style="background:${cat.color}"></div>
+                    <div class="timeline-content">
+                        <h4>${r.name}</h4>
+                        <p>${r.location || 'Ikke fastsatt'} · ${dateStr}${r.club ? ' · ' + r.club : ''}</p>
+                        <span class="timeline-badge" style="${badgeStyle(r.catKey)}">${cat.label}</span>
+                    </div>
+                </div>`;
+        }).join('');
     }
-}
 
-/**
- * Filtrerer ritt etter kategori.
- * Oppdaterer knappestiler, viser/skjuler markører og bygger sidebar på nytt.
- * Justerer kartvisningen til å vise alle synlige markører.
- */
-function filterRitt(catKey, btn) {
-    currentFilter = catKey;
-
-    // Oppdater aktiv-stil på filter-knapper
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'active-all'));
-    btn.classList.add(catKey === 'all' ? 'active-all' : 'active');
-
-    // Fjern alle markører fra kartet midlertidig
-    Object.values(markers).forEach(m => map.removeLayer(m));
-
-    // Legg tilbake kun de som matcher filteret, med oppdatert nummer
-    const pts = [];        // Samler koordinater for å tilpasse kartvisningen
-    let n = 0;
-    ritts.forEach(r => {
-        if (!hasLocation(r)) return;
-        if (catKey !== 'all' && r.catKey !== catKey) return;
-        n++;
-        markers[r.id].setIcon(createIcon(getCat(r.catKey).color, n));
-        markers[r.id].addTo(map);
-        pts.push([r.lat, r.lng]);
-    });
-
-    // Tilpass kartvisningen til de synlige markørene
-    if (pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [50, 50] });
-    else if (pts.length === 1) map.setView(pts[0], 10);
-
-    // Bygg sidebar-listen på nytt med filtrerte ritt
-    buildSidebar();
-}
-
-/** Zoomer kartet ut til å vise alle ritt med stedsinformasjon */
-function fitMapToAll() {
-    const pts = ritts.filter(hasLocation).map(r => [r.lat, r.lng]);
-    if (pts.length) map.fitBounds(L.latLngBounds(pts), { padding: [50, 50] });
-}
-
-
-// =============================================================
-//  INIT — Starter applikasjonen
-//  Bygger alle dynamiske elementer og viser kartet.
-// =============================================================
-buildHeaderStats();        // Beregn og vis statistikk i header
-buildFilterButtons();      // Generer filter-knapper fra kategorier
-buildLegend();             // Bygg fargelegende for kartet
-buildRouteInfo();          // Vis oppsummering øverst på kartet
-addMarkers();              // Plasser markører for alle ritt med sted
-buildSidebar();            // Bygg rittlisten i sidebar
-fitMapToAll();             // Zoom kartet til å vise alle markører
+    // Start
+    buildTimeline();
 </script>
 
 </body>

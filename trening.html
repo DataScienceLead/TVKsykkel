@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Treningsplaner 2026</title>
+    <style>
+        /* ===========================
+           GENERELT
+           =========================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F4F6F9;
+            color: #194794;
+        }
+
+        /* ===========================
+           NAVIGASJON — Identisk med de andre sidene
+           =========================== */
+        .nav {
+            background: #ffffff;
+            border-bottom: 3px solid #E2071D;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            box-shadow: 0 2px 12px rgba(25, 71, 148, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-logo-fallback {
+            width: 40px;
+            height: 40px;
+            background: #194794;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            border: 2px solid #E2071D;
+            flex-shrink: 0;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #194794;
+        }
+
+        .nav-title span { color: #E2071D; }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a6aa5;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: rgba(25, 71, 148, 0.06);
+            color: #194794;
+        }
+
+        .nav-link.active {
+            color: #E2071D;
+            background: rgba(226, 7, 29, 0.06);
+            font-weight: 600;
+        }
+
+        /* ===========================
+           SIDEHEADER — Overskrift for treningssiden
+           =========================== */
+        .page-header {
+            background: linear-gradient(135deg, #194794 0%, #2e5aa8 100%);
+            color: #ffffff;
+            padding: 48px 32px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* ===========================
+           INNHOLD
+           =========================== */
+        .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #194794;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #4a6aa5;
+            margin-bottom: 32px;
+        }
+
+        /* ===========================
+           ALDERSGRUPPE-KORT
+           Hvert kort representerer en aldersgruppe.
+           Innholdet er placeholder — fylles inn senere.
+           =========================== */
+        .age-groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .age-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .age-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(25, 71, 148, 0.1);
+        }
+
+        /* Farget topplinje som visuelt skiller aldersgruppene */
+        .age-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #F4F6F9;
+        }
+
+        /* Ikon-sirkel med emoji */
+        .age-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .age-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #194794;
+        }
+
+        .age-card .age-range {
+            font-size: 12px;
+            color: #4a6aa5;
+        }
+
+        /* Treningsdetaljer inni kortet */
+        .training-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #F4F6F9;
+            font-size: 13px;
+        }
+
+        .training-detail:last-child { border-bottom: none; }
+
+        .training-detail .label {
+            color: #4a6aa5;
+        }
+
+        .training-detail .value {
+            font-weight: 600;
+            color: #194794;
+        }
+
+        /* Status-merkelapp: viser at innhold kommer */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .status-coming {
+            background: rgba(226, 7, 29, 0.08);
+            color: #E2071D;
+            border: 1px solid rgba(226, 7, 29, 0.2);
+        }
+
+        .status-ready {
+            background: rgba(34, 160, 90, 0.08);
+            color: #22a05a;
+            border: 1px solid rgba(34, 160, 90, 0.2);
+        }
+
+        /* ===========================
+           INFO-BOKS — Generell informasjon
+           =========================== */
+        .info-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 32px;
+        }
+
+        .info-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #194794;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: #4a6aa5;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .info-box p:last-child { margin-bottom: 0; }
+
+        /* ===========================
+           UKESPLAN-PLACEHOLDER
+           Enkel tabell-lignende visning
+           =========================== */
+        .week-plan {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 32px;
+        }
+
+        .week-plan h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #194794;
+            margin-bottom: 20px;
+        }
+
+        .week-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F4F6F9;
+        }
+
+        .week-row:last-child { border-bottom: none; }
+
+        .week-day {
+            min-width: 100px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #194794;
+        }
+
+        .week-activity {
+            flex: 1;
+            font-size: 13px;
+            color: #4a6aa5;
+        }
+
+        /* Aktivitets-type markør */
+        .activity-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .type-ride {
+            background: rgba(25, 71, 148, 0.08);
+            color: #194794;
+        }
+
+        .type-strength {
+            background: rgba(226, 7, 29, 0.08);
+            color: #E2071D;
+        }
+
+        .type-rest {
+            background: rgba(138, 156, 194, 0.1);
+            color: #8a9cc2;
+        }
+
+        /* ===========================
+           FOOTER
+           =========================== */
+        .footer {
+            background: #194794;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 24px 32px;
+            font-size: 13px;
+        }
+
+        .footer strong { color: #ffffff; }
+
+        /* ===========================
+           RESPONSIVT
+           =========================== */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 12px 16px;
+                height: auto;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .nav-links { width: 100%; justify-content: center; }
+            .page-header { padding: 32px 16px; }
+            .page-header h1 { font-size: 28px; }
+            .content { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVIGASJON -->
+<nav class="nav">
+    <div class="nav-left">
+        <img src="TVK.png" alt="TVK" class="nav-logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="nav-logo-fallback">TVK</div>
+        <div class="nav-title">TVK <span>2026</span></div>
+    </div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link">🏠 Hjem</a>
+        <a href="terminliste.html" class="nav-link">Terminliste</a>
+        <a href="trening.html" class="nav-link active">Trening</a>
+    </div>
+</nav>
+
+<!-- SIDEHEADER -->
+<div class="page-header">
+    <h1>Treningsplaner</h1>
+    <p>Tilpassede planer for alle aldersgrupper i TVK — sesong 2026</p>
+</div>
+
+<div class="content">
+
+    <!-- ============================
+         GENERELL INFO
+         ============================ -->
+    <div class="info-box">
+        <h3>📋 Om treningsplanene</h3>
+        <p>Treningsplanene er utarbeidet av TVKs trenere og tilpasset hver aldersgruppe.
+           Planene tar hensyn til sesongoppbygging, skolehverdag og konkurransekalenderen.</p>
+        <p>Hver aldersgruppe har en ukeplan som justeres gjennom sesongen.
+           Detaljerte planer for hver periode legges ut fortløpende.</p>
+        <p><strong>Kontakt trener hvis du har spørsmål om tilpasning av planen.</strong></p>
+    </div>
+
+    <!-- ============================
+         ALDERSGRUPPE-KORT
+         Hvert kort er en placeholder for fremtidig innhold.
+         ============================ -->
+    <div class="section-title">Aldersgrupper</div>
+    <div class="section-subtitle">Velg din aldersgruppe for å se treningsplanen</div>
+
+    <div class="age-groups">
+
+        <!-- U11 -->
+        <div class="age-card">
+            <div class="age-card-header">
+                <div class="age-icon" style="background: rgba(46, 125, 209, 0.1);">🌱</div>
+                <div>
+                    <h3>U11</h3>
+                    <div class="age-range">9–10 år</div>
+                </div>
+            </div>
+            <div class="training-detail">
+                <span class="label">Økter per uke</span>
+                <span class="value">2–3</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Fokus</span>
+                <span class="value">Lek og mestring</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Timer per uke</span>
+                <span class="value">3–4 timer</span>
+            </div>
+            <span class="status-badge status-coming">Plan kommer snart</span>
+        </div>
+
+        <!-- U13 -->
+        <div class="age-card">
+            <div class="age-card-header">
+                <div class="age-icon" style="background: rgba(25, 71, 148, 0.08);">🚲</div>
+                <div>
+                    <h3>U13</h3>
+                    <div class="age-range">11–12 år</div>
+                </div>
+            </div>
+            <div class="training-detail">
+                <span class="label">Økter per uke</span>
+                <span class="value">3–4</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Fokus</span>
+                <span class="value">Teknikk og utholdenhet</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Timer per uke</span>
+                <span class="value">4–6 timer</span>
+            </div>
+            <span class="status-badge status-coming">Plan kommer snart</span>
+        </div>
+
+        <!-- U15 -->
+        <div class="age-card">
+            <div class="age-card-header">
+                <div class="age-icon" style="background: rgba(226, 7, 29, 0.08);">⚡</div>
+                <div>
+                    <h3>U15</h3>
+                    <div class="age-range">13–14 år</div>
+                </div>
+            </div>
+            <div class="training-detail">
+                <span class="label">Økter per uke</span>
+                <span class="value">4–5</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Fokus</span>
+                <span class="value">Grunntrening og intensitet</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Timer per uke</span>
+                <span class="value">6–8 timer</span>
+            </div>
+            <span class="status-badge status-coming">Plan kommer snart</span>
+        </div>
+
+        <!-- U17 -->
+        <div class="age-card">
+            <div class="age-card-header">
+                <div class="age-icon" style="background: rgba(196, 22, 60, 0.08);">🔥</div>
+                <div>
+                    <h3>U17</h3>
+                    <div class="age-range">15–16 år</div>
+                </div>
+            </div>
+            <div class="training-detail">
+                <span class="label">Økter per uke</span>
+                <span class="value">5–6</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Fokus</span>
+                <span class="value">Systematisk trening</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Timer per uke</span>
+                <span class="value">8–10 timer</span>
+            </div>
+            <span class="status-badge status-coming">Plan kommer snart</span>
+        </div>
+
+        <!-- Junior -->
+        <div class="age-card">
+            <div class="age-card-header">
+                <div class="age-icon" style="background: rgba(138, 156, 194, 0.1);">🏆</div>
+                <div>
+                    <h3>Junior</h3>
+                    <div class="age-range">17–18 år</div>
+                </div>
+            </div>
+            <div class="training-detail">
+                <span class="label">Økter per uke</span>
+                <span class="value">6–8</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Fokus</span>
+                <span class="value">Prestasjon og periodisering</span>
+            </div>
+            <div class="training-detail">
+                <span class="label">Timer per uke</span>
+                <span class="value">10–14 timer</span>
+            </div>
+            <span class="status-badge status-coming">Plan kommer snart</span>
+        </div>
+    </div>
+
+    <!-- ============================
+         EKSEMPEL UKEPLAN — Viser formatet for fremtidige planer
+         ============================ -->
+    <div class="week-plan">
+        <h3>📅 Eksempel ukeplan — U15 (vårperiode)</h3>
+
+        <div class="week-row">
+            <div class="week-day">Mandag</div>
+            <div class="week-activity">
+                <span class="activity-type type-rest">Hvile</span>
+                Restitusjon eller lett aktivitet
+            </div>
+        </div>
+        <div class="week-row">
+            <div class="week-day">Tirsdag</div>
+            <div class="week-activity">
+                <span class="activity-type type-ride">Sykkel</span>
+                Fellestrening TVK — teknikk og intervaller (1,5 t)
+            </div>
+        </div>
+        <div class="week-row">
+            <div class="week-day">Onsdag</div>
+            <div class="week-activity">
+                <span class="activity-type type-strength">Styrke</span>
+                Egentreningsprogram — kjerne og bein (45 min)
+            </div>
+        </div>
+        <div class="week-row">
+            <div class="week-day">Torsdag</div>
+            <div class="week-activity">
+                <span class="activity-type type-ride">Sykkel</span>
+                Fellestrening TVK — rolig langtur (1,5–2 t)
+            </div>
+        </div>
+        <div class="week-row">
+            <div class="week-day">Fredag</div>
+            <div class="week-activity">
+                <span class="activity-type type-rest">Hvile</span>
+                Lett tøying eller hvile før helg
+            </div>
+        </div>
+        <div class="week-row">
+            <div class="week-day">Lørdag</div>
+            <div class="week-activity">
+                <span class="activity-type type-ride">Sykkel</span>
+                Langtur eller ritt (2–3 t)
+            </div>
+        </div>
+        <div class="week-row">
+            <div class="week-day">Søndag</div>
+            <div class="week-activity">
+                <span class="activity-type type-rest">Hvile</span>
+                Fri dag eller rolig aktivitet
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================
+         KONTAKTINFO
+         ============================ -->
+    <div class="info-box">
+        <h3>📞 Kontakt trenere</h3>
+        <p>Har du spørsmål om treningsplanen for din aldersgruppe?
+           Ta kontakt med ansvarlig trener for tilpasninger.</p>
+        <p>Generelle henvendelser sendes til
+           <strong>trening@tvk.no</strong> (placeholder).</p>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <strong>Trondhjems Velocipedklubb</strong> — Sesong 2026 | Stiftet 1893
+</div>
+
+</body>
+</html>
