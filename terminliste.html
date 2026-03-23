@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TVK Terminliste 2026 - Kart</title>
+    <title>TVK Terminliste 2026</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -485,7 +485,7 @@
 <div class="main-container">
     <div class="sidebar">
         <div class="sidebar-header">
-            <div style="font-size: 14px; font-weight: 600; color: #194794;">Ritt & Arrangementer</div>
+            <div style="font-size: 14px; font-weight: 600; color: #194794;">Ritt og arrangementer</div>
             <div class="filter-buttons" id="filterButtons"></div>
         </div>
         <div class="ritt-list" id="rittList"></div>
@@ -607,7 +607,7 @@ function buildLegend() {
 
 function buildRouteInfo() {
     document.getElementById('routeInfo').innerHTML =
-        `🚴 TVK Sesong 2026 — <strong>${ritts.length} arrangementer</strong> over hele Norge`;
+        `  <strong>${ritts.length} ritt</strong> over hele Norge`;
 }
 
 // =============================================================

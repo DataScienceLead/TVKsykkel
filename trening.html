@@ -226,6 +226,38 @@
         }
 
         /* ===========================
+        PDF-LENKE — Nedlastingsknapp på alderskortene.
+        Vises bare når det finnes en plan.
+        =========================== */
+        .plan-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: #194794;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .plan-link:hover {
+            background: #E2071D;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(226, 7, 29, 0.25);
+        }
+
+        /* Lite PDF-ikon inne i knappen */
+        .plan-link svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ===========================
            INFO-BOKS
            =========================== */
         .info-box {
@@ -523,6 +555,16 @@
 </head>
 <body>
 
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <!-- PDF/dokument-ikon (nedlasting av treningsplan) -->
+    <symbol id="icon-pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <polyline points="9 15 12 18 15 15"/>
+    </symbol>
+</svg>
+
 <!-- NAVIGASJON -->
 <nav class="nav">
     <div class="nav-left">
@@ -660,7 +702,11 @@
                 <span class="label">Timer per uke</span>
                 <span class="value">8–10 timer</span>
             </div>
-            <span class="status-badge status-coming">Plan kommer snart</span>
+           <span class="status-badge status-ready">Plan tilgjengelig</span>
+    <a href="planer/treningsplan-u17.pdf" target="_blank" class="plan-link">
+        <svg><use href="#icon-pdf"/></svg>
+        Last ned treningsplan (PDF)
+    </a>
         </div>
 
         <!-- Junior -->
@@ -684,8 +730,13 @@
                 <span class="label">Timer per uke</span>
                 <span class="value">10–14 timer</span>
             </div>
-            <span class="status-badge status-coming">Plan kommer snart</span>
+              <span class="status-badge status-ready">Plan tilgjengelig. </span>
+    <a href="planer/treningsplan-junior.pdf" target="_blank" class="plan-link">
+        <svg><use href="#icon-pdf"/></svg>
+        Last ned treningsplan (PDF)
+    </a>
         </div>
+        
     </div>
 
     <!-- ============================
@@ -742,6 +793,19 @@
                 Fri dag eller rolig aktivitet
             </div>
         </div>
+        <div class="week-row">
+            <div class="week-day">Annet</div>
+            <div class="week-activity">
+                <span class="activity-type type-rest"><a href="planer/eksempel-dagsplan.xlsx" target="_blank" class="plan-link">
+        <svg><use href="#icon-pdf"/></svg>
+        Last ned
+    </a></span>
+                Se et eksempel på hvordan en 4 ukers periode kan legges opp
+            </div>
+        </div>
+
+
+
     </div>
 
     <!-- ============================
