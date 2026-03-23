@@ -139,8 +139,6 @@
 
         /* ===========================
            ALDERSGRUPPE-KORT
-           Hvert kort representerer en aldersgruppe.
-           Innholdet er placeholder — fylles inn senere.
            =========================== */
         .age-groups {
             display: grid;
@@ -162,7 +160,6 @@
             box-shadow: 0 8px 30px rgba(25, 71, 148, 0.1);
         }
 
-        /* Farget topplinje som visuelt skiller aldersgruppene */
         .age-card-header {
             display: flex;
             align-items: center;
@@ -172,7 +169,6 @@
             border-bottom: 2px solid #F4F6F9;
         }
 
-        /* Ikon-sirkel med emoji */
         .age-icon {
             width: 48px;
             height: 48px;
@@ -195,7 +191,6 @@
             color: #4a6aa5;
         }
 
-        /* Treningsdetaljer inni kortet */
         .training-detail {
             display: flex;
             justify-content: space-between;
@@ -209,7 +204,6 @@
         .training-detail .label { color: #4a6aa5; }
         .training-detail .value { font-weight: 600; color: #194794; }
 
-        /* Status-merkelapp: viser at innhold kommer */
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -262,8 +256,7 @@
         .info-box p:last-child { margin-bottom: 0; }
 
         /* ===========================
-           UKESPLAN-PLACEHOLDER
-           Enkel tabell-lignende visning
+           UKESPLAN
            =========================== */
         .week-plan {
             background: #ffffff;
@@ -302,7 +295,6 @@
             color: #4a6aa5;
         }
 
-        /* Aktivitets-type markør */
         .activity-type {
             display: inline-block;
             padding: 2px 8px;
@@ -757,16 +749,16 @@
          Beskriver ulike spurttyper og teknikk-øvelser som
          utøverne kan bruke i treningene sine.
          ============================ -->
-    <div class="section-title">Spurter og teknikk-øvelser</div>
+    <div class="section-title">🏃 Spurter og teknikk-øvelser</div>
     <div class="section-subtitle">Øvelser som kan brukes i fellestrening eller egentrening. Fargekoden viser intensitetsnivå.</div>
 
     <div class="exercise-grid">
 
         <!-- STRYKETRÅKKSPURT -->
-        <div class="exercise-card" style="border-left-color:  #22a05a;">
+        <div class="exercise-card" style="border-left-color: #8e24aa;">
             <div class="exercise-header">
                 <div class="exercise-name">Stryketråkkspurt</div>
-                <span class="intensity-badge intensity-medium">Middels</span>
+                <span class="intensity-badge intensity-max">Maks</span>
             </div>
             <div class="exercise-summary">
                 Kort, eksplosiv spurt fra lav fart. Trener evnen til å akselerere
@@ -774,21 +766,20 @@
             </div>
             <div class="exercise-meta">
                 <span class="meta-tag">⏱ 8 sek</span>
-                <span class="meta-tag">🔄 3 reps og 4 serier</span>
+                <span class="meta-tag">🔄 6–10 reps</span>
                 <span class="meta-tag">😮‍💨 Full restitusjon mellom</span>
             </div>
             <div class="exercise-details">
                 <strong>Slik gjør du det:</strong>
                 <ol class="exercise-steps">
-                    <li data-step="1">Rull i svært lav fart (nesten stille) i middels tungt gir</li>
+                    <li data-step="1">Rull i svært lav fart (nesten stille) i tungt gir</li>
                     <li data-step="2">På signal: reis deg opp og tråkk alt du kan i 8 sekunder</li>
                     <li data-step="3">Fokuser på å «rive» pedalene rundt — bruk hele tråkket</li>
-                    <li data-step="4">Sett deg ned og rull rolig i 2–3 minutter før neste repetisjon, 10 minutter mellom seriene</li>
+                    <li data-step="4">Sett deg ned og rull rolig i 2–3 minutter før neste</li>
                 </ol>
                 <div class="exercise-tip">
-                    <strong>💡 Tips:</strong> Start i et moderat tungt gir. Når du avslutter spurten skal
-                     du oppleve at girene er for lette og du må konsentrere deg for å holde farten oppe. Det betyr at du ikke skal bytte til tyngre gir underveis. 
-                    Det er selve akselerasjonen som er poenget — ikke topphastigheten. Og teknikk.
+                    <strong>💡 Tips:</strong> Start i så tungt gir at du nesten ikke klarer å komme i gang.
+                    Det er selve akselerasjonen som er poenget — ikke topphastigheten.
                 </div>
             </div>
         </div>
@@ -796,43 +787,43 @@
         <!-- VANLIG SPURT -->
         <div class="exercise-card" style="border-left-color: #E2071D;">
             <div class="exercise-header">
-                <div class="exercise-name">Spurt</div>
+                <div class="exercise-name">Feltsprint / spurt</div>
                 <span class="intensity-badge intensity-high">Høy</span>
             </div>
             <div class="exercise-summary">
                 Klassisk spurt fra gruppefart. Trener topphastighet og evne til
-                å spurte etter å ha ligget i felt over lengre tid. Start gjerne spurten etter en nedoverbakke slik at du har 35-40 km/t i når spurten starter. 
+                å spurte etter å ha ligget i felt over lengre tid.
             </div>
             <div class="exercise-meta">
-                <span class="meta-tag">⏱ 10–15 sek</span>
-                <span class="meta-tag">🔄 4–8 reps</span>
-                <span class="meta-tag">🚴 Fra rittfart</span>
+                <span class="meta-tag">⏱ 15–20 sek</span>
+                <span class="meta-tag">🔄 4–6 reps</span>
+                <span class="meta-tag">🚴 Fra gruppefart</span>
             </div>
             <div class="exercise-details">
                 <strong>Slik gjør du det:</strong>
                 <ol class="exercise-steps">
-                    <li data-step="1">Rull i jevnt tempo i gruppen (sone 1-2)</li>
-                    <li data-step="2">Velg et punkt 150-200 m frem som «mållinje»</li>
+                    <li data-step="1">Rull i jevnt tempo i gruppen (sone 2–3)</li>
+                    <li data-step="2">Velg et punkt 200 m frem som «mållinje»</li>
                     <li data-step="3">Gir opp 1–2 hakk, reis deg og spurt med alt du har</li>
                     <li data-step="4">Hold spurten gjennom «mållinjen» — ikke gi deg for tidlig</li>
                     <li data-step="5">Rull rolig i 3–5 minutter før neste spurt</li>
                 </ol>
                 <div class="exercise-tip">
-                    <strong>💡 Tips:</strong> Hvis spurtene skjer fra en gruppe kan du øve på å starte spurten fra ulike posisjoner i gruppen.
+                    <strong>💡 Tips:</strong> Øv på å starte spurten fra ulike posisjoner i gruppen.
                     I ritt må du ofte spurte fra 3.–5. posisjon.
                 </div>
             </div>
         </div>
 
         <!-- RYKKØVELSE -->
-        <div class="exercise-card" style="border-left-color: #8e24aa;">
+        <div class="exercise-card" style="border-left-color: #E2071D;">
             <div class="exercise-header">
                 <div class="exercise-name">Rykk i bakke</div>
-                <span class="intensity-badge intensity-max">Maks</span>
+                <span class="intensity-badge intensity-high">Høy</span>
             </div>
             <div class="exercise-summary">
                 Simulerer rykk i stigning slik det skjer i ritt. Trener evnen
-                til å sette inn støt i motbakke og holde tempoet oppe. Dette er svært intensive øker og er i stedet for intervaller. 
+                til å sette inn støt i motbakke og holde tempoet oppe.
             </div>
             <div class="exercise-meta">
                 <span class="meta-tag">⏱ 20–40 sek</span>
@@ -880,7 +871,7 @@
                 </ol>
                 <div class="exercise-tip">
                     <strong>💡 Tips:</strong> Hvis du spretter i setet, er kadensen for høy.
-                    Senk frekvensen/kadensen litt til du klarer å sitte stabilt og tråkke jevnt. Dette er også en tekinikk og koordinasjonsøvelse. 
+                    Senk litt til du klarer å sitte stabilt og tråkke jevnt.
                 </div>
             </div>
         </div>
@@ -892,7 +883,7 @@
          Beskriver ulike intervalltyper med soner,
          varighet og gjennomføring.
          ============================ -->
-    <div class="section-title" style="margin-top: 48px;">Intervalløkter</div>
+    <div class="section-title" style="margin-top: 48px;">⚡ Intervalløkter</div>
     <div class="section-subtitle">Standard intervallformater brukt i TVK-treningene. Sonene refererer til NCFs 5-sone-modell.</div>
 
     <div class="exercise-grid">
@@ -905,7 +896,7 @@
             </div>
             <div class="exercise-summary">
                 Klassisk VO₂max-intervall. Kort belastning med like kort pause
-                gir høy akkumulert tid i sone 5 uten fullstendig utmattelse. I denne øvelsen veksler du på intensiteten. Fra hard til veldig hard. 
+                gir høy akkumulert tid i sone 5 uten fullstendig utmattelse.
             </div>
             <div class="exercise-meta">
                 <span class="meta-tag">⏱ 30 sek på / 30 sek av</span>
@@ -917,15 +908,15 @@
                 <ol class="exercise-steps">
                     <li data-step="1">Varm opp grundig i 15–20 min med noen korte drag</li>
                     <li data-step="2">Kjør 30 sekunder i sone 5 (tungt, men kontrollerbart)</li>
-                    <li data-step="3">Sykle med moderat intensitet i 30 sekunder (sone 3/4)</li>
-                    <li data-step="4">Gjenta 4-5 ganger = 1 serie</li>
-                    <li data-step="5">Hvil 4-5 min lett tråkking mellom serier</li>
-                    <li data-step="6">Kjør 3 serier totalt</li>
+                    <li data-step="3">Rull lett i 30 sekunder (sone 1 — aktiv hvile)</li>
+                    <li data-step="4">Gjenta 8–12 ganger = 1 serie</li>
+                    <li data-step="5">Hvil 5 min lett tråkking mellom serier</li>
+                    <li data-step="6">Kjør 2–3 serier totalt etter dagsform</li>
                 </ol>
                 <div class="exercise-tip">
-                    <strong>💡 Tips:</strong> Første intervall skal ikke være for hardt. Øk heller gradvis.
+                    <strong>💡 Tips:</strong> Første intervall skal ikke kjennes maksimalt.
                     Legg deg på et jevnt watt-tall du kan holde gjennom hele serien.
-                    Hvis du sykler opp en slak bakke, så er det en god sjekk å se om du klarer å sykle like langt på hvert drag. 
+                    Bedre å være litt for forsiktig enn å dø på de siste.
                 </div>
             </div>
         </div>
@@ -933,7 +924,7 @@
         <!-- 4×4 MINUTTER -->
         <div class="exercise-card" style="border-left-color: #E2071D;">
             <div class="exercise-header">
-                <div class="exercise-name">4-6 × 4-6 min intervaller</div>
+                <div class="exercise-name">4 × 4 min intervaller</div>
                 <span class="intensity-badge intensity-high">Sone 4–5</span>
             </div>
             <div class="exercise-summary">
@@ -941,54 +932,54 @@
                 Gullstandarden for å forbedre maksimalt oksygenopptak.
             </div>
             <div class="exercise-meta">
-                <span class="meta-tag">⏱ 4-6 min intensivt, men 3-5 min pause </span>
-                <span class="meta-tag">🔄 3–6 reps</span>
-                <span class="meta-tag">❤️ 87–92% av maks hjertefrekvens</span>
+                <span class="meta-tag">⏱ 4 min på / 3 min av</span>
+                <span class="meta-tag">🔄 3–5 reps</span>
+                <span class="meta-tag">❤️ 90–95% av maks HF</span>
             </div>
             <div class="exercise-details">
                 <strong>Slik gjør du det:</strong>
                 <ol class="exercise-steps">
-                    <li data-step="1">Varm opp 15–20 min, inkludert 2–3 korte drag med høy intensitet</li>
-                    <li data-step="2">Kjør 4-6 minutter i sone 4–5 (tungt, jevnt tempo)</li>
-                    <li data-step="3">Hvil 3-5 minutter i sone 1–2 (lett tråkking)</li>
-                    <li data-step="4">Gjenta 3–6 ganger avhengig av treningsfase</li>
-                    <li data-step="5">Avslutt med 10–15 min rolig nedrulling</li>
+                    <li data-step="1">Varm opp 15–20 min, inkludert 2–3 korte drag i sone 4</li>
+                    <li data-step="2">Kjør 4 minutter i sone 4–5 (tungt, jevnt tempo)</li>
+                    <li data-step="3">Hvil 3 minutter i sone 1–2 (lett tråkking)</li>
+                    <li data-step="4">Gjenta 3–5 ganger avhengig av treningsfase</li>
+                    <li data-step="5">Avslutt med 10–15 min rolig nedrul</li>
                 </ol>
                 <div class="exercise-tip">
                     <strong>💡 Tips:</strong> Prøv å holde jevn watt gjennom hele draget.
                     Puls vil stige gradvis — det er normalt. Du bør nå 90 %+ av maks HF
-                    mot slutten av hvert drag. På det første intervalldraget kan du ikke forvente å få så høy puls. 
-                </div> 
+                    mot slutten av hvert drag.
+                </div>
             </div>
         </div>
 
         <!-- TERSKELINTERVALL -->
         <div class="exercise-card" style="border-left-color: #22a05a;">
             <div class="exercise-header">
-                <div class="exercise-name">2-4 × 10-20 min lavterskel</div>
-                <span class="intensity-badge intensity-medium">Sone 3-4</span>
+                <div class="exercise-name">2 × 15 min terskel</div>
+                <span class="intensity-badge intensity-medium">Sone 4</span>
             </div>
             <div class="exercise-summary">
-                Lengre drag under og rett rundt terskelfart. Bygger evnen til
-                å holde høyt tempo over tid. Dette er en treningsintensitet som har en kortere restitusjonstid og gjør at en kan trene lange intervaller. 
+                Lengre drag rett under og rundt terskelfart. Bygger evnen til
+                å holde høyt tempo over tid — avgjørende i etapperitt.
             </div>
             <div class="exercise-meta">
-                <span class="meta-tag">⏱ 10-20 min på / 2-5 min av</span>
+                <span class="meta-tag">⏱ 15 min på / 5 min av</span>
                 <span class="meta-tag">🔄 2–3 reps</span>
-                <span class="meta-tag">❤️ 80–87% av maks HF</span>
+                <span class="meta-tag">❤️ 85–90% av maks HF</span>
             </div>
             <div class="exercise-details">
                 <strong>Slik gjør du det:</strong>
                 <ol class="exercise-steps">
                     <li data-step="1">Varm opp 15–20 min med gradvis økende intensitet</li>
-                    <li data-step="2">Kjør 10-20 min hard — «komfortabelt ubehagelig»</li>
-                    <li data-step="3">Hvil 2-5 min i sone 1–2</li>
-                    <li data-step="4">Gjenta 2–4 ganger</li>
+                    <li data-step="2">Kjør 15 min i sone 4 — «komfortabelt ubehagelig»</li>
+                    <li data-step="3">Hvil 5 min i sone 1–2</li>
+                    <li data-step="4">Gjenta 2–3 ganger</li>
                 </ol>
                 <div class="exercise-tip">
-                    <strong>💡 Tips:</strong> Lavterskeldrag skal kjennes hardt, men håndterbart.
+                    <strong>💡 Tips:</strong> Terskeldrag skal kjennes hardt, men håndterbart.
                     Du skal kunne gjennomføre alle repetisjonene på tilnærmet lik watt.
-                    Hvis du faller av: du startet for hardt. Du skal fortsatt ha krefter til å øke farten på det siste draget. 
+                    Hvis du faller av: du startet for hardt.
                 </div>
             </div>
         </div>
@@ -1027,7 +1018,7 @@
         <!-- ROLIG LANGTUR -->
         <div class="exercise-card" style="border-left-color: #2e7dd1;">
             <div class="exercise-header">
-                <div class="exercise-name">Rolig langtur</div>
+                <div class="exercise-name">Rolig langtur (LIT)</div>
                 <span class="intensity-badge intensity-low">Sone 1–2</span>
             </div>
             <div class="exercise-summary">
@@ -1035,16 +1026,16 @@
                 forbrenning og restitusjon. Skal kjennes lett hele veien.
             </div>
             <div class="exercise-meta">
-                <span class="meta-tag">⏱ 1,5–4 timer</span>
+                <span class="meta-tag">⏱ 1,5–3 timer</span>
                 <span class="meta-tag">❤️ 60–75% av maks HF</span>
-                <span class="meta-tag">🗣️ Farten skal være lav og det skal ikke gå på bekostning av morgendagens intervaller</span>
+                <span class="meta-tag">🗣️ Kan prate i setninger</span>
             </div>
             <div class="exercise-details">
                 <strong>Slik gjør du det:</strong>
                 <ol class="exercise-steps">
                     <li data-step="1">Velg en rute uten for mange stopp</li>
                     <li data-step="2">Hold deg i sone 1–2 hele veien — ta det med ro i bakker</li>
-                    <li data-step="3">Fokuser på jevn kadans (90–95 rpm) og avslappet overkropp</li>
+                    <li data-step="3">Fokuser på jevn kadans (80–95 rpm) og avslappet overkropp</li>
                     <li data-step="4">Spis og drikk underveis på turer over 1,5 time</li>
                 </ol>
                 <div class="exercise-tip">
@@ -1055,7 +1046,7 @@
             </div>
         </div>
 
-        <!-- MIKRO-INTERVALLER 
+        <!-- MIKRO-INTERVALLER -->
         <div class="exercise-card" style="border-left-color: #8e24aa;">
             <div class="exercise-header">
                 <div class="exercise-name">15/15 mikro-intervaller</div>
@@ -1085,7 +1076,7 @@
                     en kort rundløype uten trafikk.
                 </div>
             </div>
-        </div>-->
+        </div>
 
     </div>
 
@@ -1097,7 +1088,7 @@
         <p>Har du spørsmål om treningsplanen for din aldersgruppe?
            Ta kontakt med ansvarlig trener for tilpasninger.</p>
         <p>Generelle henvendelser sendes til
-           <strong>på epost eller spond til trener</strong> </p>
+           <strong>trening@tvk.no</strong> (placeholder).</p>
     </div>
 
 </div>
