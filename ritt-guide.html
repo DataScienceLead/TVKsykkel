@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ritt-guide – TVK 2026</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="TVK.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="TVK.png">
+    <style>
+        /* ===========================
+           GENERELT
+           =========================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F4F6F9;
+            color: #194794;
+        }
+
+        /* ===========================
+           NAVIGASJON
+           =========================== */
+        .nav {
+            background: #ffffff;
+            border-bottom: 3px solid #E2071D;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            box-shadow: 0 2px 12px rgba(25, 71, 148, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 12px; }
+
+        .nav-logo { height: 40px; width: auto; object-fit: contain; }
+
+        .nav-logo-fallback {
+            width: 40px; height: 40px;
+            background: #194794; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 14px;
+            border: 2px solid #E2071D; flex-shrink: 0;
+        }
+
+        .nav-title { font-size: 18px; font-weight: 700; color: #194794; }
+        .nav-title span { color: #E2071D; }
+
+        .nav-links { display: flex; gap: 4px; }
+
+        .nav-link {
+            padding: 8px 16px; border-radius: 8px; text-decoration: none;
+            font-size: 14px; font-weight: 500; color: #4a6aa5; transition: all 0.2s;
+        }
+        .nav-link:hover { background: rgba(25, 71, 148, 0.06); color: #194794; }
+        .nav-link.active { color: #E2071D; background: rgba(226, 7, 29, 0.06); font-weight: 600; }
+
+        /* ===========================
+           SIDEHEADER
+           =========================== */
+        .page-header {
+            background: linear-gradient(135deg, #194794 0%, #2e5aa8 100%);
+            color: #ffffff;
+            padding: 48px 32px;
+            text-align: center;
+        }
+
+        .page-header h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+        .page-header p { font-size: 16px; opacity: 0.8; }
+
+        /* ===========================
+           TO-KOLONNE LAYOUT
+           =========================== */
+        .page-body {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 32px;
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* ===========================
+           SIDEMENY / INNHOLDSFORTEGNELSE
+           =========================== */
+        .toc {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid #e2e8f0;
+            position: sticky;
+            top: 80px;
+        }
+
+        .toc-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8a9cc2;
+            margin-bottom: 16px;
+        }
+
+        .toc-list { list-style: none; }
+
+        .toc-item a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            color: #4a6aa5;
+            transition: all 0.2s;
+            line-height: 1.3;
+        }
+
+        .toc-item a:hover {
+            background: rgba(25, 71, 148, 0.06);
+            color: #194794;
+        }
+
+        .toc-item a.active {
+            background: rgba(226, 7, 29, 0.07);
+            color: #E2071D;
+            font-weight: 600;
+        }
+
+        .toc-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
+        }
+
+        .toc-divider {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 12px 0;
+        }
+
+        /* ===========================
+           INNHOLD
+           =========================== */
+        .content { min-width: 0; }
+
+        /* Innledningsboks */
+        .intro-box {
+            background: linear-gradient(135deg, rgba(25, 71, 148, 0.05), rgba(25, 71, 148, 0.02));
+            border: 1px solid rgba(25, 71, 148, 0.15);
+            border-left: 4px solid #194794;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            font-size: 14px;
+            color: #4a6aa5;
+            line-height: 1.7;
+        }
+
+        /* Seksjonskort */
+        .guide-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+            scroll-margin-top: 90px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #F4F6F9;
+        }
+
+        .section-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: rgba(25, 71, 148, 0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #194794;
+        }
+
+        /* Tekstinnhold */
+        .guide-section p {
+            font-size: 14px;
+            color: #4a6aa5;
+            line-height: 1.75;
+            margin-bottom: 12px;
+        }
+
+        .guide-section p:last-child { margin-bottom: 0; }
+
+        /* Kulepunktlister */
+        .guide-section ul {
+            list-style: none;
+            margin: 8px 0 12px 0;
+        }
+
+        .guide-section ul li {
+            font-size: 14px;
+            color: #4a6aa5;
+            line-height: 1.6;
+            padding: 5px 0 5px 22px;
+            position: relative;
+            border-bottom: 1px solid #F4F6F9;
+        }
+
+        .guide-section ul li:last-child { border-bottom: none; }
+
+        .guide-section ul li::before {
+            content: '›';
+            position: absolute;
+            left: 6px;
+            color: #E2071D;
+            font-weight: 700;
+        }
+
+        .guide-section ul li strong { color: #194794; }
+
+        .guide-section a {
+            color: #194794;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(25, 71, 148, 0.3);
+            transition: all 0.2s;
+        }
+
+        .guide-section a:hover { color: #E2071D; border-bottom-color: #E2071D; }
+
+        /* Nummererte steg */
+        .steps { margin: 12px 0; }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid #F4F6F9;
+        }
+
+        .step:last-child { border-bottom: none; }
+
+        .step-num {
+            min-width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #194794;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #4a6aa5;
+            line-height: 1.6;
+        }
+
+        .step-text strong { color: #194794; }
+
+        /* Tabell */
+        .guide-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .guide-table thead tr {
+            background: #194794;
+            color: #fff;
+        }
+
+        .guide-table th {
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .guide-table tbody tr:nth-child(odd)  { background: #F4F6F9; }
+        .guide-table tbody tr:nth-child(even) { background: #ffffff; }
+
+        .guide-table td {
+            padding: 9px 14px;
+            color: #4a6aa5;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .guide-table td strong { color: #194794; }
+
+        /* Undertittel/gruppe-overskrift */
+        .sub-heading {
+            font-size: 13px;
+            font-weight: 700;
+            color: #194794;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 20px 0 8px 0;
+        }
+
+        .sub-heading:first-child { margin-top: 4px; }
+
+        /* Advarsel/tips-boks */
+        .tip-box {
+            background: rgba(226, 7, 29, 0.04);
+            border: 1px solid rgba(226, 7, 29, 0.15);
+            border-left: 3px solid #E2071D;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #4a6aa5;
+            line-height: 1.6;
+            margin-top: 16px;
+        }
+
+        .tip-box strong { color: #E2071D; }
+
+        /* ===========================
+           SJEKKLISTE
+           =========================== */
+        .checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #F4F6F9;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #4a6aa5;
+        }
+
+        .check-box {
+            width: 20px; height: 20px;
+            border-radius: 6px;
+            border: 2px solid #b8c7de;
+            flex-shrink: 0;
+        }
+
+        /* ===========================
+           FOOTER
+           =========================== */
+        .footer {
+            background: #194794;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 24px 32px;
+            font-size: 13px;
+        }
+
+        .footer strong { color: #ffffff; }
+
+        /* ===========================
+           RESPONSIVT
+           =========================== */
+        @media (max-width: 860px) {
+            .page-body {
+                grid-template-columns: 1fr;
+                padding: 24px 16px;
+            }
+            .toc { position: static; display: none; } /* skjul sidemeny på mobil */
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 12px 16px; height: auto; flex-wrap: wrap; gap: 8px; }
+            .nav-links { width: 100%; justify-content: center; }
+            .page-header { padding: 32px 16px; }
+            .page-header h1 { font-size: 26px; }
+            .guide-section { padding: 24px 20px; }
+            .checklist { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <symbol id="icon-pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <polyline points="9 15 12 18 15 15"/>
+    </symbol>
+</svg>
+
+<!-- NAVIGASJON -->
+<nav class="nav">
+    <div class="nav-left">
+        <img src="TVK.png" alt="TVK" class="nav-logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="nav-logo-fallback">TVK</div>
+        <div class="nav-title">TVK <span>2026</span></div>
+    </div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>Hjem</a>
+        <a href="terminliste.html" class="nav-link">Terminliste</a>
+        <a href="trening.html" class="nav-link">Trening</a>
+        <a href="ritt-guide.html" class="nav-link active">Ritt-guide</a>
+    </div>
+</nav>
+
+<!-- SIDEHEADER -->
+<div class="page-header">
+    <h1>Ritt-guide for utøvere og foreldre</h1>
+    <p>Alt du trenger å vite – fra påmelding til målgang</p>
+</div>
+
+<!-- TOKOLONNE-LAYOUT -->
+<div class="page-body">
+
+    <!-- SIDEMENY -->
+    <aside class="toc">
+        <div class="toc-title">Innhold</div>
+        <ul class="toc-list">
+            <li class="toc-item"><a href="#paamelding"><span class="toc-icon">📋</span>Påmelding</a></li>
+            <li class="toc-item"><a href="#oppmote"><span class="toc-icon">🕐</span>Oppmøtetid</a></li>
+            <li class="toc-item"><a href="#startnummer"><span class="toc-icon">🏷️</span>Hente startnummer</a></li>
+            <li class="toc-item"><a href="#oppvarming"><span class="toc-icon">🔥</span>Oppvarming</a></li>
+            <li class="toc-item"><a href="#brikke"><span class="toc-icon">📡</span>Tidtagingsbrikke</a></li>
+            <hr class="toc-divider">
+            <li class="toc-item"><a href="#klar"><span class="toc-icon">🧤</span>Klær</a></li>
+            <li class="toc-item"><a href="#mat"><span class="toc-icon">🍌</span>Mat og drikke</a></li>
+            <li class="toc-item"><a href="#sykkel"><span class="toc-icon">🚵</span>Sykkel og utstyr</a></li>
+            <hr class="toc-divider">
+            <li class="toc-item"><a href="#trenere"><span class="toc-icon">👕</span>Trenere fra TVK</a></li>
+            <li class="toc-item"><a href="#sjekkliste"><span class="toc-icon">✅</span>Sjekkliste</a></li>
+        </ul>
+    </aside>
+
+    <!-- INNHOLD -->
+    <main class="content">
+
+        <div class="intro-box">
+            Dette er en guide til deg som skal sykle ritt for Trondhjems Velocipedklubb (TVK).
+            Her finner du og foreldrene dine alt dere trenger å vite – fra påmelding til start.
+        </div>
+
+        <!-- PÅMELDING -->
+        <section class="guide-section" id="paamelding">
+            <div class="section-header">
+                <div class="section-icon">📋</div>
+                <h2>Påmelding</h2>
+            </div>
+            <p>Alle ritt som TVK deltar på, har påmelding via <strong>eqtiming</strong>. Lenke til hvert ritt finnes i terminlisten på <a href="https://www.ncf.no" target="_blank" rel="noopener">NCF – Norges Cykleforbund</a> sin nettside eller på <a href="https://www.eqtiming.com" target="_blank" rel="noopener">eqtiming.com</a>.</p>
+            <ul>
+                <li>Meld deg på <strong>i god tid</strong> – mange ritt stenger påmeldingen 1–2 uker før.</li>
+                <li>Påmeldingen gjøres av utøveren selv eller foresatte.</li>
+                <li>Sjekk at klasse er riktig (MK/10 år, M/K 11–12 år, M/K 13–14 osv.) og at navn og fødselsdato stemmer. Normalt vil riktig klasse bli lagt inn hvis fødselsdatoen er korrekt.</li>
+                <li>Det er ikke mulig å lage en bruker for barna før de har egen e-postadresse og skal betale selv.</li>
+                <li><strong>TVK dekker påmelding til ritt.</strong> Se detaljer på <a href="https://www.tvk.no/Reiserefusjoner/" target="_blank" rel="noopener">tvk.no/Reiserefusjoner</a>.</li>
+                <li>For <strong>lokale ritt og treningsritt</strong> i TVK-regi: påmelding skjer via <strong>Spond</strong>. Se terminlisten for detaljer.</li>
+                <li>Spør en trener hvis du er usikker på hvilken klasse du skal melde deg på i.</li>
+            </ul>
+        </section>
+
+        <!-- OPPMØTETID -->
+        <section class="guide-section" id="oppmote">
+            <div class="section-header">
+                <div class="section-icon">🕐</div>
+                <h2>Oppmøtetid</h2>
+            </div>
+            <p>Å komme tidsnok er avgjørende for å få en god opplevelse. Som tommelfingerregel:</p>
+
+            <table class="guide-table">
+                <thead>
+                    <tr><th>Rittype</th><th>Anbefalt oppmøte</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>NC / større krets-ritt</strong></td><td>1–2 timer før start</td></tr>
+                    <tr><td><strong>Lokale ritt / turritt</strong></td><td>45 min–1 time før start</td></tr>
+                    <tr><td><strong>Treningsritt TVK</strong></td><td>30–45 min før start</td></tr>
+                </tbody>
+            </table>
+
+            <ul>
+                <li>Sjekk <strong>starttidspunkt for din klasse</strong> på eqtiming eller rittets egen nettside – det er ikke alltid at yngste klasser starter først.</li>
+                <li>Parkeringen kan være langt fra start. Regn inn tid til å gå inn med sykkel og utstyr.</li>
+                <li>Trenere og lagledere fra TVK vil som regel være på plass senest 45 minutter før første TVK-utøver starter.</li>
+            </ul>
+        </section>
+
+        <!-- STARTNUMMER -->
+        <section class="guide-section" id="startnummer">
+            <div class="section-header">
+                <div class="section-icon">🏷️</div>
+                <h2>Hente startnummer</h2>
+            </div>
+            <ul>
+                <li>Startnummerut deling skjer ved <strong>sekretariatet</strong> på rittarenaen. Finn skiltet «Sekretariat» eller forhør deg med de som er til stede.</li>
+                <li>Du trenger ikke ta med bekreftelse på påmelding.</li>
+            </ul>
+            <p class="sub-heading">Terrengsykkelritt</p>
+            <p>Fest startnummeret med strips <strong>foran på sykkelen</strong> – gjerne til styret. Spør noen om hjelp hvis du lurer.</p>
+            <p class="sub-heading">Landevei</p>
+            <p>Fest startnummeret på <strong>baksiden av drakten</strong>, gjerne med fire sikkerhetsnåler i hjørnene så det ikke flagrer.</p>
+        </section>
+
+        <!-- OPPVARMING -->
+        <section class="guide-section" id="oppvarming">
+            <div class="section-header">
+                <div class="section-icon">🔥</div>
+                <h2>Oppvarming</h2>
+            </div>
+            <p>En god oppvarming gjør at du er godt forberedt til rittet og gjør det lettere å presse seg underveis.</p>
+
+            <p class="sub-heading">Opptil 12–13 år</p>
+            <div class="steps">
+                <div class="step"><div class="step-num">1</div><div class="step-text">Sykle rolig i 10–20 minutter.</div></div>
+                <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Sykkel gjennom løypa</strong> hvis mulig – spesielt viktig i terrengritt. Merk at det sjelden er mulig å sykle gjennom løypa etter at rittet har startet. I store ritt er det avsatt tid til trening.</div></div>
+            </div>
+
+            <p class="sub-heading">Fra 13–14 år og oppover</p>
+            <div class="steps">
+                <div class="step"><div class="step-num">1</div><div class="step-text"><strong>15–20 min rolig sykling</strong> – kom gradvis i gang, jobb opp pulsen.</div></div>
+                <div class="step"><div class="step-num">2</div><div class="step-text"><strong>5–10 min med høyere intensitet</strong> – noen kortere drag for å aktivere bena.</div></div>
+                <div class="step"><div class="step-num">3</div><div class="step-text"><strong>2–4 korte akselerasjoner</strong> på 10–15 sekunder – gjerne opp en liten bakke.</div></div>
+                <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Avslutt 10 min før start</strong> – hold deg varm, men unngå å bli sliten.</div></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>Tips:</strong> Ta med langermet trøye eller jakke til oppvarmingen, særlig i kjølig vær.
+                Spis ingen tung mat under oppvarmingen – du bør allerede ha spist, minst 1 time før start.
+                Treneren vil ofte gi konkrete råd rett før start – lytt til dem.
+            </div>
+        </section>
+
+        <!-- BRIKKE -->
+        <section class="guide-section" id="brikke">
+            <div class="section-header">
+                <div class="section-icon">📡</div>
+                <h2>Tidtagingsbrikke (landevei)</h2>
+            </div>
+            <p>På større <strong>landeveisritt</strong> og noen turritt brukes det transporderbrikke for tidtaking.</p>
+            <ul>
+                <li>Tidtakerbrikken finnes i ulike varianter. En type festes med tape på <strong>hjelmen</strong> (engangs, mottas ved start), den andre typen festes rundt <strong>ankelen</strong> med et medfølgende festebånd.</li>
+                <li>Den leies ut av arrangøren ved sekretariatet og <strong>skal leveres tilbake etter målgang</strong>.</li>
+                <li>Brikken er dyr – pass godt på den og lever den alltid tilbake umiddelbart etter målgang.</li>
+                <li>På <strong>XC/terrengritt</strong> brukes vanligvis ikke brikke – tidtaking skjer med brikke festet til selve startnummeret.</li>
+            </ul>
+        </section>
+
+        <!-- KLÆR -->
+        <section class="guide-section" id="klar">
+            <div class="section-header">
+                <div class="section-icon">🧤</div>
+                <h2>Klær</h2>
+            </div>
+            <p>Riktig klesvalg handler om komfort, sikkerhet og prestasjoner.</p>
+
+            <p class="sub-heading">Alltid</p>
+            <ul>
+                <li><strong>TVK-drakt</strong> (trøye og shorts) – obligatorisk i Norges cup-ritt og sterkt anbefalt i alle ritt. Fra 13–14 år er det et krav i offisielle ritt.</li>
+                <li><strong>Hjelm godkjent for sykkel</strong> – absolutt krav. Ingen hjelm = ingen start.</li>
+                <li><strong>Sykkelsko</strong> eller sko egnet for pedalene du bruker.</li>
+            </ul>
+
+            <p class="sub-heading">Vurder etter vær</p>
+            <ul>
+                <li>Regnjakke eller vindjakke (kan tas av underveis)</li>
+                <li>Lange fingerhansker og/eller fingerløse hansker</li>
+                <li>Benvarmere eller knelange shorts</li>
+                <li>Armvarmere (lette å ta av og legge i lomme)</li>
+                <li>Buff ved kaldt vær</li>
+            </ul>
+
+            <p class="sub-heading">Etter målgang</p>
+            <ul>
+                <li>Kle på deg varme klær <strong>umiddelbart</strong> – kroppen er varm og avkjøler seg fort.</li>
+                <li>Ha alltid et sett tørt tøy i sekken.</li>
+            </ul>
+        </section>
+
+        <!-- MAT OG DRIKKE -->
+        <section class="guide-section" id="mat">
+            <div class="section-header">
+                <div class="section-icon">🍌</div>
+                <h2>Mat og drikke</h2>
+            </div>
+
+            <p class="sub-heading">Dagen før</p>
+            <ul>
+                <li>Spis normalt og litt ekstra karbohydrater (pasta, ris, brød).</li>
+                <li>Drikk godt med vann gjennom dagen.</li>
+            </ul>
+
+            <p class="sub-heading">Frokost (2–3 timer før start)</p>
+            <ul>
+                <li>Havregrøt, brødskiver med nøttepålegg, banan og juice er gode valg.</li>
+                <li>Unngå tung mat som sitter lenge i magen.</li>
+            </ul>
+
+            <p class="sub-heading">Under rittet</p>
+            <table class="guide-table">
+                <thead>
+                    <tr><th>Rittlengde</th><th>Anbefaling</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Under 45 min</td><td>Ikke nødvendig å spise, men ta med drikke</td></tr>
+                    <tr><td>45–90 min</td><td>1–2 energigeler eller en banan, drikke hver runde</td></tr>
+                    <tr><td>Over 90 min</td><td>Planlegg inntak hvert 20.–30. minutt (gel, bar, banan)</td></tr>
+                </tbody>
+            </table>
+            <div class="tip-box">
+                <strong>Husk:</strong> Drikk litt, ofte – ikke vent til du er tørst.
+            </div>
+
+            <p class="sub-heading">Etter rittet</p>
+            <ul>
+                <li>Spis noe innen 30–60 minutter etter målgang – kroppen er mottakelig for næring.</li>
+                <li>Frukt, nøtter, melk, eller en liten matpakke er perfekt.</li>
+            </ul>
+        </section>
+
+        <!-- SYKKEL OG UTSTYR -->
+        <section class="guide-section" id="sykkel">
+            <div class="section-header">
+                <div class="section-icon">🚵</div>
+                <h2>Sykkel og utstyr</h2>
+            </div>
+
+            <p class="sub-heading">Sjekkliste kvelden før</p>
+            <ul>
+                <li>Dekk pumpet til riktig trykk – se <a href="https://sykkelhjulet.no/2021/08/dekktrykkalkulator/" target="_blank" rel="noopener">dekktrykk-kalkulator</a> for tips.</li>
+                <li>Bremser fungerer.</li>
+                <li>Girkassette og kjede rent og smurt.</li>
+                <li>Styret og sete festet godt.</li>
+                <li>Sadelhøyde er justert i tråd med vekst.</li>
+            </ul>
+
+            <p class="sub-heading">Nyttig å ha med til rittene</p>
+            <p>Det hender at noe skjer før start, så det kan være nyttig med litt verktøy og deler:</p>
+            <ul>
+                <li>Reserveslange (riktig størrelse for ditt dekk)</li>
+                <li>Pumpe</li>
+                <li>Multiverktøy</li>
+            </ul>
+        </section>
+
+        <!-- TRENERE -->
+        <section class="guide-section" id="trenere">
+            <div class="section-header">
+                <div class="section-icon">👕</div>
+                <h2>Trenere og ledere fra TVK er til stede</h2>
+            </div>
+            <p>Dere er aldri alene på ritt! TVK stiller alltid med trenere og ledere på de viktigste rittene.</p>
+            <ul>
+                <li><strong>Trenere og ledere møter opp i god tid</strong> og hjelper til med oppvarming og forberedelser.</li>
+                <li>Spør gjerne en TVK-voksen om hjelp til å finne sekretariat, start og depotplass.</li>
+                <li>TVK-vester og drakten gjør det enkelt å se hvem som er fra klubben.</li>
+                <li>Etter rittet samles TVK-utøverne gjerne for en kort gjennomgang – en fin arena for å dele erfaringer.</li>
+                <li>Har du spørsmål før rittet? Ta kontakt med trener på <strong>Spond</strong>.</li>
+            </ul>
+        </section>
+
+        <!-- SJEKKLISTE -->
+        <section class="guide-section" id="sjekkliste">
+            <div class="section-header">
+                <div class="section-icon">✅</div>
+                <h2>Rask sjekkliste for rittdagen</h2>
+            </div>
+            <div class="checklist">
+                <div class="check-item"><div class="check-box"></div>Drakt på</div>
+                <div class="check-item"><div class="check-box"></div>Hjelm funnet og strammet</div>
+                <div class="check-item"><div class="check-box"></div>Sykkel sjekket</div>
+                <div class="check-item"><div class="check-box"></div>Løype sjekket og gjennomgått</div>
+                <div class="check-item"><div class="check-box"></div>Mat og drikke pakket</div>
+                <div class="check-item"><div class="check-box"></div>Startnummer hentet og festet</div>
+                <div class="check-item"><div class="check-box"></div>Oppvarming gjennomført</div>
+                <div class="check-item"><div class="check-box"></div>Funnet startplass</div>
+                <div class="check-item"><div class="check-box"></div>Klar til å kose seg! 🚵</div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <strong>Trondhjems Velocipedklubb</strong> — Sesong 2026 | Stiftet 1893
+</div>
+
+<script>
+// Marker aktiv seksjon i sidemeny ved scroll
+(function () {
+    const links = document.querySelectorAll('.toc-item a');
+    const sections = Array.from(links)
+        .map(a => document.querySelector(a.getAttribute('href')))
+        .filter(Boolean);
+
+    function onScroll() {
+        let current = sections[0];
+        for (const s of sections) {
+            if (s.getBoundingClientRect().top <= 110) current = s;
+        }
+        links.forEach(a => {
+            a.classList.toggle('active',
+                a.getAttribute('href') === '#' + current.id);
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+
+</body>
+</html>
