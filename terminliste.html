@@ -441,6 +441,10 @@
             transition: background 0.2s;
         }
         .popup-reg-link:hover, .card-reg-link:hover { background: #E2071D; }
+        .popup-reg-link.results, .card-reg-link.results {
+            background: #4a6aa5;
+        }
+        .popup-reg-link.results:hover, .card-reg-link.results:hover { background: #194794; }
         .popup-reg-spond, .card-reg-spond {
             display: inline-block;
             margin-top: 8px;
@@ -846,7 +850,14 @@ function createIcon(color, num) {
 
 function regLinkHTML(r, cls) {
     if (!r.regUrl) return '';
-    if (r.regUrl === 'spond') return `<span class="${cls}-spond">📱 Meld på via Spond</span>`;
+    const isPast = parseDate(r.end) < new Date();
+    if (r.regUrl === 'spond') {
+        return isPast ? '' : `<span class="${cls}-spond">📱 Meld på via Spond</span>`;
+    }
+    const baseUrl = r.regUrl.replace('#dashboard', '');
+    if (isPast) {
+        return `<a class="${cls}-link results" href="${baseUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Se resultater →</a>`;
+    }
     return `<a class="${cls}-link" href="${r.regUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Meld deg på →</a>`;
 }
 
