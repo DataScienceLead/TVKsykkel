@@ -390,6 +390,7 @@
 
 <!-- Ikonbibliotek — alle SVG-symboler lastes fra icons.js -->
 <script src="icons.js"></script>
+<script src="data/ritt.js"></script>
 
 
 <!-- ============================
@@ -477,9 +478,8 @@
 
 <script>
     // ===========================
-    //  Samme kategorier og rittdata som i terminliste.html
-    //  Hold disse oppdatert i begge filer!
-    //  (Alternativt kan de legges i en felles JS-fil)
+    //  Kategorier og rittdata
+    //  rittData lastes fra data/ritt.js
     // ===========================
     const CATEGORIES = {
         ncterr:     { label: 'NC Terreng',  color: '#194794' },
@@ -489,32 +489,6 @@
         lokale:     { label: 'Lokale ritt', color: '#6aaa64' },
         trening:    { label: 'Trening',     color: '#8a9cc2' }
     };
-
-    const rittData = [
-        { name: "XC NC1-2",                         catKey: "ncterr",     start: "18.04.2026", end: "19.04.2026", location: "Son",                       club: "Soon CK"         },
-        { name: "XC NC3-5",                         catKey: "ncterr",     start: "01.05.2026", end: "01.05.2026", location: "Oslo",                      club: "Rye"             },
-        { name: "Rogaland 3Ds",                     catKey: "ncfranking", start: "01.05.2026", end: "03.05.2026", location: "Rogaland",                  club: "Stavanger SK"    },
-        { name: "Bioracer-cup #1",                  catKey: "bioracer",   start: "06.05.2026", end: "06.05.2026", location: "Prestmoen",                 club: "Stjørdals-Blink" },
-        { name: "Bioracer-cup #2",                  catKey: "bioracer",   start: "20.05.2026", end: "20.05.2026", location: "Lånkebanen",                club: "Stjørdals-Blink" },
-        { name: "XC NM",                            catKey: "ncterr",     start: "30.05.2026", end: "31.05.2026", location: "Sande",                     club: "Sande SK"        },
-        { name: "XC NC6-7 Terrengsykkelfestivalen", catKey: "ncterr",     start: "06.06.2026", end: "07.06.2026", location: "Oslo",                      club: "Frøy"            },
-        { name: "Bioracer-cup #3",                  catKey: "bioracer",   start: "10.06.2026", end: "10.06.2026", location: "Lånkebanen",                club: "Stjørdals-Blink" },
-        { name: "Follo 2D",                         catKey: "ncfranking", start: "12.06.2026", end: "14.06.2026", location: "Follo",                     club: "Follo"           },
-        { name: "L'etape Trondheim",                catKey: "turritt",    start: "13.06.2026", end: "13.06.2026", location: "Trondheim",                 club: "TVK"             },
-        { name: "Vestfold 3Ds",                     catKey: "ncfranking", start: "19.06.2026", end: "21.06.2026", location: "Vestfold",                  club: "Tønsberg"        },
-        { name: "XC NC8-9",                         catKey: "ncterr",     start: "27.06.2026", end: "28.06.2026", location: "Elverum",                   club: "CK Elverum"      },
-        { name: "Ferie",                            catKey: "trening",    start: "29.06.2026", end: "02.08.2026" },
-        { name: "Treningssamling UM",               catKey: "trening",    start: "07.08.2026", end: "08.08.2026", location: "Trondheim",                 club: "TVK"             },
-        { name: "IF Frøys Jokerfestival",           catKey: "ncfranking", start: "08.08.2026", end: "09.08.2026", location: "Ås",                        club: "Frøy SK"         },
-        { name: "Stjørdalsdagene GP",               catKey: "ncfranking", start: "14.08.2026", end: "16.08.2026", location: "Stjørdal",                  club: "Stjørdals-Blink" },
-        { name: "Jokermesterskapet UM",             catKey: "ncfranking", start: "15.08.2026", end: "16.08.2026", location: "Skien",                     club: "Grenland SK"     },
-        { name: "UngdomsBirken",                    catKey: "turritt",    start: "29.08.2026", end: "29.08.2026", location: "Lillehammer",               club: "Lillehammer CK"  },
-        { name: "XC NC10-11",                       catKey: "ncterr",     start: "05.09.2026", end: "06.09.2026", location: "Nilsbyen Terrengsykkelpark", club: "TVK"             },
-        { name: "Lillehammer Sykkelfestival",       catKey: "ncfranking", start: "11.09.2026", end: "13.09.2026", location: "Lillehammer",               club: "Lillehammer CK"  },
-        { name: "XC 12-13 Karl XII rittet",         catKey: "ncterr",     start: "19.09.2026", end: "20.09.2026", location: "Halden",                    club: "Halden CK"       },
-        { name: "Treningsritt TVK&Gauldal #1",      catKey: "lokale",     start: "28.05.2026", end: "28.05.2026", location: "Trehjørningen arena, kl 17.30", club: "Gauldal Sykkelklubb" },
-        { name: "Treningsritt TVK&Gauldal #2",      catKey: "lokale",     start: "15.06.2026", end: "15.06.2026", location: "Nilsbyen Terrengsykkelpark", club: "TVK"             },
-    ];
 
     // Norske månedsnavn for tidslinje-visningen
     const MONTHS = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun',
