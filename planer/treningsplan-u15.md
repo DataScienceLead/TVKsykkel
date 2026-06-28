@@ -120,6 +120,106 @@ I vårsesongen som strekker seg fra slutten av april til slutten av juni er det 
 
 ---
 
+## Sommer – volumblokk
+
+I denne perioden er det to tre-ukers blokker med fokus på å øke aerob kapasitet og terskelstyrke. Tre intervalløkter per uke i harde uker (2 × sone 3, 1 × sone 4), to i rolige uker. Alle øktene bør gjennomføres på sykkel.
+
+**Periode:** 29. juni – 8. august  
+**Struktur:** 2 harde uker + 1 rolig uke × 2 blokker
+
+---
+
+### Blokk 1
+
+**Uke 1 – hard (29. juni – 5. juli)**
+
+| Dag      | Økt                                                         | Tid       |
+|----------|-------------------------------------------------------------|-----------|
+| Mandag   | Restitusjonsøkt eller fri                                   | 0–1 t     |
+| Tirsdag  | Sone 3-intervaller: 5 × 6 min (pause 2 min) – 30 min       | 1–1,5 t   |
+| Onsdag   | Rolig langkjøring sone 1–2                                  | 1–2 t     |
+| Torsdag  | Sone 4-intervaller: 4 × 3 min (pause 3 min) – 12 min       | 1–1,5 t   |
+| Fredag   | Basisøkt + rolig sykkeltur                                  | 0,5–1 t   |
+| Lørdag   | Langkjøring sone 1–2                                        | 1,5–2,5 t |
+| Søndag   | Sone 3-intervaller: 5 × 6 min (pause 2 min) – 30 min       | 1–1,5 t   |
+
+**Totalbelastning:** 6–11 timer
+
+**Uke 2 – hard (6. juli – 12. juli)**
+
+| Dag      | Økt                                                         | Tid       |
+|----------|-------------------------------------------------------------|-----------|
+| Mandag   | Restitusjonsøkt eller fri                                   | 0–1 t     |
+| Tirsdag  | Sone 3-intervaller: 5 × 7 min (pause 2 min) – 35 min       | 1–1,5 t   |
+| Onsdag   | Rolig langkjøring sone 1–2                                  | 1,5–2 t   |
+| Torsdag  | Sone 4-intervaller: 4 × 4 min (pause 3 min) – 16 min       | 1–1,5 t   |
+| Fredag   | Basisøkt + rolig sykkeltur                                  | 0,5–1 t   |
+| Lørdag   | Langkjøring sone 1–2                                        | 2–3 t     |
+| Søndag   | Sone 3-intervaller: 4 × 8 min (pause 2–3 min) – 32 min     | 1–1,5 t   |
+
+**Totalbelastning:** 7–11,5 timer
+
+**Uke 3 – rolig (13. juli – 19. juli)**
+
+| Dag      | Økt                                                         | Tid       |
+|----------|-------------------------------------------------------------|-----------|
+| Mandag   | Fri                                                         | 0 t       |
+| Tirsdag  | Sone 3-intervaller: 4 × 6 min (pause 2 min) – 24 min       | 1–1,5 t   |
+| Onsdag   | Rolig sykkeltur sone 1–2                                    | 1–1,5 t   |
+| Torsdag  | Sone 4-intervaller: 3 × 4 min (pause 3 min) – 12 min       | 1–1,5 t   |
+| Fredag   | Basisøkt + rolig sykkeltur                                  | 0,5–1 t   |
+| Lørdag   | Langkjøring sone 1–2                                        | 1,5–2 t   |
+| Søndag   | Rolig sykkeltur eller hvile                                 | 0–1 t     |
+
+**Totalbelastning:** 5–8,5 timer
+
+---
+
+### Blokk 2
+
+**Uke 4 – hard (20. juli – 26. juli)**
+
+| Dag      | Økt                                                         | Tid       |
+|----------|-------------------------------------------------------------|-----------|
+| Mandag   | Restitusjonsøkt eller fri                                   | 0–1 t     |
+| Tirsdag  | Sone 3-intervaller: 5 × 7 min (pause 2 min) – 35 min       | 1–1,5 t   |
+| Onsdag   | Rolig langkjøring sone 1–2                                  | 1,5–2 t   |
+| Torsdag  | Sone 4-intervaller: 4 × 4 min (pause 3 min) – 16 min       | 1–1,5 t   |
+| Fredag   | Basisøkt + rolig sykkeltur                                  | 0,5–1 t   |
+| Lørdag   | Langkjøring sone 1–2                                        | 2–3 t     |
+| Søndag   | Sone 3-intervaller: 5 × 7 min (pause 2 min) – 35 min       | 1–1,5 t   |
+
+**Totalbelastning:** 7–11,5 timer
+
+**Uke 5 – hard (27. juli – 2. august)**
+
+| Dag      | Økt                                                         | Tid       |
+|----------|-------------------------------------------------------------|-----------|
+| Mandag   | Restitusjonsøkt eller fri                                   | 0–1 t     |
+| Tirsdag  | Sone 3-intervaller: 5 × 8 min (pause 2–3 min) – 40 min     | 1,5–2 t   |
+| Onsdag   | Rolig langkjøring sone 1–2                                  | 1,5–2,5 t |
+| Torsdag  | Sone 4-intervaller: 5 × 4 min (pause 3 min) – 20 min       | 1–1,5 t   |
+| Fredag   | Basisøkt + rolig sykkeltur                                  | 0,5–1 t   |
+| Lørdag   | Langkjøring sone 1–2                                        | 2–3 t     |
+| Søndag   | Sone 3-intervaller: 4 × 8 min (pause 2–3 min) – 32 min     | 1,5–2 t   |
+
+**Totalbelastning:** 8–13 timer
+
+**Uke 6 – rolig (3. august – 8. august)**
+
+| Dag      | Økt                                                         | Tid       |
+|----------|-------------------------------------------------------------|-----------|
+| Mandag   | Fri                                                         | 0 t       |
+| Tirsdag  | Sone 3-intervaller: 4 × 6 min (pause 2 min) – 24 min       | 1–1,5 t   |
+| Onsdag   | Rolig sykkeltur sone 1–2                                    | 1–1,5 t   |
+| Torsdag  | Sone 4-intervaller: 3 × 4 min (pause 3 min) – 12 min       | 1–1,5 t   |
+| Fredag   | Basisøkt + rolig sykkeltur                                  | 0,5–1 t   |
+| Lørdag   | Langkjøring sone 1–2                                        | 1–1,5 t   |
+
+**Totalbelastning:** 4,5–7,5 timer
+
+---
+
 ## Basisstyrke
 
 Dette er øvelser du kan gjøre hjemme i stua etter endt økt. Forslag til øvelser (her er det bare fantasien som setter grenser):
