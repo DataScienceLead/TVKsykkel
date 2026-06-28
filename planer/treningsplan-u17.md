@@ -157,7 +157,7 @@ hardere enn uker med ritt (rittukene).
 
 ## Sommer – volumblokk
 
-I denne perioden er det to tre-ukers blokker med fokus på å øke aerob kapasitet og terskelstyrke. Tre intervalløkter per uke i harde uker (2 × sone 3, 1 × sone 4), to i rolige uker. Alle øktene på sykkel.
+I denne perioden er det to tre-ukers blokker med fokus på å øke aerob kapasitet og terskelstyrke. Tre intervalløkter per uke i harde uker (2 × sone 3, 1 × sone 4), to i rolige uker. Øktene bør gjennomføres på sykkel, men 1-2 økter i uka kan med fordel være alternativ trening slik som løping eller rulleski.
 
 **Periode:** 29. juni – 8. august
 **Struktur:** 2 harde uker + 1 rolig uke × 2 blokker

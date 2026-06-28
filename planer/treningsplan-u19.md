@@ -152,7 +152,7 @@ I vårsesongen som strekker seg fra slutten av april til slutten av juni er det 
 
 ## Sommer – volumblokk
 
-I denne perioden er det to tre-ukers blokker med fokus på å øke aerob kapasitet og terskelstyrke. I blokk 1 er det tre intervalløkter i harde uker (2 × sone 3, 1 × sone 4). I blokk 2 legges det til en fjerde intervalløkt – en 30/15-økt i sone 4 høy – for ytterligere å stimulere den aerobe kapasiteten. Alle øktene på sykkel.
+I denne perioden er det to tre-ukers blokker med fokus på å øke aerob kapasitet og terskelstyrke. I blokk 1 er det tre intervalløkter i harde uker (2 × sone 3, 1 × sone 4). I blokk 2 legges det til en fjerde intervalløkt – en 30/15-økt i sone 4 høy – for ytterligere å stimulere den aerobe kapasiteten. Øktene bør gjennomføres på sykkel, men 1 økte i uka kan med fordel være alternativ trening slik som løping eller rulleski.
 
 **Periode:** 29. juni – 8. august  
 **Struktur:** 2 harde uker + 1 rolig uke × 2 blokker
