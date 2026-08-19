@@ -378,8 +378,141 @@ story.append(week_table([
 ]))
 story.append(p("<b>Totalbelastning:</b> 4,5–7,5 timer", total_style))
 
-# ══════════════════════════════════════════════════════════
-# 6. BASISSTYRKE
+# ══════════════════════════════════════════════════════════# 5B. SENSOMMER – VO₂ OG RITTPERIODE
+# ════════════════════════════════════════════════════════
+story.append(PageBreak())
+story.append(p("Sensommer – VO₂ og rittperiode", h2_style))
+story.append(p(
+    "Fra midten av august starter en sju ukers periode med tre viktige ritt: "
+    "NC terreng i Nilsbyen 5.–6. september, Lillehammer sykkelfestival 11.–13. september "
+    "og NC terreng (Karl XII-rittet) i Halden 19.–20. september. Perioden er delt i to bolker "
+    "der bolk 1 avsluttes med NC terreng, og bolk 2 dekker de to påfølgende ritt-helgene."
+))
+story.append(p(
+    "Fokus i hele perioden er å <b>prioritere O₂-opptak og rittform</b>. Terskelarbeidet "
+    "vedlikeholdes, mens andelen sone 5-intervaller økes sammenlignet med sommer-volumblokken. "
+    "De to første ukene skal ha noe ekstra mengde – bruk gjerne øvre halvdel av tidsintervallet "
+    "på langturene – slik at grunnformen løftes før første ritthelg. Husk at U15 fortsatt er i "
+    "en fase der teknikk, gnist og glede er viktigere enn total treningsmengde: kutt heller en "
+    "økt hvis skolen krever det."
+))
+story.append(p("<b>Periode:</b> 17. august – 4. oktober"))
+story.append(p("<b>Struktur:</b> 2 harde uker + 1 rittuke (bolk 1) → 2 rittuker + 1 rolig uke + 1 overgangsuke (bolk 2)"))
+
+# Bolk 1
+story.append(p("Bolk 1 – VO₂ og volum (17. august – 6. september)", h3_style))
+
+story.append(p("<b>Uke 1 – hard/høy mengde (17. – 23. august)</b>"))
+story.append(week_table([
+    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1 t"),
+    ("Tirsdag", "Sone 5 VO₂: 4 × 4 min (pause 3 min) – 16 min",                     "1–1,5 t"),
+    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "1,5–2,5 t"),
+    ("Torsdag", "Sone 4-intervaller: 4 × 4 min (pause 3 min) – 16 min",             "1–1,5 t"),
+    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "0,5–1 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                             "2–3 t"),
+    ("Søndag",  "Langtur m/ sone 3-intervaller: 4 × 7 min (pause 2 min)",            "1,5–2 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 7,5–12,5 timer", total_style))
+story.append(p(
+    "Kommentar: Første uke etter oppkjøring – hold VO₂-økta stram og kontrollert, ikke overdriv siste to drag. "
+    "Prioriter søvn og mat mellom øktene.", note_style
+))
+
+story.append(p("<b>Uke 2 – hard/høy mengde (24. – 30. august)</b>"))
+story.append(week_table([
+    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1 t"),
+    ("Tirsdag", "Sone 5 VO₂: 5 × 3 min (pause 2–3 min) – 15 min",                   "1–1,5 t"),
+    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "1,5–2,5 t"),
+    ("Torsdag", "Sone 4-intervaller: 5 × 4 min (pause 3 min) – 20 min",             "1–1,5 t"),
+    ("Fredag",  "Sone 4 høy 15/15: 3 × 5 min (pause 4 min)",                        "1–1,5 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                             "2–3 t"),
+    ("Søndag",  "Langtur m/ sone 3-intervaller: 3 × 10 min (pause 3 min)",           "1,5–2 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 8–13 timer", total_style))
+story.append(p(
+    "Kommentar: Peakuke i bolk 1 – fire intervalløkter er mye. Hvis du kjenner deg sliten, "
+    "dropp fredagens 15/15-økt og ta en rolig tur i stedet.", note_style
+))
+
+story.append(p("<b>Uke 3 – rittuke (31. august – 6. september) – NC terreng Nilsbyen 5.–6. sept.</b>"))
+story.append(week_table([
+    ("Mandag",  "Restitusjonsøkt",                                                  "0–1 t"),
+    ("Tirsdag", "Sone 5 VO₂: 4 × 3 min (pause 2 min) – 12 min",                     "1–1,5 t"),
+    ("Onsdag",  "Rolig langkjøring m/ 3–4 × 20 sek spurter",                         "1–1,5 t"),
+    ("Torsdag", "Rolig sykkeltur",                                                   "0,5–1 t"),
+    ("Fredag",  "Åpnere: 30 min lett + 3 × 1 min sone 5 + 2 × 15 sek spurt",          "0,5–1 t"),
+    ("Lørdag",  "NC terreng Nilsbyen – ritt",                                        "1–2,5 t"),
+    ("Søndag",  "NC terreng Nilsbyen – ritt",                                        "1–2,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 5–11 timer", total_style))
+
+# Bolk 2
+story.append(p("Bolk 2 – Rittperiode (7. september – 4. oktober)", h3_style))
+
+story.append(p("<b>Uke 4 – rittuke (7. – 13. september) – Lillehammer sykkelfestival 11.–13. sept.</b>"))
+story.append(p(
+    "Lillehammer sykkelfestival går fra fredag til søndag, så åpnerne legges på torsdag."
+))
+story.append(week_table([
+    ("Mandag",  "Restitusjonsøkt",                                                  "0–1 t"),
+    ("Tirsdag", "Sone 5 VO₂: 4 × 3 min (pause 2 min) – 12 min",                     "1–1,5 t"),
+    ("Onsdag",  "Rolig langkjøring",                                                "1–1,5 t"),
+    ("Torsdag", "Åpnere: 30 min lett + 3 × 1 min sone 5 + 2 × 15 sek spurt",          "0,5–1 t"),
+    ("Fredag",  "Lillehammer sykkelfestival – ritt",                                 "1–2,5 t"),
+    ("Lørdag",  "Lillehammer sykkelfestival – ritt",                                 "1–2,5 t"),
+    ("Søndag",  "Lillehammer sykkelfestival – ritt",                                 "1–2,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 5,5–12,5 timer", total_style))
+story.append(p(
+    "Kommentar: Tre rittdager på rad er tøft – spis og drikk godt underveis, og legg deg tidlig etter hver etappe. "
+    "Bruk lettere gir enn du «tror du klarer» de første 15 minuttene på fredag.", note_style
+))
+
+story.append(p("<b>Uke 5 – rittuke (14. – 20. september) – NC Halden (Karl XII) 19.–20. sept.</b>"))
+story.append(week_table([
+    ("Mandag",  "Restitusjonsøkt",                                                  "0–1 t"),
+    ("Tirsdag", "Rolig langkjøring",                                                "1–1,5 t"),
+    ("Onsdag",  "Sone 5 VO₂: 4 × 3 min (pause 2 min) – 12 min",                     "1–1,5 t"),
+    ("Torsdag", "Rolig langkjøring m/ 3 × 20 sek spurter",                           "1–1,5 t"),
+    ("Fredag",  "Åpnere: 30 min lett + 3 × 1 min sone 5 + 2 × 15 sek spurt",          "0,5–1 t"),
+    ("Lørdag",  "NC terreng Halden – ritt",                                          "1–2,5 t"),
+    ("Søndag",  "NC terreng Halden – ritt",                                          "1–2,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 5,5–11,5 timer", total_style))
+story.append(p(
+    "Kommentar: Etter Lillehammer prioriteres restitusjon mandag og tirsdag. "
+    "VO₂-økta flyttes til onsdag for å gi mest mulig avstand til rittet på lørdag.", note_style
+))
+
+story.append(p("<b>Uke 6 – rolig uke (21. – 27. september)</b>"))
+story.append(week_table([
+    ("Mandag",  "Fri",                                                               "0 t"),
+    ("Tirsdag", "Sone 3-intervaller: 3 × 6 min (pause 2 min) – 18 min",             "1–1,5 t"),
+    ("Onsdag",  "Rolig sykkeltur",                                                   "1–1,5 t"),
+    ("Torsdag", "Sone 4-intervaller: 3 × 4 min (pause 3 min) – 12 min",             "1–1,5 t"),
+    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "0,5–1 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                             "1,5–2,5 t"),
+    ("Søndag",  "Rolig sykkeltur",                                                  "0,5–1 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 5,5–9 timer", total_style))
+
+story.append(p("<b>Uke 7 – overgangsuke (28. september – 4. oktober)</b>"))
+story.append(week_table([
+    ("Mandag",  "Fri",                                                               "0 t"),
+    ("Tirsdag", "Rolig sykkeltur eller alternativ trening",                          "0,5–1 t"),
+    ("Onsdag",  "Sone 3-intervaller: 3 × 7 min (pause 2 min) – 21 min",             "1–1,5 t"),
+    ("Torsdag", "Fri eller basisøkt",                                               "0–1 t"),
+    ("Fredag",  "Rolig sykkeltur",                                                   "0,5–1 t"),
+    ("Lørdag",  "Langkjøring sone 1–2 (gjerne på grus/terreng)",                     "1–2 t"),
+    ("Søndag",  "Rolig tur eller alternativ trening",                                "0,5–1 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 3,5–7,5 timer", total_style))
+story.append(p(
+    "Kommentar: Bruk uka til å reflektere over sesongen og gli gradvis over i høst-/basetrening. "
+    "Alternativ trening (løping, ballspill, fottur) er velkomment.", note_style
+))
+
+# ════════════════════════════════════════════════════════# 6. BASISSTYRKE
 # ══════════════════════════════════════════════════════════
 story.append(hr())
 story.append(p("Basisstyrke", h2_style))
