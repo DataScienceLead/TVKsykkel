@@ -807,7 +807,7 @@ function setupLegendToggle() {
 // =============================================================
 const map = L.map('map', { zoomControl: false }).setView([61.5, 10.5], 6);
 L.control.zoom({ position: 'topleft' }).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?cb1_2rst_1_605bf22b90be505ee95a7ec8', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
     subdomains: 'abcd', maxZoom: 19
 }).addTo(map);
