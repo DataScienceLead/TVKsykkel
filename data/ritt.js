@@ -13,6 +13,7 @@
 //                "https://live.eqtiming.com/XXXXX#dashboard"  – eqtiming-ritt
 //                "spond"                                       – Spond-påmelding
 //                (utelatt)                                     – ingen knapp
+//   prepUrl  – Lenke til rittspesifikk infoside (valgfri)
 
 const rittData = [
     { name: "XC NC1-2",                         catKey: "ncterr",     start: "18.04.2026", end: "19.04.2026", location: "Son",                          club: "Soon CK",             lat: 59.5283,   lng: 10.6872,  regUrl: "https://live.eqtiming.com/82148#dashboard" },
@@ -44,7 +45,7 @@ const rittData = [
     { name: "XC NC10-11 Nilsbyen Race Weekend",              catKey: "ncterr",     start: "05.09.2026", end: "06.09.2026", location: "Nilsbyen Terrengsykkelpark",   club: "TVK",                 lat: 63.4080,   lng: 10.3500,  regUrl: "https://live.eqtiming.com/83316#dashboard" },
     { name: "Bioracer Trøndercup #5",           catKey: "bioracer",   start: "09.09.2026", end: "09.09.2026", location: "Granåsen",                     club: "TVK",                 lat: 63.38,     lng: 10.31,    regUrl: "https://live.eqtiming.com/83300#dashboard" },
     { name: "Treningsritt TVK&Gauldal #4",      catKey: "lokale",     start: "14.09.2026", end: "14.09.2026", location: "Nilsbyen Terrengsykkelpark",   club: "TVK",                 lat: 63.4080,   lng: 10.3500,  regUrl: "spond" },
-    { name: "Lillehammer Sykkelfestival",       catKey: "ncfranking", start: "11.09.2026", end: "13.09.2026", location: "Lillehammer",                  club: "Lillehammer CK",      lat: 61.1200,   lng: 10.4700,  regUrl: "https://live.eqtiming.com/81060#dashboard" },
+    { name: "Lillehammer Sykkelfestival",       catKey: "ncfranking", start: "11.09.2026", end: "13.09.2026", location: "Lillehammer",                  club: "Lillehammer CK",      lat: 61.1200,   lng: 10.4700,  regUrl: "https://live.eqtiming.com/81060#dashboard", prepUrl: "lillehammer-sykkelfestival.html" },
     { name: "XC NC12-13 Karl XII rittet",         catKey: "ncterr",     start: "19.09.2026", end: "20.09.2026", location: "Halden",                       club: "Halden CK",           lat: 59.1227,   lng: 11.3875,  regUrl: "https://live.eqtiming.com/81510#dashboard" },
     { name: "Trønderkross",                     catKey: "lokale",     start: "26.09.2026", end: "26.09.2026", location: "Nilsbyen Terrengsykkelarena",    club: "TVK",                 lat: 63.4080,   lng: 10.3500,  regUrl: "https://live.eqtiming.com/83430#dashboard" },
 ];

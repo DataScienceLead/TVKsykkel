@@ -428,7 +428,8 @@
             margin-bottom: 8px;
         }
 
-        .popup-reg-link, .card-reg-link {
+        .popup-reg-link, .card-reg-link,
+        .popup-prep-link, .card-prep-link {
             display: inline-block;
             margin-top: 8px;
             padding: 5px 12px;
@@ -440,11 +441,18 @@
             text-decoration: none;
             transition: background 0.2s;
         }
-        .popup-reg-link:hover, .card-reg-link:hover { background: #E2071D; }
+        .popup-reg-link:hover, .card-reg-link:hover,
+        .popup-prep-link:hover, .card-prep-link:hover { background: #E2071D; }
         .popup-reg-link.results, .card-reg-link.results {
             background: #4a6aa5;
         }
         .popup-reg-link.results:hover, .card-reg-link.results:hover { background: #194794; }
+        .popup-prep-link, .card-prep-link {
+            background: #E2071D;
+        }
+        .popup-prep-link:hover, .card-prep-link:hover {
+            background: #194794;
+        }
         .popup-reg-spond, .card-reg-spond {
             display: inline-block;
             margin-top: 8px;
@@ -456,7 +464,7 @@
             font-weight: 600;
             border: 1px solid #c9d2e8;
         }
-        .card-reg-link, .card-reg-spond { margin-top: 6px; }
+        .card-reg-link, .card-reg-spond, .card-prep-link { margin-top: 6px; }
 
         /* ===========================
            KARTMARKØRER
@@ -837,6 +845,11 @@ function regLinkHTML(r, cls) {
     return `<a class="${cls}-link" href="${r.regUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Meld deg på →</a>`;
 }
 
+function prepLinkHTML(r, cls) {
+    if (!r.prepUrl) return '';
+    return `<a class="${cls}-link" href="${r.prepUrl}" onclick="event.stopPropagation()">Rittplan →</a>`;
+}
+
 function popupHTML(r) {
     return `
         <div class="popup-badge" style="${badgeStyle(r.catKey)}">${getCat(r.catKey).label}</div>
@@ -846,7 +859,8 @@ function popupHTML(r) {
             <strong>📅 Dato:</strong> ${dateRange(r.start, r.end)}<br>
             <strong>🏢 Arrangør:</strong> ${r.club}
         </div>
-        ${regLinkHTML(r, 'popup-reg')}`;
+        ${regLinkHTML(r, 'popup-reg')}
+        ${prepLinkHTML(r, 'popup-prep')}`;
 }
 
 function addMarkers() {
@@ -905,6 +919,7 @@ function buildSidebar() {
                 <div class="ritt-detail-item">${ICONS.cal()} ${dato}</div>
                 <div class="ritt-detail-item">${ICONS.person} ${r.club}</div>
                 ${r.regUrl ? `<div class="ritt-detail-item">${regLinkHTML(r, 'card-reg')}</div>` : ''}
+                ${r.prepUrl ? `<div class="ritt-detail-item">${prepLinkHTML(r, 'card-prep')}</div>` : ''}
             </div>`;
         el.appendChild(card);
     });

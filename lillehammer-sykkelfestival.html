@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lillehammer Sykkelfestival – TVK 2026</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="TVK.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="TVK.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --tvk-blue: #194794;
+            --tvk-red: #E2071D;
+            --bg: #F4F6F9;
+            --ink: #4a6aa5;
+            --border: #dce3ed;
+            --card: #ffffff;
+            --soft: rgba(25, 71, 148, 0.06);
+            --soft-red: rgba(226, 7, 29, 0.08);
+            --amber: #b7791f;
+            --amber-bg: #fff6e5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--tvk-blue);
+        }
+
+        .nav {
+            background: #ffffff;
+            border-bottom: 3px solid var(--tvk-red);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            box-shadow: 0 2px 12px rgba(25, 71, 148, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 12px; }
+        .nav-logo { height: 40px; width: auto; object-fit: contain; }
+        .nav-logo-fallback {
+            width: 40px;
+            height: 40px;
+            background: var(--tvk-blue);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            border: 2px solid var(--tvk-red);
+            flex-shrink: 0;
+        }
+        .nav-title { font-size: 18px; font-weight: 700; color: var(--tvk-blue); }
+        .nav-title span { color: var(--tvk-red); }
+        .nav-links { display: flex; gap: 4px; }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: var(--soft); color: var(--tvk-blue); }
+
+        .hero {
+            background: linear-gradient(135deg, var(--tvk-blue) 0%, #2e5aa8 60%, #5075b8 100%);
+            color: #ffffff;
+            padding: 48px 32px 36px;
+        }
+
+        .hero-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 46px);
+            line-height: 1.08;
+            margin-bottom: 14px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 62ch;
+        }
+
+        .hero-actions {
+            margin-top: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .hero-btn.primary {
+            background: #ffffff;
+            color: var(--tvk-blue);
+        }
+
+        .hero-btn.secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            padding: 22px;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-card h2 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .hero-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .hero-item {
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .hero-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .hero-item-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.62);
+            margin-bottom: 4px;
+        }
+
+        .hero-item-value {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .page {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        .notice {
+            background: var(--amber-bg);
+            color: #7a5600;
+            border: 1px solid #f2d083;
+            border-left: 4px solid var(--amber);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .stack {
+            display: grid;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(25, 71, 148, 0.06);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-head h2 {
+            font-size: 22px;
+            color: var(--tvk-blue);
+        }
+
+        .section-head p {
+            font-size: 13px;
+            color: #7f92bb;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .summary-item {
+            background: linear-gradient(135deg, #ffffff, #f7f9fc);
+            border: 1px solid #e5ebf4;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .summary-item-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8a9cc2;
+            margin-bottom: 6px;
+        }
+
+        .summary-item-value {
+            font-size: 15px;
+            line-height: 1.55;
+            color: var(--tvk-blue);
+        }
+
+        .stage-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .stage {
+            border: 1px solid #e3e9f3;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .stage-header {
+            padding: 18px 20px;
+            background: linear-gradient(135deg, rgba(25, 71, 148, 0.06), rgba(25, 71, 148, 0.02));
+            border-bottom: 1px solid #e3e9f3;
+        }
+
+        .stage-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .stage-header h3 {
+            font-size: 20px;
+            color: var(--tvk-blue);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .badge.ok {
+            background: rgba(25, 71, 148, 0.08);
+            color: var(--tvk-blue);
+        }
+
+        .badge.wait {
+            background: var(--soft-red);
+            color: var(--tvk-red);
+        }
+
+        .stage-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: var(--ink);
+            font-size: 13px;
+        }
+
+        .stage-body {
+            padding: 20px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .time-box {
+            background: #f7f9fc;
+            border: 1px solid #e3e9f3;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .time-box .label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8a9cc2;
+            margin-bottom: 6px;
+        }
+
+        .time-box .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--tvk-blue);
+        }
+
+        .time-box .note {
+            margin-top: 4px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--ink);
+        }
+
+        .rider-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid #e3e9f3;
+        }
+
+        .rider-table th,
+        .rider-table td {
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #e9eef6;
+        }
+
+        .rider-table th {
+            background: #f7f9fc;
+            color: var(--tvk-blue);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .rider-table tr:last-child td { border-bottom: none; }
+
+        .checklist,
+        .info-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .checklist li,
+        .info-list li {
+            padding-left: 22px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--ink);
+        }
+
+        .checklist li::before,
+        .info-list li::before {
+            content: '•';
+            position: absolute;
+            left: 7px;
+            color: var(--tvk-red);
+            font-weight: 700;
+        }
+
+        .status-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .status-item {
+            border-radius: 14px;
+            padding: 14px 16px;
+            border: 1px solid #e6ecf5;
+            background: #fbfcfe;
+        }
+
+        .status-item strong {
+            color: var(--tvk-blue);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .status-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--ink);
+        }
+
+        .link-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .link-card {
+            display: block;
+            padding: 14px 16px;
+            border: 1px solid #e3e9f3;
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--tvk-blue);
+            background: #ffffff;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .link-card:hover {
+            transform: translateY(-1px);
+            border-color: #b8c7de;
+        }
+
+        .link-card span {
+            display: block;
+            font-size: 12px;
+            color: #7f92bb;
+            margin-top: 3px;
+        }
+
+        .map-card {
+            padding-bottom: 18px;
+        }
+
+        .map-copy {
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--ink);
+            margin-bottom: 14px;
+        }
+
+        .mini-map {
+            width: 100%;
+            height: 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #dce3ed;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .map-caption {
+            margin-top: 12px;
+            font-size: 12px;
+            line-height: 1.55;
+            color: #7f92bb;
+        }
+
+        .footer {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 32px 40px;
+            color: #7f92bb;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .hero-inner,
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid,
+            .time-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 8px 12px;
+                height: auto;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .nav-logo { height: 32px; }
+            .nav-title { font-size: 15px; }
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                gap: 2px;
+            }
+            .nav-link {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .hero,
+            .page,
+            .footer {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .card,
+            .hero-card,
+            .stage-body,
+            .stage-header {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .stage-header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .rider-table th,
+            .rider-table td {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script src="icons.js"></script>
+
+<nav class="nav">
+    <div class="nav-left">
+        <img src="TVK.png" alt="TVK" class="nav-logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="nav-logo-fallback">TVK</div>
+        <div class="nav-title">TVK <span>2026</span></div>
+    </div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link"><svg width="14" height="14" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px"><use href="#icon-home"/></svg>Hjem</a>
+        <a href="terminliste.html" class="nav-link">Terminliste</a>
+        <a href="trening.html" class="nav-link">Trening</a>
+        <a href="ritt-guide.html" class="nav-link">Ritt-guide</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Lillehammer 11.–13. september 2026</div>
+            <h1>Lillehammer Sykkelfestival</h1>
+            <p>Deltakerplan for TVK med fire etapper for M11-12 og M15-16, samt gateritt for senior lørdag. Siden samler overnatting, startsteder, starttider og anbefalt oppvarming.</p>
+            <div class="hero-actions">
+                <a class="hero-btn primary" href="https://live.eqtiming.com/81060#dashboard" target="_blank" rel="noopener">EQ Timing</a>
+                <a class="hero-btn secondary" href="https://lillehammerck.no/wp-content/uploads/2026/08/enkel-invitasjon-LPP-2026-3.pdf" target="_blank" rel="noopener">Invitasjon PDF</a>
+            </div>
+        </div>
+
+        <aside class="hero-card">
+            <h2>Helgeoversikt</h2>
+            <div class="hero-list">
+                <div class="hero-item">
+                    <span class="hero-item-label">Overnatting</span>
+                    <div class="hero-item-value">Scandic Lillehammer.</div>
+                </div>
+                <div class="hero-item">
+                    <span class="hero-item-label">Klasser</span>
+                    <div class="hero-item-value">M11-12 og M15-16 sykler alle fire etapper. Senior sykler gateritt lørdag.</div>
+                </div>
+                <div class="hero-item">
+                    <span class="hero-item-label">Arrangør</span>
+                    <div class="hero-item-value">Lillehammer CK. Joker-ritt 10-16 år og NC for junior/senior.</div>
+                </div>
+                <div class="hero-item">
+                    <span class="hero-item-label">Viktig å følge opp</span>
+                    <div class="hero-item-value">Individuelle starttider for Sverre, Oliver og Olav publiseres først 10. september eller samme dag. Det er derfor ikke nødvendig å sjekke EQ Timing før da.</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</header>
+
+<main class="page">
+    <div class="grid">
+        <div class="stack">
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Rask oversikt</h2>
+                        <p>Det viktigste først</p>
+                    </div>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-item-label">Fredag</span>
+                        <div class="summary-item-value">Bakketempo fra kl. 18:00. M15-16 starter ved Lysgaardsbakkene med 40 min oppvarming. M11-12 starter ved Nedre Skrefsrud med 25 min oppvarming.</div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Lørdag formiddag</span>
+                        <div class="summary-item-value">Gateritt ved Birkebeineren skistadion. M15-16 starter fra kl. 08:30 med 40 min oppvarming, M11-12 kl. 09:30 med 25 min, og senior kl. 10:30 med 40 min.</div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Lørdag ettermiddag</span>
+                        <div class="summary-item-value">Tempo ved Birkebeineren skistadion fra kl. 15:00. M15-16 bruker 40 min oppvarming. M11-12 bruker 25 min og får individuell starttid senere.</div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Søndag</span>
+                        <div class="summary-item-value">Fellesstart fra kl. 08:00. M15-16 starter i Øyer med 10-15 min oppvarming. M11-12 starter kl. 08:32 på Tretten med 25 min oppvarming. Målgang er ved Øyer kirke.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card map-card">
+                <div class="section-head">
+                    <div>
+                        <h2>Helgekart</h2>
+                        <p>Overnatting og alle kjente punkter</p>
+                    </div>
+                </div>
+                <p class="map-copy">Kartet samler Scandic Lillehammer, fredagsetappens arena og start, lørdagens punkt på Birkebeineren skistadion, startpunktet på Tretten for M11-12 og startpunktet i Øyer for M15-16 på søndag. Målgang ved Øyer kirke er fortsatt bare beskrevet i teksten, siden koordinat ikke er oppgitt.</p>
+                <div id="weekendMap" class="mini-map" aria-label="Kart over hele ritthelgen"></div>
+                <div class="map-caption">Kartet viser overnatting, fredagsetappens arena og start, lørdagens arena og begge søndagsstarter i samme visning.</div>
+                <div class="link-list">
+                    <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.1234167,10.4870278&travelmode=driving" target="_blank" rel="noopener">
+                        Google Maps til fredag arena
+                        <span>Kjøreinstruksjoner fra din posisjon til Lysgaardsbakkene</span>
+                    </a>
+                    <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.1227778,10.4960278&travelmode=driving" target="_blank" rel="noopener">
+                        Google Maps til fredag start
+                        <span>Kjøreinstruksjoner fra din posisjon til Nedre Skrefsrud</span>
+                    </a>
+                    <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.1358333,10.5050833&travelmode=driving" target="_blank" rel="noopener">
+                        Google Maps til lørdag arena
+                        <span>Kjøreinstruksjoner fra din posisjon til Birkebeineren skistadion</span>
+                    </a>
+                    <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.3135833,10.3039167&travelmode=driving" target="_blank" rel="noopener">
+                        Google Maps til søndag start M11-12
+                        <span>Kjøreinstruksjoner fra din posisjon til Tretten</span>
+                    </a>
+                    <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.2644722,10.4143889&travelmode=driving" target="_blank" rel="noopener">
+                        Google Maps til søndag start M15-16
+                        <span>Kjøreinstruksjoner fra din posisjon til Øyer</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Etapper og ritt</h2>
+                        <p>Klassevise tider og praktisk plan</p>
+                    </div>
+                </div>
+
+                <div class="stage-list">
+                    <article class="stage">
+                        <div class="stage-header">
+                            <div class="stage-header-top">
+                                <h3>Fredag 11. september</h3>
+                                <span class="badge ok">Bekreftet</span>
+                            </div>
+                            <div class="stage-meta">
+                                <span>Bakketempo</span>
+                                <span>M11-12 og M15-16</span>
+                                <span>Start M11-12: Nedre Skrefsrud</span>
+                                <span>Start M15-16: Lysgaardsbakkene</span>
+                                <span>Arena: Lysgaardsbakkene</span>
+                            </div>
+                        </div>
+                        <div class="stage-body">
+                            <div class="time-grid">
+                                <div class="time-box">
+                                    <span class="label">Starttid</span>
+                                    <div class="value">Fra 18:00</div>
+                                    <div class="note">Invitasjonen sier start fra kl. 18:00 for LPP-bakketempo. M11-12 og M15-16 følger samme etappe, men med ulikt startpunkt. Individuelle tider for Sverre, Oliver og Olav forventes først publisert 10. september eller samme dag.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Rittvarighet</span>
+                                    <div class="value">Ca. 15 min</div>
+                                    <div class="note">Kort og intensiv etappe. Ha sykkel og utstyr helt klart i god tid.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt oppvarming</span>
+                                    <div class="value">M11-12: 25 min / M15-16: 40 min</div>
+                                    <div class="note">I tråd med Rittguide brukes 25 min fast oppvarming for M11-12. For M15-16 legges det opp til 40 min for bakketempo: 15-20 min rolig sykling, 5-10 min med høyere intensitet, 2-4 korte akselerasjoner og avslutning rundt 10 min før start.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt avreise</span>
+                                    <div class="value">4 min til arena / 7 min til start</div>
+                                    <div class="note">Google Maps viser ca. 1,8 km og 4 min til Lysgaardsbakkene, eller ca. 2,9 km og 7 min til startpunktet på Nedre Skrefsrud. Legg inn margin for parkering og tid mellom arena og start.</div>
+                                </div>
+                            </div>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Punkt</th>
+                                        <th>Beskrivelse</th>
+                                        <th>Merknad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Arena / oppmøte</td>
+                                        <td>Lysgaardsbakkene</td>
+                                        <td>Oppmøte ved arena</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Start</td>
+                                        <td>Nedre Skrefsrud</td>
+                                        <td>M11-12 startpunkt for bakketempo</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Start</td>
+                                        <td>Lysgaardsbakkene</td>
+                                        <td>M15-16 starter fra arenaområdet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Klasse</th>
+                                        <th>Plan</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>M11-12</td>
+                                        <td>Sverre: individuell starttid kommer senere, 25 min oppvarming</td>
+                                        <td>Avventer startliste 10. september eller rittdag</td>
+                                    </tr>
+                                    <tr>
+                                        <td>M15-16</td>
+                                        <td>Oliver og Olav: individuelle starttider kommer senere, 40 min oppvarming</td>
+                                        <td>Avventer startliste 10. september eller rittdag</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="stage">
+                        <div class="stage-header">
+                            <div class="stage-header-top">
+                                <h3>Lørdag 12. september</h3>
+                                <span class="badge ok">Bekreftet</span>
+                            </div>
+                            <div class="stage-meta">
+                                <span>Gateritt</span>
+                                <span>Birkebeineren skistadion</span>
+                                <span>M11-12, M15-16 og senior</span>
+                            </div>
+                        </div>
+                        <div class="stage-body">
+                            <div class="time-grid">
+                                <div class="time-box">
+                                    <span class="label">M15-16 start</span>
+                                    <div class="value">Fra 08:30</div>
+                                    <div class="note">Eldste ungdomsklasse vises først her fordi startrekkefølgen begynner fra kl. 08:30. Eksakt klasseplassering må bekreftes hvis arrangøren publiserer detaljert startplan.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">M11-12 start</span>
+                                    <div class="value">09:30</div>
+                                    <div class="note">Yngre klasse kommer etterpå i dagsplanen. Din klasse er satt til start 1 kl. 09:30.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Senior start</span>
+                                    <div class="value">10:30</div>
+                                    <div class="note">Matcher invitasjonen for NC junior/senior.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt oppvarming</span>
+                                    <div class="value">M15-16: 40 min / M11-12: 25 min / Senior: 40 min</div>
+                                    <div class="note">Rittguide anbefaler rolig sykling først, deretter høyere intensitet og korte akselerasjoner. Derfor bruker siden 40 min for M15-16 og senior i gateritt, mens M11-12 holder seg til 25 min fast oppvarming.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Rittvarighet</span>
+                                    <div class="value">15 min / 70 min</div>
+                                    <div class="note">M11-12 sykler ca. 15 min. Senior sykler ca. 70 min.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt avreise</span>
+                                    <div class="value">Ca. 9 min med bil</div>
+                                    <div class="note">Google Maps viser ca. 5,5 km og 9 min fra Scandic Lillehammer til Birkebeineren skistadion. Legg inn god tid til parkering, startnummer og oppvarming.</div>
+                                </div>
+                            </div>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Klasse</th>
+                                        <th>Start</th>
+                                        <th>Kommentar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>M15-16</td>
+                                        <td>Fra 08:30</td>
+                                        <td>40 min oppvarming. Samme arena. Bekreft detaljert startrekkefølge hvis arrangøren legger ut klassevis plan.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>M11-12</td>
+                                        <td>09:30</td>
+                                        <td>25 min oppvarming. Møt tidlig nok til startnummer og løypeblikk.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Senior</td>
+                                        <td>10:30</td>
+                                        <td>40 min oppvarming og mer tid til forberedelser før start.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="stage">
+                        <div class="stage-header">
+                            <div class="stage-header-top">
+                                <h3>Lørdag 12. september</h3>
+                                <span class="badge wait">Foreløpig</span>
+                            </div>
+                            <div class="stage-meta">
+                                <span>Tempo</span>
+                                <span>M11-12 og M15-16</span>
+                                <span>Birkebeineren skistadion</span>
+                            </div>
+                        </div>
+                        <div class="stage-body">
+                            <div class="time-grid">
+                                <div class="time-box">
+                                    <span class="label">Starttid</span>
+                                    <div class="value">Fra 15:00</div>
+                                    <div class="note">Invitasjonen oppgir tempo fra kl. 15:00 for 10-16 år. Individuelle starttider for Sverre, Oliver og Olav publiseres først 10. september eller samme dag.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Rittvarighet</span>
+                                    <div class="value">Ca. 15 min</div>
+                                    <div class="note">Kort tempoetappe. Sjekk endelig startliste på EQ Timing tidligst 10. september eller samme dag.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt oppvarming</span>
+                                    <div class="value">M11-12: 25 min / M15-16: 40 min</div>
+                                    <div class="note">Rittguide-opplegget brukes også her: M11-12 holder seg til 25 min total oppvarming, mens M15-16 får 40 min for tempo med rolig sykling, 5-10 min høyere intensitet, 2-4 akselerasjoner og avslutning rundt 10 min før start.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt avreise</span>
+                                    <div class="value">Ingen ekstra forflytning hvis laget blir på arena</div>
+                                    <div class="note">Etappe 2 og 3 ligger på samme arena, så dagen kan planlegges samlet rundt Birkebeineren skistadion.</div>
+                                </div>
+                            </div>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Klasse</th>
+                                        <th>Start</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>M11-12</td>
+                                        <td>Sverre: individuell starttid kommer senere</td>
+                                        <td>25 min oppvarming. Publiseres 10. september eller rittdag</td>
+                                    </tr>
+                                    <tr>
+                                        <td>M15-16</td>
+                                        <td>Oliver og Olav: individuelle starttider kommer senere</td>
+                                        <td>40 min oppvarming. Publiseres 10. september eller rittdag</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="stage">
+                        <div class="stage-header">
+                            <div class="stage-header-top">
+                                <h3>Søndag 13. september</h3>
+                                <span class="badge ok">Bekreftet</span>
+                            </div>
+                            <div class="stage-meta">
+                                <span>Fellesstart</span>
+                                <span>M11-12 og M15-16</span>
+                                <span>Start M11-12: Tretten</span>
+                                <span>Start M15-16: Øyer</span>
+                                <span>Mål: Øyer kirke</span>
+                            </div>
+                        </div>
+                        <div class="stage-body">
+                            <div class="time-grid">
+                                <div class="time-box">
+                                    <span class="label">M15-16 start</span>
+                                    <div class="value">Fra 08:00</div>
+                                    <div class="note">Eldre ungdomsklasse starter fra Øyer. Eventuell detaljert klasseplassering må bekreftes hvis arrangøren publiserer mer presis rekkefølge.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Starttid</span>
+                                    <div class="value">M11-12: 08:32</div>
+                                    <div class="note">M11-12 har din oppgitte klassestart 08:32 fra Tretten.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Rittvarighet</span>
+                                    <div class="value">Ca. 30 min</div>
+                                    <div class="note">M11-12 sykler halv runde ifølge invitasjonen.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt oppvarming</span>
+                                    <div class="value">M15-16: 10-15 min / M11-12: 25 min</div>
+                                    <div class="note">For fellesstart følger siden Rittguide-prinsippet om kortere oppvarming. M15-16 trenger 10-15 min, mens M11-12 fortsatt bruker 25 min fast oppvarming uansett distanse.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Anbefalt avreise</span>
+                                    <div class="value">Ca. 34 min til Tretten / ca. 28 min til Øyer</div>
+                                    <div class="note">Google Maps viser ca. 30,3 km og 34 min fra Scandic Lillehammer til start på Tretten for M11-12. For M15-16 viser Google Maps ca. 21,5 km og 28 min til Øyer via Sørbygdsvegen.</div>
+                                </div>
+                            </div>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Punkt</th>
+                                        <th>Beskrivelse</th>
+                                        <th>Merknad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Start</td>
+                                        <td>Tretten</td>
+                                        <td>M11-12 startpunkt for søndagsetappen</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Start</td>
+                                        <td>Øyer</td>
+                                        <td>M15-16 startpunkt lagt inn i kartet og Google Maps-lenken</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Målgang</td>
+                                        <td>Øyer kirke</td>
+                                        <td>Koordinat ikke lagt inn</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Klasse</th>
+                                        <th>Start</th>
+                                        <th>Kommentar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>M15-16</td>
+                                        <td>Fra 08:00</td>
+                                        <td>10-15 min oppvarming. Start i Øyer. Bruk Øyer-punktet i kartet for navigasjon og bekreft eventuell klassevis startrekkefølge hvis arrangøren publiserer mer detaljert info.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>M11-12</td>
+                                        <td>08:32</td>
+                                        <td>25 min oppvarming. Halv runde. Startstedet bør dobbeltsjekkes mot siste arrangørinfo hvis kart eller teknisk guide presiserer oppmøtepunkt.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+
+        <aside class="stack">
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Hva avventer</h2>
+                        <p>Oppdater dette når ny info kommer</p>
+                    </div>
+                </div>
+                <div class="status-list">
+                    <div class="status-item">
+                        <strong>Reisevei med bil</strong>
+                        <p>Google Maps viser ca. 4 min til fredag arena, 7 min til fredag start, 9 min til lørdagsarenaen, 34 min til M11-12-starten på Tretten og 28 min til M15-16-starten i Øyer via Sørbygdsvegen.</p>
+                    </div>
+                    <div class="status-item">
+                        <strong>Individuelle starttider</strong>
+                        <p>Både bakketempo fredag og tempo lørdag får personlige starttider for Sverre, Oliver og Olav først 10. september eller samme dag. Det er ikke nødvendig å sjekke EQ Timing før da.</p>
+                    </div>
+                    <div class="status-item">
+                        <strong>Målgang søndag</strong>
+                        <p>Starten på Tretten er lagt inn i kartet, men målgang ved Øyer kirke mangler fortsatt koordinat dersom du vil ha komplett søndagsvisning.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Praktisk info</h2>
+                        <p>Fra invitasjonen</p>
+                    </div>
+                </div>
+                <ul class="info-list">
+                    <li>Rittkontor fredag: Øyer kontrollstasjon 13:00-16:00 og Lysgårdsbakkene 16:30-19:00.</li>
+                    <li>Rittkontor lørdag: Gråhallen, Birkebeineren skistadion 07:30-17:00.</li>
+                    <li>Rittkontor søndag: Øyer kommunehus 07:00-16:00.</li>
+                    <li>Parkering på Birkebeiner stadion skjer via APCOA. Lysgaardsbakkene har gratis, merket parkering.</li>
+                    <li>Alle får Emit-brikke av arrangør.</li>
+                    <li>Lagledermøte torsdag kl. 20:00 på Teams og fredag kl. 20:30 i Gråhallen.</li>
+                    <li>Pizzabuffet og premieutdeling lørdag kveld i Servicehallen / Gråhallen.</li>
+                    <li>TVK overnatter på Scandic Lillehammer.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Før avreise</h2>
+                        <p>Kort sjekkliste</p>
+                    </div>
+                </div>
+                <ul class="checklist">
+                    <li>Bruk Google Maps-lenkene for å sjekke trafikk samme dag, selv om grunnestimatene nå er lagt inn på siden.</li>
+                    <li>Sjekk EQ Timing for individuelle starttider tidligst 10. september eller samme konkurransedag.</li>
+                    <li>Avklar gjerne koordinat for målgang ved Øyer kirke hvis dere vil ha komplett søndagskart.</li>
+                    <li>Pakk varmt skift, regntøy, mat og drikke for en lang lørdag med to etapper.</li>
+                    <li>Beregn god tid til parkering, startnummer og toalett før første start.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Nyttige lenker</h2>
+                        <p>Offisiell informasjon</p>
+                    </div>
+                </div>
+                <div class="link-list">
+                    <a class="link-card" href="https://live.eqtiming.com/81060#dashboard" target="_blank" rel="noopener">
+                        EQ Timing
+                        <span>Påmelding, deltakere og oppdatert startinformasjon</span>
+                    </a>
+                    <a class="link-card" href="https://lillehammerck.no/wp-content/uploads/2026/08/enkel-invitasjon-LPP-2026-3.pdf" target="_blank" rel="noopener">
+                        Invitasjon PDF
+                        <span>Programoversikt, rittkontor, parkering og premiering</span>
+                    </a>
+                    <a class="link-card" href="https://lillehammerck.no/lillehammersykkelfestival" target="_blank" rel="noopener">
+                        Arrangørside
+                        <span>Oppdatert informasjon, rittmanual og eventuelle siste endringer</span>
+                    </a>
+                </div>
+            </section>
+        </aside>
+    </div>
+</main>
+
+<div class="footer">
+    <strong>Trondhjems Velocipedklubb</strong> — deltakerplan for Lillehammer Sykkelfestival 2026
+</div>
+
+<script>
+const bakketempoArena = [61.1234167, 10.4870278];
+const bakketempoStart = [61.1227778, 10.4960278];
+const scandicLillehammer = [61.1171389, 10.4780556];
+const saturdayArena = [61.1358333, 10.5050833];
+const trettenStart = [61.3135833, 10.3039167];
+const oyerStart = [61.2644722, 10.4143889];
+
+function googleDirectionsLink(destination, label) {
+    const [lat, lng] = destination;
+    const href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+    return `<br><a href="${href}" target="_blank" rel="noopener">${label}</a>`;
+}
+
+const weekendMap = L.map('weekendMap', {
+    zoomControl: true,
+    scrollWheelZoom: false
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_2rst_1_605bf22b90be505ee95a7ec8', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(weekendMap);
+
+L.circleMarker(scandicLillehammer, {
+    radius: 8,
+    color: '#194794',
+    fillColor: '#194794',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup('<strong>Overnatting</strong><br>Scandic Lillehammer');
+
+L.circleMarker(bakketempoArena, {
+    radius: 8,
+    color: '#194794',
+    fillColor: '#194794',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup(`<strong>Fredag arena</strong><br>Lysgaardsbakkene${googleDirectionsLink(bakketempoArena, 'Google Maps')}`);
+
+L.circleMarker(bakketempoStart, {
+    radius: 8,
+    color: '#E2071D',
+    fillColor: '#E2071D',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup(`<strong>Fredag start</strong><br>Nedre Skrefsrud${googleDirectionsLink(bakketempoStart, 'Google Maps')}`);
+
+L.circleMarker(saturdayArena, {
+    radius: 8,
+    color: '#c2410c',
+    fillColor: '#c2410c',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup(`<strong>Etappe 2 og 3</strong><br>Birkebeineren skistadion${googleDirectionsLink(saturdayArena, 'Google Maps')}`);
+
+L.circleMarker(trettenStart, {
+    radius: 8,
+    color: '#4a6aa5',
+    fillColor: '#4a6aa5',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup(`<strong>Etappe 4 start M11-12</strong><br>Tretten${googleDirectionsLink(trettenStart, 'Google Maps')}`);
+
+L.circleMarker(oyerStart, {
+    radius: 8,
+    color: '#15803d',
+    fillColor: '#15803d',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup(`<strong>Etappe 4 start M15-16</strong><br>Øyer${googleDirectionsLink(oyerStart, 'Google Maps')}`);
+
+weekendMap.fitBounds([
+    scandicLillehammer,
+    bakketempoArena,
+    bakketempoStart,
+    saturdayArena,
+    trettenStart,
+    oyerStart
+], {
+    padding: [30, 30]
+});
+</script>
+</body>
+</html>
