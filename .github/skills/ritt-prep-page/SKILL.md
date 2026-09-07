@@ -28,7 +28,10 @@ Målet er en praktisk side som svarer på tre spørsmål:
 - Bruk [data/ritt.js](./../../../data/ritt.js) som første kilde for rittnavn, dato og sted
 - Bruk [terminliste.html](./../../../terminliste.html) som referanse for hvordan ritt presenteres i oversikten
 - Bruk [ritt-guide.html](./../../../ritt-guide.html) og [planer/ritt-guide.md](./../../../planer/ritt-guide.md) som referanse for tone, TVK-kontekst og oppvarmingsprinsipper
+- Bruk en eksisterende rittside i repoet som første implementasjonsmal når bruker allerede har pekt på ønsket uttrykk eller funksjon, for eksempel [lillehammer-sykkelfestival.html](./../../../rittplan/lillehammer-sykkelfestival.html)
 - Hvis EQ Timing-lenke mangler eller er usikker, bruk [eqtiming-regurl-workflow](./../eqtiming-regurl-workflow/SKILL.md)
+- Hvis siden trenger automatisk oppdatert TVK-status fra EQ Timing på en statisk HTML-side, bruk [eqtiming-tvk-status-updater](./../eqtiming-tvk-status-updater/SKILL.md)
+- Hvis siden trenger værdata, bruk [race-weather-data](./../race-weather-data/SKILL.md)
 - Bruk [assets/ritt-prep-template.md](./assets/ritt-prep-template.md) som minimumsstruktur for innholdet
 
 ## Nødvendige Inndata
@@ -70,10 +73,13 @@ Hvis brukeren ikke har all informasjon klar, skal du ikke gjette. Merk heller fe
 ## Prosedyre
 
 1. Finn målflaten.
-   Velg først om du skal oppdatere en eksisterende rittside eller lage en ny. Standard i dette repoet er en egen HTML-side per ritt. Hvis repoet ikke allerede har en egen side for rittet, opprett en ny statisk HTML-side som følger prosjektets eksisterende uttrykk.
+   Velg først om du skal oppdatere en eksisterende rittside eller lage en ny. Standard i dette repoet er en egen HTML-side per ritt i `rittplan/`. Hvis repoet ikke allerede har en egen side for rittet, opprett en ny statisk HTML-side som følger prosjektets eksisterende uttrykk.
 
 2. Bekreft grunninformasjon.
    Sammenlign brukerens opplysninger med eksisterende rittdata og eventuelle EQ Timing-lenker. Pass på at rittnavn, dato og sted er konsistente.
+
+2a. Finn nærmeste fungerende mønster.
+   Hvis repoet allerede har en rittside med kart, værseksjon eller logistikk som ligner behovet, bruk den som første mal i stedet for å komponere siden fra bunnen av.
 
 3. Avklar sideatferd tidlig.
    Bekreft før videre arbeid om siden skal være skjult fra hovedmenyen, om den bare skal lenkes fra terminlisten, og om koordinater skal holdes ute av synlig tekst hvis de primært er tekniske.
@@ -106,13 +112,22 @@ Hvis brukeren ikke har all informasjon klar, skal du ikke gjette. Merk heller fe
 10. Legg inn kart og kjørelenker bare når de faktisk hjelper.
    Hvis brukeren ønsker kart, bruk ett samlet helgekart når det gir best oversikt, eller flere små kart når punktene ellers blir uleselige. Hvis siden også trenger Google Maps-lenker eller reisetider, bruk [google-maps-race-logistics](./../google-maps-race-logistics/SKILL.md).
 
-11. Skriv siden for praktisk bruk.
+10a. Verifiser arena før kartet ferdigstilles.
+   Ikke bruk generiske bykoordinater fra delt rittdata som arena i rittsiden uten kontroll. Finn faktiske arena-, start- eller målpunkt fra arrangørinformasjon, og bruk OpenStreetMap/Nominatim eller tilsvarende til å bekrefte at sted og koordinater matcher.
+
+11. Legg inn værdata bare når det gjør siden mer praktisk.
+   Hvis brukeren vil ha vær på siden, knytt været til faktiske etapper, startsteder eller arenaer i stedet for et generisk stedsvarsel når det er flere relevante punkter. Bruk [race-weather-data](./../race-weather-data/SKILL.md).
+
+12. Skriv siden for praktisk bruk.
    Presentasjonen skal være lett å skanne på mobil før avreise. Prioriter konkrete klokkeslett, adresser, avreisetider og korte forklaringer fremfor lange avsnitt. Ikke legg inn unødig metatekst som forklarer hvor informasjonen er hentet fra, med mindre brukeren eksplisitt ber om det.
 
-12. Koble siden til terminlisten når brukeren ønsker det.
+13. Koble siden til terminlisten når brukeren ønsker det.
    Ikke legg rittsiden i hovednavigasjonen. Hvis siden skal være tilgjengelig fra terminlisteflaten, foretrekk en løsning der lenken styres fra delt rittdata i [data/ritt.js](./../../../data/ritt.js) og rendres i [terminliste.html](./../../../terminliste.html), i stedet for å hardkode lenken bare ett sted.
 
-13. Kvalitetssikre før levering.
+13a. Avklar tidlig om TVK-deltakere skal være levende eller manuelle.
+   På en ren statisk HTML-side vil direkte nettleser-`fetch()` mot EQ Timing normalt stoppes av CORS. Hvis brukeren ønsker levende deltakerstatus, planlegg tidlig for en lokal oppdaterer som henter fra EQ Timing-API-et og skriver inn status i HTML, i stedet for å forsøke klienthenting sent i prosessen.
+
+14. Kvalitetssikre før levering.
    Kontroller at hver dag eller etappe svarer på:
    - hvor vi bor
    - hvor start er
@@ -187,6 +202,7 @@ Ferdigheten er ferdig når siden:
 - bruker kart og koordinater på en måte som passer brukerens ønske om detaljnivå
 - bare eksponerer rittsiden der brukeren ønsker det, uten å legge den i hovedmenyen
 - inneholder lenker til EQ Timing eller arrangørside der brukeren senere må sjekke oppdateringer
+- bruker lokal oppdaterer for TVK-status når bruker ønsker automatisk EQ Timing-oppdatering på en statisk side
 - unngaar unodig metatekst om kilder i den synlige siden
 - er lett å lese på mobil og følger eksisterende TVK-stil
 

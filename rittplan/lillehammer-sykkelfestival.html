@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lillehammer Sykkelfestival – TVK 2026</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="TVK.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="TVK.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../TVK.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../TVK.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -513,6 +513,98 @@
             color: #7f92bb;
         }
 
+        .weather-status {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--ink);
+            margin-bottom: 14px;
+        }
+
+        .weather-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .weather-card {
+            border: 1px solid #e3e9f3;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #ffffff, #f7f9fc);
+        }
+
+        .weather-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .weather-day {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8a9cc2;
+        }
+
+        .weather-symbol {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .weather-temp {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tvk-blue);
+            margin-bottom: 4px;
+        }
+
+        .weather-summary {
+            font-size: 13px;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .weather-stage {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--tvk-blue);
+            margin-bottom: 4px;
+        }
+
+        .weather-place {
+            font-size: 12px;
+            color: #7f92bb;
+            margin-bottom: 8px;
+        }
+
+        .weather-meta {
+            display: grid;
+            gap: 4px;
+            font-size: 12px;
+            color: #62759c;
+        }
+
+        .weather-note {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #7f92bb;
+        }
+
+        .weather-credit {
+            margin-top: 14px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #7f92bb;
+        }
+
+        .weather-credit a {
+            color: var(--tvk-blue);
+            font-weight: 600;
+        }
+
         .footer {
             max-width: 1160px;
             margin: 0 auto;
@@ -582,20 +674,20 @@
     </style>
 </head>
 <body>
-<script src="icons.js"></script>
+<script src="../icons.js"></script>
 
 <nav class="nav">
     <div class="nav-left">
-        <img src="TVK.png" alt="TVK" class="nav-logo"
+        <img src="../TVK.png" alt="TVK" class="nav-logo"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="nav-logo-fallback">TVK</div>
         <div class="nav-title">TVK <span>2026</span></div>
     </div>
     <div class="nav-links">
-        <a href="index.html" class="nav-link"><svg width="14" height="14" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px"><use href="#icon-home"/></svg>Hjem</a>
-        <a href="terminliste.html" class="nav-link">Terminliste</a>
-        <a href="trening.html" class="nav-link">Trening</a>
-        <a href="ritt-guide.html" class="nav-link">Ritt-guide</a>
+        <a href="../index.html" class="nav-link"><svg width="14" height="14" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px"><use href="#icon-home"/></svg>Hjem</a>
+        <a href="../terminliste.html" class="nav-link">Terminliste</a>
+        <a href="../trening.html" class="nav-link">Trening</a>
+        <a href="../ritt-guide.html" class="nav-link">Ritt-guide</a>
     </div>
 </nav>
 
@@ -628,7 +720,9 @@
                 </div>
                 <div class="hero-item">
                     <span class="hero-item-label">Viktig å følge opp</span>
-                    <div class="hero-item-value">Individuelle starttider for Sverre, Oliver og Olav publiseres først 10. september eller samme dag. Det er derfor ikke nødvendig å sjekke EQ Timing før da.</div>
+                    <!-- tvk-hero-status:start -->
+                    <div class="hero-item-value">3 TVK-påmeldinger funnet per 7. september 2026 kl. 21:23: Sverre Blix Prestmo, Olav Øfsti, Oliver Skavdal-Sand. Sjekk detaljene under for publiserte starttider.</div>
+    <!-- tvk-hero-status:end -->
                 </div>
             </div>
         </aside>
@@ -1042,10 +1136,16 @@
                     </div>
                 </div>
                 <div class="status-list">
-                    
+                    <!-- tvk-detail-status:start -->
                     <div class="status-item">
-                        <strong>Individuelle starttider</strong>
-                        <p>Både bakketempo fredag og tempo lørdag får personlige starttider for Sverre, Oliver og Olav først 10. september eller samme dag. Det er ikke nødvendig å sjekke EQ Timing før da.</p>
+                        <strong>TVK-påmeldte</strong>
+                        <p>Oppdatert automatisk fra EQ Timing 7. september 2026 kl. 21:23. Fant 3 TVK-påmeldinger for Lillehammer Sykkelfestival.</p>
+                        <p><strong>Lillehammer Sykkelfestival:</strong><br>18:00 - Sverre Blix Prestmo (M11-12, Registrert)<br>19:00 - Olav Øfsti (M15-16, Registrert)<br>19:00 - Oliver Skavdal-Sand (M15-16, Registrert)</p>
+                    </div>
+    <!-- tvk-detail-status:end -->
+                    <div class="status-item">
+                        <strong>Etappevise starttider</strong>
+                        <p>Tiden i TVK-statusen over er tiden EQ Timing viser i den samlede deltakerlisten. Kontroller de endelige, etappevise startlistene for bakketempo og tempo når arrangøren publiserer dem.</p>
                     </div>
                 </div>
             </section>
@@ -1088,6 +1188,32 @@
             <section class="card">
                 <div class="section-head">
                     <div>
+                        <h2>Vær fra Yr</h2>
+                        <p>Etappevis prognose for start- og arenaområdene</p>
+                    </div>
+                </div>
+                <p class="weather-status" id="weatherStatus">Laster værdata for etappene...</p>
+                <div class="weather-grid" id="weatherGrid"></div>
+                <p class="weather-credit">Værdata fra <a href="https://www.met.no/en" target="_blank" rel="noopener">MET Norway</a>, vist med lenke til <a href="https://www.yr.no/nb/s%C3%B8k?q=Birkebeineren%20skistadion%20Lillehammer" target="_blank" rel="noopener">Yr</a>. Lisens: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+                <div class="link-list">
+                    <a class="link-card" href="https://www.yr.no/nb/s%C3%B8k?q=Birkebeineren%20skistadion%20Lillehammer" target="_blank" rel="noopener">
+                        Åpne Yr for hovedarenaen
+                        <span>Fullt varsel for området rundt Birkebeineren skistadion</span>
+                    </a>
+                    <a class="link-card" href="https://www.yr.no/nb/s%C3%B8k?q=Tretten" target="_blank" rel="noopener">
+                        Åpne Yr for Tretten
+                        <span>Fullt varsel for M11-12-starten søndag</span>
+                    </a>
+                    <a class="link-card" href="https://www.yr.no/nb/s%C3%B8k?q=%C3%98yer" target="_blank" rel="noopener">
+                        Åpne Yr for Øyer
+                        <span>Fullt varsel for M15-16-start og målområdet søndag</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
                         <h2>Nyttige lenker</h2>
                         <p>Offisiell informasjon</p>
                     </div>
@@ -1115,7 +1241,9 @@
     <strong>Trondhjems Velocipedklubb</strong> — deltakerplan for Lillehammer Sykkelfestival 2026
 </div>
 
+<script src="rittplan.js"></script>
 <script>
+const { googleDirectionsLink, loadWeatherForecast } = window.Rittplan;
 const bakketempoArena = [61.1234167, 10.4870278];
 const bakketempoStart = [61.1227778, 10.4960278];
 const scandicLillehammer = [61.1171389, 10.4780556];
@@ -1123,12 +1251,53 @@ const saturdayArena = [61.1358333, 10.5050833];
 const trettenStart = [61.3135833, 10.3039167];
 const oyerStart = [61.2644722, 10.4143889];
 const oyerKirkeFinish = [61.2664722, 10.4221389];
-
-function googleDirectionsLink(destination, label) {
-    const [lat, lng] = destination;
-    const href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
-    return `<br><a href="${href}" target="_blank" rel="noopener">${label}</a>`;
-}
+const yrWeatherUrl = 'https://www.yr.no/nb/s%C3%B8k?q=Birkebeineren%20skistadion%20Lillehammer';
+const weatherStages = [
+    {
+        label: 'Fredag 11. september',
+        stage: 'Bakketempo M15-16',
+        place: 'Lysgaardsbakkene, ca. kl. 18:00',
+        targetTime: '2026-09-11T18:00:00+02:00',
+        location: [61.1234, 10.4870],
+        note: 'Varslet er knyttet til arena- og startområdet for M15-16.'
+    },
+    {
+        label: 'Fredag 11. september',
+        stage: 'Bakketempo M11-12',
+        place: 'Nedre Skrefsrud, ca. kl. 18:00',
+        targetTime: '2026-09-11T18:00:00+02:00',
+        location: [61.1228, 10.4960],
+        note: 'Varslet er knyttet til startpunktet for M11-12.'
+    },
+    {
+        label: 'Lørdag 12. september',
+        stage: 'Gateritt',
+        place: 'Birkebeineren skistadion, ca. kl. 09:00',
+        targetTime: '2026-09-12T09:00:00+02:00',
+        location: [61.1358, 10.5051]
+    },
+    {
+        label: 'Lørdag 12. september',
+        stage: 'Tempo',
+        place: 'Birkebeineren skistadion, ca. kl. 15:00',
+        targetTime: '2026-09-12T15:00:00+02:00',
+        location: [61.1358, 10.5051]
+    },
+    {
+        label: 'Søndag 13. september',
+        stage: 'Fellesstart M15-16',
+        place: 'Øyer, ca. kl. 08:00',
+        targetTime: '2026-09-13T08:00:00+02:00',
+        location: [61.2645, 10.4144]
+    },
+    {
+        label: 'Søndag 13. september',
+        stage: 'Fellesstart M11-12',
+        place: 'Tretten, kl. 08:32',
+        targetTime: '2026-09-13T08:32:00+02:00',
+        location: [61.3136, 10.3039]
+    }
+];
 
 const weekendMap = L.map('weekendMap', {
     zoomControl: true,
@@ -1207,6 +1376,15 @@ weekendMap.fitBounds([
     oyerKirkeFinish
 ], {
     padding: [30, 30]
+});
+
+loadWeatherForecast({
+    stages: weatherStages,
+    messages: {
+        failed: `Kunne ikke laste værdata automatisk. Se <a href="${yrWeatherUrl}" target="_blank" rel="noopener">Yr</a> for manuell sjekk.`,
+        partial: `Delvis oppdatert værinfo for etappene. Se <a href="${yrWeatherUrl}" target="_blank" rel="noopener">Yr</a> for full kontroll.`,
+        complete: 'Værprognoser nærmest starttid for hver etappe og hvert startområde.'
+    }
 });
 </script>
 </body>

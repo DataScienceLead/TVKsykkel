@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karl XII-rittet – TVK 2026</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../TVK.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../TVK.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --tvk-blue: #194794;
+            --tvk-red: #E2071D;
+            --bg: #F4F6F9;
+            --ink: #4a6aa5;
+            --border: #dce3ed;
+            --card: #ffffff;
+            --soft: rgba(25, 71, 148, 0.06);
+            --soft-red: rgba(226, 7, 29, 0.08);
+            --amber: #b7791f;
+            --amber-bg: #fff6e5;
+            --ok-bg: rgba(25, 71, 148, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--tvk-blue);
+        }
+
+        .nav {
+            background: #ffffff;
+            border-bottom: 3px solid var(--tvk-red);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            box-shadow: 0 2px 12px rgba(25, 71, 148, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 12px; }
+        .nav-logo { height: 40px; width: auto; object-fit: contain; }
+        .nav-logo-fallback {
+            width: 40px;
+            height: 40px;
+            background: var(--tvk-blue);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            border: 2px solid var(--tvk-red);
+            flex-shrink: 0;
+        }
+        .nav-title { font-size: 18px; font-weight: 700; color: var(--tvk-blue); }
+        .nav-title span { color: var(--tvk-red); }
+        .nav-links { display: flex; gap: 4px; }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: var(--soft); color: var(--tvk-blue); }
+
+        .hero {
+            background: linear-gradient(135deg, var(--tvk-blue) 0%, #2e5aa8 58%, #5f83c0 100%);
+            color: #ffffff;
+            padding: 48px 32px 36px;
+        }
+
+        .hero-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 46px);
+            line-height: 1.08;
+            margin-bottom: 14px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 64ch;
+        }
+
+        .hero-actions {
+            margin-top: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .hero-btn.primary {
+            background: #ffffff;
+            color: var(--tvk-blue);
+        }
+
+        .hero-btn.secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .hero-btn:hover { transform: translateY(-1px); }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            padding: 22px;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-card h2 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .hero-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .hero-item {
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .hero-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .hero-item-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.62);
+            margin-bottom: 4px;
+        }
+
+        .hero-item-value {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .page {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        .notice {
+            background: var(--amber-bg);
+            color: #7a5600;
+            border: 1px solid #f2d083;
+            border-left: 4px solid var(--amber);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .stack {
+            display: grid;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(25, 71, 148, 0.06);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-head h2 {
+            font-size: 22px;
+            color: var(--tvk-blue);
+        }
+
+        .section-head p {
+            font-size: 13px;
+            color: #7f92bb;
+        }
+
+        .summary-grid,
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .summary-item,
+        .time-box {
+            background: linear-gradient(135deg, #ffffff, #f7f9fc);
+            border: 1px solid #e5ebf4;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .summary-item-label,
+        .time-box .label,
+        .table-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8a9cc2;
+            margin-bottom: 6px;
+        }
+
+        .summary-item-value,
+        .time-box .value {
+            font-size: 15px;
+            line-height: 1.55;
+            color: var(--tvk-blue);
+        }
+
+        .time-box .value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .time-box .note {
+            margin-top: 4px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--ink);
+        }
+
+        .stage-list,
+        .status-list,
+        .link-list,
+        .info-list,
+        .checklist {
+            display: grid;
+            gap: 16px;
+        }
+
+        .stage {
+            border: 1px solid #e3e9f3;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .stage-header {
+            padding: 18px 20px;
+            background: linear-gradient(135deg, rgba(25, 71, 148, 0.06), rgba(25, 71, 148, 0.02));
+            border-bottom: 1px solid #e3e9f3;
+        }
+
+        .stage-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .stage-header h3 {
+            font-size: 20px;
+            color: var(--tvk-blue);
+        }
+
+        .stage-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: var(--ink);
+            font-size: 13px;
+        }
+
+        .stage-body {
+            padding: 20px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .badge.ok {
+            background: var(--ok-bg);
+            color: var(--tvk-blue);
+        }
+
+        .badge.wait {
+            background: var(--soft-red);
+            color: var(--tvk-red);
+        }
+
+        .rider-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid #e3e9f3;
+        }
+
+        .rider-table th,
+        .rider-table td {
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #e9eef6;
+        }
+
+        .rider-table th {
+            background: #f7f9fc;
+            color: var(--tvk-blue);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .rider-table tr:last-child td { border-bottom: none; }
+
+        .status-item {
+            border-radius: 14px;
+            padding: 14px 16px;
+            border: 1px solid #e6ecf5;
+            background: #fbfcfe;
+        }
+
+        .status-item strong {
+            color: var(--tvk-blue);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .status-item p,
+        .map-copy,
+        .map-caption,
+        .card p {
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--ink);
+        }
+
+        .info-list,
+        .checklist {
+            list-style: none;
+        }
+
+        .info-list li,
+        .checklist li {
+            padding-left: 22px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--ink);
+        }
+
+        .info-list li::before,
+        .checklist li::before {
+            content: '•';
+            position: absolute;
+            left: 7px;
+            color: var(--tvk-red);
+            font-weight: 700;
+        }
+
+        .link-card {
+            display: block;
+            padding: 14px 16px;
+            border: 1px solid #e3e9f3;
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--tvk-blue);
+            background: #ffffff;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .link-card:hover {
+            transform: translateY(-1px);
+            border-color: #b8c7de;
+        }
+
+        .link-card span {
+            display: block;
+            font-size: 12px;
+            color: #7f92bb;
+            margin-top: 3px;
+        }
+
+        .address-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .address-card {
+            border: 1px solid #e3e9f3;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #ffffff, #f7f9fc);
+        }
+
+        .address-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8a9cc2;
+            margin-bottom: 6px;
+        }
+
+        .address-value {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--tvk-blue);
+        }
+
+        .address-note {
+            margin-top: 6px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #7f92bb;
+        }
+
+        .mini-map {
+            width: 100%;
+            height: 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #dce3ed;
+        }
+
+        .weather-status {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--ink);
+            margin-bottom: 14px;
+        }
+
+        .weather-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .weather-card {
+            border: 1px solid #e3e9f3;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #ffffff, #f7f9fc);
+        }
+
+        .weather-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .weather-day {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8a9cc2;
+        }
+
+        .weather-symbol {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .weather-temp {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tvk-blue);
+            margin-bottom: 4px;
+        }
+
+        .weather-summary {
+            font-size: 13px;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .weather-stage {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--tvk-blue);
+            margin-bottom: 4px;
+        }
+
+        .weather-place {
+            font-size: 12px;
+            color: #7f92bb;
+            margin-bottom: 8px;
+        }
+
+        .weather-meta {
+            display: grid;
+            gap: 4px;
+            font-size: 12px;
+            color: #62759c;
+        }
+
+        .weather-note {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #7f92bb;
+        }
+
+        .weather-credit {
+            margin-top: 14px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #7f92bb;
+        }
+
+        .weather-credit a {
+            color: var(--tvk-blue);
+            font-weight: 600;
+        }
+
+        .footer {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 32px 40px;
+            color: #7f92bb;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .hero-inner,
+            .grid,
+            .summary-grid,
+            .time-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 8px 12px;
+                height: auto;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .nav-logo { height: 32px; }
+            .nav-title { font-size: 15px; }
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                gap: 2px;
+            }
+
+            .nav-link {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .hero,
+            .page,
+            .footer {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .card,
+            .hero-card,
+            .stage-body,
+            .stage-header {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .stage-header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .rider-table th,
+            .rider-table td {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script src="../icons.js"></script>
+
+<nav class="nav">
+    <div class="nav-left">
+        <img src="../TVK.png" alt="TVK" class="nav-logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="nav-logo-fallback">TVK</div>
+        <div class="nav-title">TVK <span>2026</span></div>
+    </div>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-link"><svg width="14" height="14" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px"><use href="#icon-home"/></svg>Hjem</a>
+        <a href="../terminliste.html" class="nav-link">Terminliste</a>
+        <a href="../trening.html" class="nav-link">Trening</a>
+        <a href="../ritt-guide.html" class="nav-link">Ritt-guide</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <div>
+            <div class="eyebrow">Halden 19.–20. september 2026</div>
+            <h1>Karl XII-rittet</h1>
+                <p>Foreløpig rittplan for TVK til NC-helga i terreng i Halden. Siden samler publiserte starttider for XCO og XCC, status på TVK-påmeldte og lenker som må sjekkes nærmere når helga nærmer seg.</p>
+            <div class="hero-actions">
+                <a class="hero-btn primary" href="https://live.eqtiming.com/81510#dashboard" target="_blank" rel="noopener">EQ Timing XCO</a>
+                <a class="hero-btn secondary" href="https://live.eqtiming.com/81511#dashboard" target="_blank" rel="noopener">EQ Timing XCC</a>
+                <a class="hero-btn secondary" href="https://haldencykleklub.org/hck_test2/wp-content/uploads/2026/08/Invitasjon_KarlXII-2026_ver2_2608.pdf" target="_blank" rel="noopener">Innbydelse PDF</a>
+                <a class="hero-btn secondary" href="https://live.eqtiming.com/81512#dashboard" target="_blank" rel="noopener">Lagstelt</a>
+            </div>
+        </div>
+
+        <aside class="hero-card">
+            <h2>Helgeoversikt</h2>
+            <div class="hero-list">
+                <div class="hero-item">
+                    <span class="hero-item-label">Overnatting</span>
+                    <div class="hero-item-value">Ikke klart ennå. Reise og avreise oppdateres når base er bestemt.</div>
+                </div>
+                <div class="hero-item">
+                    <span class="hero-item-label">Arena</span>
+                    <div class="hero-item-value">Nyborg / Idd SK, Halden. Samme helg brukes også eget EQ Timing-oppsett for lagstelt.</div>
+                </div>
+                <div class="hero-item">
+                    <span class="hero-item-label">TVK-påmeldte</span>
+                    <!-- tvk-hero-status:start -->
+                    <div class="hero-item-value">Ingen ryttere fra TVK ligger i deltakerlistene for verken XCO eller XCC per 7. september 2026 kl. 21:22.</div>
+    <!-- tvk-hero-status:end -->
+                </div>
+                <div class="hero-item">
+                    <span class="hero-item-label">Viktig å følge opp</span>
+                    <div class="hero-item-value">Hvis TVK-meldinger kommer senere, bør deltakerlista sjekkes på nytt i EQ Timing for begge dager.</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</header>
+
+<main class="page">
+    <!-- tvk-notice:start -->
+    <div class="notice">
+        Starttider og deltakerstatus er hentet fra EQ Timing 7. september 2026 kl. 21:22. Overnatting, avreise og eventuell TVK-lagbase er markert som foreløpig inntil mer praktisk info er avklart.
+    </div>
+    <!-- tvk-notice:end -->
+
+    <div class="grid">
+        <div class="stack">
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Rask oversikt</h2>
+                        <p>Det viktigste for helga</p>
+                    </div>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-item-label">Lørdag 19. september</span>
+                        <div class="summary-item-value">XCO hele dagen. For de yngste starter M/K 10 kl. 09:15 og M/K 11-12 kl. 09:30. Rankingklassene fortsetter fra kl. 10:40, og elite/junior er lagt til ettermiddagen.</div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Søndag 20. september</span>
+                        <div class="summary-item-value">XCC med ny startrekkefølge. M/K 10 er satt til kl. 09:30, M/K 11-12 til kl. 10:20 og M/K 15-16 til kl. 12:00. Elite er publisert til kl. 14:00.</div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Oppvarming</span>
+                        <div class="summary-item-value">Bruk TVK-standard fra rittguiden: 25 min for 11-12 år, og 40 min for 13 år og opp i XCO/XCC. Legg inn litt ekstra tid til arenaforberedelser og løypekikk.</div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">TVK-status</span>
+                        <!-- tvk-summary-status:start -->
+                        <div class="summary-item-value">Ingen TVK-navn er synlige i dagens deltakerlister. Denne siden fungerer derfor foreløpig som praktisk helgeside og oppdateres når eventuelle etteranmeldinger kommer.</div>
+    <!-- tvk-summary-status:end -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Dagsplan</h2>
+                        <p>Publisert rekkefølge i EQ Timing</p>
+                    </div>
+                </div>
+
+                <div class="stage-list">
+                    <article class="stage">
+                        <div class="stage-header">
+                            <div class="stage-header-top">
+                                <h3>XCO</h3>
+                                <span class="badge ok">Bekreftet fra EQ Timing</span>
+                            </div>
+                            <div class="stage-meta">
+                                <span>Lørdag 19. september</span>
+                                <span>Arena: Nyborg, Aspedammen</span>
+                                <span>NC12 UCI cat 1 Rundbane</span>
+                            </div>
+                        </div>
+                        <div class="stage-body">
+                            <div class="time-grid">
+                                <div class="time-box">
+                                    <span class="label">Første start</span>
+                                    <div class="value">09:15</div>
+                                    <div class="note">M/K 10 starter dagen. M/K 11-12 følger kl. 09:30.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Rankingstart</span>
+                                    <div class="value">10:40</div>
+                                    <div class="note">M/K 13-14 kl. 10:40 og M15-16 kl. 11:30.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Junior</span>
+                                    <div class="value">13:00 / 14:50</div>
+                                    <div class="note">Kvinner junior kl. 13:00. Menn junior er publisert til kl. 14:50.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Elite</span>
+                                    <div class="value">14:45</div>
+                                    <div class="note">Menn elite ligger sist i publisert utdrag. Beregn god tid for arena og startnummer.</div>
+                                </div>
+                            </div>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Klokkeslett</th>
+                                        <th>Klasse</th>
+                                        <th>TVK-status</th>
+                                    </tr>
+                                </thead>
+                                <!-- tvk-xco-rows:start -->
+                                <tbody>
+                                    <tr>
+                                        <td>09:15</td>
+                                        <td>M/K 10</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>09:30</td>
+                                        <td>M/K 11-12</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:40</td>
+                                        <td>M/K 13-14</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>11:30</td>
+                                        <td>M15-16</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:00-14:50</td>
+                                        <td>Junior og elite</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                </tbody>
+    <!-- tvk-xco-rows:end -->
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="stage">
+                        <div class="stage-header">
+                            <div class="stage-header-top">
+                                <h3>XCC</h3>
+                                <span class="badge ok">Bekreftet fra EQ Timing</span>
+                            </div>
+                            <div class="stage-meta">
+                                <span>Søndag 20. september</span>
+                                <span>Arena: Nyborg, Aspedammen</span>
+                                <span>NC13 UCI cat 3 Kortbane</span>
+                            </div>
+                        </div>
+                        <div class="stage-body">
+                            <div class="time-grid">
+                                <div class="time-box">
+                                    <span class="label">Første start</span>
+                                    <div class="value">09:30</div>
+                                    <div class="note">M/K 10 starter først. M/K 11-12 er publisert til kl. 10:20.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Rankingstart</span>
+                                    <div class="value">11:00</div>
+                                    <div class="note">M/K 13-14 kl. 11:00 og M/K 15-16 kl. 12:00.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Junior</span>
+                                    <div class="value">13:00</div>
+                                    <div class="note">Kvinner junior er bekreftet til kl. 13:00 i publisert deltakerliste.</div>
+                                </div>
+                                <div class="time-box">
+                                    <span class="label">Elite</span>
+                                    <div class="value">14:00</div>
+                                    <div class="note">Menn elite ligger som seneste bekreftede tidspunkt i tilgjengelig EQ Timing-utdrag.</div>
+                                </div>
+                            </div>
+
+                            <table class="rider-table">
+                                <thead>
+                                    <tr>
+                                        <th>Klokkeslett</th>
+                                        <th>Klasse</th>
+                                        <th>TVK-status</th>
+                                    </tr>
+                                </thead>
+                                <!-- tvk-xcc-rows:start -->
+                                <tbody>
+                                    <tr>
+                                        <td>09:30</td>
+                                        <td>M/K 10</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:20</td>
+                                        <td>M/K 11-12</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>11:00</td>
+                                        <td>M/K 13-14</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:00</td>
+                                        <td>M/K 15-16</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:00-14:00</td>
+                                        <td>Junior og elite</td>
+                                        <td>Ingen TVK-navn publisert</td>
+                                    </tr>
+                                </tbody>
+    <!-- tvk-xcc-rows:end -->
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>TVK-status og avklaringer</h2>
+                        <p>Det som fortsatt må på plass</p>
+                    </div>
+                </div>
+                <div class="status-list">
+                    <!-- tvk-detail-status:start -->
+                    <div class="status-item">
+                        <strong>TVK-påmeldte</strong>
+                        <p>Oppdatert automatisk fra EQ Timing 7. september 2026 kl. 21:22. Fant 0 TVK-påmeldinger for Halden.</p>
+                        <p><strong>XCO lørdag:</strong> Ingen TVK-ryttere synlige i deltakerlista. <a href="https://live.eqtiming.com/81510#dashboard" target="_blank" rel="noopener">Åpne EQ Timing</a>.</p>
+                        <p><strong>XCC søndag:</strong> Ingen TVK-ryttere synlige i deltakerlista. <a href="https://live.eqtiming.com/81511#dashboard" target="_blank" rel="noopener">Åpne EQ Timing</a>.</p>
+                    </div>
+    <!-- tvk-detail-status:end -->
+                    <div class="status-item">
+                        <strong>Overnatting</strong>
+                        <p>Hotell, hytte eller annen base er ikke bestemt. Derfor er ikke kjøretid, avreise eller morgenlogistikk regnet ut ennå. Til en foreløpig hotelljakt brukes Halden sentrum som søkepunkt.</p>
+                    </div>
+                    <div class="status-item">
+                        <strong>Lagstelt</strong>
+                        <p>Arrangøren har eget EQ Timing-oppsett for lagstelt. Hvis TVK trenger base på arenaen, bruk lagstelt-lenken over og avklar plassering med laget.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="stack">
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Praktisk</h2>
+                        <p>Det viktigste på arena</p>
+                    </div>
+                </div>
+                <ul class="info-list">
+                    <li>Hent startnummer tidlig og regn inn tid til å se løypa før oppvarming.</li>
+                    <li>For XCO og XCC fra 13 år og oppover er 40 min oppvarming TVK-standard hvis ikke trener sier noe annet.</li>
+                    <li>For 11-12 år brukes 25 min oppvarming og enkel gjennomkjøring av viktige partier i løypa.</li>
+                    <li>Ta med varme klær til mellom start og målgang. Halden i slutten av september kan fort bli kjølig på morgenen.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Adresser fra OpenStreetMap</h2>
+                        <p>Automatisk oppslag for arena og overnatting</p>
+                    </div>
+                </div>
+                <div class="address-grid">
+                    <div class="address-card">
+                        <span class="address-label">Arena</span>
+                        <div class="address-value" id="arenaAddress">Laster adresse for Nyborg-arenaen...</div>
+                        <div class="address-note">Oppslag fra OpenStreetMap/Nominatim for rittområdet ved Nyborg i Aspedammen.</div>
+                    </div>
+                    <div class="address-card">
+                        <span class="address-label">Overnatting som stedssøk</span>
+                        <div class="address-value" id="lodgingAddress">Laster forslag for Halden-området...</div>
+                        <div class="address-note">Brukes bare som foreløpig søkepunkt til overnatting er bestemt.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Vær fra Yr</h2>
+                        <p>Prognose for Halden og Idd arena</p>
+                    </div>
+                </div>
+                <p class="weather-status" id="weatherStatus">Laster værdata for arena og Halden-området...</p>
+                <div class="weather-grid" id="weatherGrid"></div>
+                <p class="weather-credit">Værdata fra <a href="https://www.met.no/en" target="_blank" rel="noopener">MET Norway</a>, vist med lenker til <a href="https://www.yr.no/nb/s%C3%B8k?q=Nyborg%20Aspedammen%20Halden" target="_blank" rel="noopener">Yr for arenaen</a> og <a href="https://www.yr.no/nb/s%C3%B8k?q=Halden" target="_blank" rel="noopener">Yr for Halden</a>. Lisens: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+                <div class="link-list">
+                    <a class="link-card" href="https://www.yr.no/nb/s%C3%B8k?q=Nyborg%20Aspedammen%20Halden" target="_blank" rel="noopener">
+                        Åpne Yr for Idd arena / Nyborg
+                        <span>Fullt varsel for arenaområdet i Aspedammen</span>
+                    </a>
+                    <a class="link-card" href="https://www.yr.no/nb/s%C3%B8k?q=Halden" target="_blank" rel="noopener">
+                        Åpne Yr for Halden
+                        <span>Manuell kontroll av vær for sentrum, overnatting og innkjøring</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Kart</h2>
+                        <p>Arena og møtested</p>
+                    </div>
+                </div>
+                <p class="map-copy">Kartet peker nå til selve arenaen på Nyborg i Aspedammen, ikke bare til Halden generelt. Klikk markøren for detaljert popup og kjørelenke.</p>
+                <div id="weekendMap" class="mini-map" aria-label="Kart over Karl XII-rittet"></div>
+                <p class="map-caption">Direktelenke: <a id="arenaMapLink" href="https://www.google.com/maps?q=59.0564556,11.4815472" target="_blank" rel="noopener">åpne arena i Google Maps</a>.</p>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Lenker</h2>
+                        <p>Oppdatert informasjon</p>
+                    </div>
+                </div>
+                <div class="link-list">
+                    <a class="link-card" href="https://live.eqtiming.com/81510#dashboard" target="_blank" rel="noopener">
+                        XCO lørdag
+                        <span>Påmelding, deltakere og publiserte starttider for rundbane</span>
+                    </a>
+                    <a class="link-card" href="https://live.eqtiming.com/81511#dashboard" target="_blank" rel="noopener">
+                        XCC søndag
+                        <span>Påmelding, deltakere og publiserte starttider for kortbane</span>
+                    </a>
+                    <a class="link-card" href="https://haldencykleklub.org/hck_test2/wp-content/uploads/2026/08/Invitasjon_KarlXII-2026_ver2_2608.pdf" target="_blank" rel="noopener">
+                        Innbydelse fra arrangør
+                        <span>Offisiell invitasjon med program, klasser og praktisk informasjon</span>
+                    </a>
+                    <a class="link-card" href="https://live.eqtiming.com/81512#dashboard" target="_blank" rel="noopener">
+                        Lagstelt
+                        <span>Eget EQ Timing-oppsett for teltplass og lagbase</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="section-head">
+                    <div>
+                        <h2>Sjekkliste</h2>
+                        <p>For rittmorgen</p>
+                    </div>
+                </div>
+                <ul class="checklist">
+                    <li>Sjekk EQ Timing kvelden før for siste endringer i deltakerliste og starttid.</li>
+                    <li>Pakk TVK-drakt, hjelm, hansker, varme klær og mat for hele dagen.</li>
+                    <li>Kontroller dekktrykk, bremser og gir kvelden før.</li>
+                    <li>Planlegg tid til sekretariat, løypegjennomgang og oppvarming før første aktuelle start.</li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+</main>
+
+<footer class="footer">
+    <strong>Trondhjems Velocipedklubb</strong> — foreløpig rittplan for Karl XII-rittet 2026. Oppdateres når TVK-påmeldinger og overnatting er klare.
+</footer>
+
+<script src="rittplan.js"></script>
+<script>
+const { googleDirectionsLink, loadWeatherForecast } = window.Rittplan;
+const arenaPoint = [59.0564556, 11.4815472];
+const lodgingSearchPoint = [59.1244, 11.3878];
+const arenaQuery = 'Nyborg, Aspedamveien, Aspedammen, Halden';
+const lodgingQuery = 'Halden, Østfold, Norge';
+const yrArenaUrl = 'https://www.yr.no/nb/s%C3%B8k?q=Nyborg%20Aspedammen%20Halden';
+const yrHaldenUrl = 'https://www.yr.no/nb/s%C3%B8k?q=Halden';
+const weatherStages = [
+    {
+        label: 'Lørdag 19. september',
+        stage: 'XCO på Idd arena',
+        place: 'Nyborg, Aspedammen, ca. kl. 09:15',
+        targetTime: '2026-09-19T09:15:00+02:00',
+        location: [59.0565, 11.4815],
+        note: 'Varslet er knyttet til arenaen på Nyborg i Aspedammen, som brukes for lørdagens XCO.'
+    },
+    {
+        label: 'Søndag 20. september',
+        stage: 'XCC på Idd arena',
+        place: 'Nyborg, Aspedammen, ca. kl. 09:30',
+        targetTime: '2026-09-20T09:30:00+02:00',
+        location: [59.0565, 11.4815],
+        note: 'Varslet er knyttet til samme arenaområde for søndagens XCC.'
+    }
+];
+
+async function lookupOpenStreetMap(query) {
+    const url = new URL('https://nominatim.openstreetmap.org/search');
+    url.searchParams.set('format', 'jsonv2');
+    url.searchParams.set('limit', '1');
+    url.searchParams.set('q', query);
+
+    const response = await fetch(url.toString(), {
+        headers: {
+            Accept: 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`OSM lookup feilet (${response.status})`);
+    }
+
+    const results = await response.json();
+    return results[0] || null;
+}
+
+function setAddress(id, text) {
+    document.getElementById(id).textContent = text;
+}
+
+async function loadAddresses() {
+    try {
+        const arenaResult = await lookupOpenStreetMap(arenaQuery);
+        if (arenaResult) {
+            setAddress('arenaAddress', arenaResult.display_name);
+            document.getElementById('arenaMapLink').href = `https://www.google.com/maps?q=${arenaResult.lat},${arenaResult.lon}`;
+        } else {
+            setAddress('arenaAddress', 'Fant ikke sikker OSM-adresse for Nyborg-arenaen.');
+        }
+    } catch (error) {
+        setAddress('arenaAddress', 'Kunne ikke hente arenaadresse fra OpenStreetMap akkurat nå.');
+    }
+
+    try {
+        const lodgingResult = await lookupOpenStreetMap(lodgingQuery);
+        if (lodgingResult) {
+            setAddress('lodgingAddress', lodgingResult.display_name);
+        } else {
+            setAddress('lodgingAddress', 'Halden sentrum, Halden, Østfold, Norge');
+        }
+    } catch (error) {
+        setAddress('lodgingAddress', 'Halden sentrum, Halden, Østfold, Norge');
+    }
+}
+
+const weekendMap = L.map('weekendMap', {
+    zoomControl: true,
+    scrollWheelZoom: false
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_2rst_1_605bf22b90be505ee95a7ec8', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(weekendMap);
+
+L.circleMarker(arenaPoint, {
+    radius: 8,
+    color: '#194794',
+    fillColor: '#194794',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap)
+    .bindPopup(`<strong>Arena Karl XII-rittet</strong><br>Nyborg, Aspedamveien, Aspedammen${googleDirectionsLink(arenaPoint, 'Google Maps')}`)
+    .bindTooltip('Arena', { direction: 'top', permanent: true, offset: [0, -10] });
+
+L.circleMarker(lodgingSearchPoint, {
+    radius: 8,
+    color: '#7f92bb',
+    fillColor: '#7f92bb',
+    fillOpacity: 0.85,
+    weight: 2
+}).addTo(weekendMap)
+    .bindPopup(`<strong>Foreløpig overnattingsområde</strong><br>Halden sentrum${googleDirectionsLink(lodgingSearchPoint, 'Google Maps')}`)
+    .bindTooltip('Overnatting?', { direction: 'top', permanent: true, offset: [0, -10] });
+
+weekendMap.fitBounds([
+    arenaPoint,
+    lodgingSearchPoint
+], {
+    padding: [30, 30]
+});
+
+loadAddresses();
+loadWeatherForecast({
+    stages: weatherStages,
+    messages: {
+        failed: `Kunne ikke laste værdata automatisk. Se <a href="${yrArenaUrl}" target="_blank" rel="noopener">Yr for arenaen</a> eller <a href="${yrHaldenUrl}" target="_blank" rel="noopener">Yr for Halden</a> for manuell sjekk.`,
+        outOfRange: (lastDate) => `MET-prognosen for arenaen går foreløpig bare til ${lastDate}. Kortene fylles automatisk når ritthelga kommer innenfor varselvinduet. Se Yr-lenkene under i mellomtiden.`,
+        partial: `Delvis oppdatert værinfo for arenaen. Se <a href="${yrArenaUrl}" target="_blank" rel="noopener">Yr</a> for full kontroll.`,
+        complete: 'Værprognoser nærmest starttid for lørdag og søndag på Idd arena.'
+    }
+});
+</script>
+</body>
+</html>
