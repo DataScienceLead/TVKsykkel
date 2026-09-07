@@ -672,9 +672,9 @@
                         <p>Overnatting og alle kjente punkter</p>
                     </div>
                 </div>
-                <p class="map-copy">Kartet samler Scandic Lillehammer, fredagsetappens arena og start, lørdagens punkt på Birkebeineren skistadion, startpunktet på Tretten for M11-12 og startpunktet i Øyer for M15-16 på søndag. Målgang ved Øyer kirke er fortsatt bare beskrevet i teksten, siden koordinat ikke er oppgitt.</p>
+                <p class="map-copy">Kartet samler Scandic Lillehammer, fredagsetappens arena og start, lørdagens punkt på Birkebeineren skistadion, startpunktet på Tretten for M11-12, startpunktet i Øyer for M15-16 på søndag og målgang ved Øyer kirke.</p>
                 <div id="weekendMap" class="mini-map" aria-label="Kart over hele ritthelgen"></div>
-                <div class="map-caption">Kartet viser overnatting, fredagsetappens arena og start, lørdagens arena og begge søndagsstarter i samme visning.</div>
+                <div class="map-caption">Kartet viser overnatting, fredagsetappens arena og start, lørdagens arena, begge søndagsstarter og målgang i samme visning.</div>
                 <div class="link-list">
                     <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.1234167,10.4870278&travelmode=driving" target="_blank" rel="noopener">
                         Google Maps til fredag arena
@@ -695,6 +695,10 @@
                     <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.2644722,10.4143889&travelmode=driving" target="_blank" rel="noopener">
                         Google Maps til søndag start M15-16
                         <span>Kjøreinstruksjoner fra din posisjon til Øyer</span>
+                    </a>
+                    <a class="link-card" href="https://www.google.com/maps/dir/?api=1&destination=61.2664722,10.4221389&travelmode=driving" target="_blank" rel="noopener">
+                        Google Maps til målgang søndag
+                        <span>Kjøreinstruksjoner fra din posisjon til Øyer kirke</span>
                     </a>
                 </div>
             </section>
@@ -997,7 +1001,7 @@
                                     <tr>
                                         <td>Målgang</td>
                                         <td>Øyer kirke</td>
-                                        <td>Koordinat ikke lagt inn</td>
+                                        <td>Lagt inn i kartet og Google Maps-lenken</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1048,7 +1052,7 @@
                     </div>
                     <div class="status-item">
                         <strong>Målgang søndag</strong>
-                        <p>Starten på Tretten er lagt inn i kartet, men målgang ved Øyer kirke mangler fortsatt koordinat dersom du vil ha komplett søndagsvisning.</p>
+                        <p>Både startene på Tretten og i Øyer, samt målgang ved Øyer kirke, er nå lagt inn i kartet med egne Google Maps-lenker.</p>
                     </div>
                 </div>
             </section>
@@ -1082,7 +1086,7 @@
                 <ul class="checklist">
                     <li>Bruk Google Maps-lenkene for å sjekke trafikk samme dag, selv om grunnestimatene nå er lagt inn på siden.</li>
                     <li>Sjekk EQ Timing for individuelle starttider tidligst 10. september eller samme konkurransedag.</li>
-                    <li>Avklar gjerne koordinat for målgang ved Øyer kirke hvis dere vil ha komplett søndagskart.</li>
+                    <li>Bruk målgangspunktet ved Øyer kirke i kartet hvis dere vil koordinere henting eller møteplass etter rittet.</li>
                     <li>Pakk varmt skift, regntøy, mat og drikke for en lang lørdag med to etapper.</li>
                     <li>Beregn god tid til parkering, startnummer og toalett før første start.</li>
                 </ul>
@@ -1104,7 +1108,7 @@
                         Invitasjon PDF
                         <span>Programoversikt, rittkontor, parkering og premiering</span>
                     </a>
-                    <a class="link-card" href="https://lillehammerck.no/lillehammersykkelfestival" target="_blank" rel="noopener">
+                    <a class="link-card" href="https://lillehammerck.no/lillehammer-sykkelfestival-nc-lillehammer-petit-prix-2026/" target="_blank" rel="noopener">
                         Arrangørside
                         <span>Oppdatert informasjon, rittmanual og eventuelle siste endringer</span>
                     </a>
@@ -1125,6 +1129,7 @@ const scandicLillehammer = [61.1171389, 10.4780556];
 const saturdayArena = [61.1358333, 10.5050833];
 const trettenStart = [61.3135833, 10.3039167];
 const oyerStart = [61.2644722, 10.4143889];
+const oyerKirkeFinish = [61.2664722, 10.4221389];
 
 function googleDirectionsLink(destination, label) {
     const [lat, lng] = destination;
@@ -1191,13 +1196,22 @@ L.circleMarker(oyerStart, {
     weight: 2
 }).addTo(weekendMap).bindPopup(`<strong>Etappe 4 start M15-16</strong><br>Øyer${googleDirectionsLink(oyerStart, 'Google Maps')}`);
 
+L.circleMarker(oyerKirkeFinish, {
+    radius: 8,
+    color: '#7c3aed',
+    fillColor: '#7c3aed',
+    fillOpacity: 0.95,
+    weight: 2
+}).addTo(weekendMap).bindPopup(`<strong>Etappe 4 målgang</strong><br>Øyer kirke${googleDirectionsLink(oyerKirkeFinish, 'Google Maps')}`);
+
 weekendMap.fitBounds([
     scandicLillehammer,
     bakketempoArena,
     bakketempoStart,
     saturdayArena,
     trettenStart,
-    oyerStart
+    oyerStart,
+    oyerKirkeFinish
 ], {
     padding: [30, 30]
 });
