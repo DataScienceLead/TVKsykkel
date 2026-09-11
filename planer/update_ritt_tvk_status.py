@@ -107,7 +107,8 @@ def is_tvk_entry(item: dict[str, Any]) -> bool:
 
 def normalize_start_time(value: str) -> str:
     try:
-        return datetime.strptime(value, "%H:%M:%S").strftime("%H:%M")
+        start_time = datetime.strptime(value, "%H:%M:%S")
+        return start_time.strftime("%H:%M:%S" if start_time.second else "%H:%M")
     except ValueError:
         return value
 
