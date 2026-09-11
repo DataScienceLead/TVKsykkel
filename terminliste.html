@@ -193,6 +193,64 @@
            =========================== */
         .ritt-list { padding: 8px; }
 
+        .ritt-section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 8px 8px 10px;
+            color: #194794;
+        }
+
+        .ritt-section-header h2 {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ritt-section-count {
+            font-size: 11px;
+            color: #6b7fa7;
+        }
+
+        .ritt-empty {
+            margin: 0 8px 12px;
+            padding: 14px;
+            border: 1px dashed #b8c7de;
+            border-radius: 8px;
+            color: #6b7fa7;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .completed-races {
+            margin-top: 10px;
+            border-top: 1px solid #dce3ed;
+        }
+
+        .completed-races summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 8px 12px;
+            color: #194794;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .completed-races summary::-webkit-details-marker { display: none; }
+
+        .completed-races summary::after {
+            content: '▾';
+            color: #6b7fa7;
+            transition: transform 0.2s;
+        }
+
+        .completed-races[open] summary::after { transform: rotate(180deg); }
+
+        .completed-races .ritt-card,
+        .completed-races .no-location-card { opacity: 0.78; }
+
         .ritt-card {
             background: #F4F6F9;
             border-radius: 12px;
@@ -742,6 +800,26 @@ const ritts        = prepareData(rittData);
 const getCat       = (k) => CATEGORIES[k] || CATEGORIES.trening;
 const hasLocation  = (r) => r.lat != null && r.lng != null;
 const dateRange    = (s, e) => s === e ? s : `${s} – ${e}`;
+const COMPLETED_DELAY_DAYS = 3;
+
+function isCompleted(r, now = new Date()) {
+    const cutoff = parseDate(r.end || r.start);
+    cutoff.setHours(23, 59, 59, 999);
+    cutoff.setDate(cutoff.getDate() + COMPLETED_DELAY_DAYS);
+    return now > cutoff;
+}
+
+function groupedRitts() {
+    const filtered = ritts.filter(r => currentFilter === 'all' || r.catKey === currentFilter);
+    return {
+        upcoming: filtered
+            .filter(r => !isCompleted(r))
+            .sort((a, b) => parseDate(a.start) - parseDate(b.start)),
+        completed: filtered
+            .filter(r => isCompleted(r))
+            .sort((a, b) => parseDate(b.end || b.start) - parseDate(a.end || a.start))
+    };
+}
 
 function badgeStyle(catKey) {
     const c = getCat(catKey).color;
@@ -822,6 +900,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=
 
 const markers = {};
 let currentFilter = 'all';
+let completedOpen = false;
 
 function createIcon(color, num) {
     return L.divIcon({
@@ -865,7 +944,8 @@ function popupHTML(r) {
 
 function addMarkers() {
     let n = 0;
-    ritts.forEach(r => {
+    const groups = groupedRitts();
+    [...groups.upcoming, ...groups.completed].forEach(r => {
         if (!hasLocation(r)) return;
         n++;
         const m = L.marker([r.lat, r.lng], { icon: createIcon(getCat(r.catKey).color, n) })
@@ -879,19 +959,12 @@ function addMarkers() {
 // =============================================================
 //  SIDEBAR
 // =============================================================
-function buildSidebar() {
-    const el = document.getElementById('rittList');
-    el.innerHTML = '';
-    let counter = 0;
-
-    ritts.forEach(r => {
-        if (currentFilter !== 'all' && r.catKey !== currentFilter) return;
+function buildRaceCard(r, counter) {
         const cat  = getCat(r.catKey);
         const dato = dateRange(r.start, r.end);
 
         if (!hasLocation(r)) {
-            el.insertAdjacentHTML('beforeend', `
-                <div class="no-location-card">
+            return `<div class="no-location-card">
                     <div class="ritt-card-header">
                         <div class="ritt-name" style="padding-left:0">${r.name}</div>
                         <span class="ritt-category-badge" style="${badgeStyle(r.catKey)}">${cat.label}</span>
@@ -899,17 +972,10 @@ function buildSidebar() {
                     <div class="ritt-details" style="padding-left:0">
                         <div class="ritt-detail-item">${ICONS.cal('#8a9cc2')} ${dato}</div>
                     </div>
-                </div>`);
-            return;
+                </div>`;
         }
 
-        counter++;
-        const card = document.createElement('div');
-        card.className = 'ritt-card';
-        card.dataset.id = r.id;
-        card.style.borderLeft = `4px solid ${cat.color}`;
-        card.onclick = () => flyToRitt(r.id);
-        card.innerHTML = `
+        return `<div class="ritt-card" data-id="${r.id}" style="border-left:4px solid ${cat.color}" onclick="flyToRitt(${r.id})">
             <div class="ritt-card-header">
                 <div class="ritt-name">${counter}. ${r.name}</div>
                 <span class="ritt-category-badge" style="${badgeStyle(r.catKey)}">${cat.label}</span>
@@ -920,8 +986,42 @@ function buildSidebar() {
                 <div class="ritt-detail-item">${ICONS.person} ${r.club}</div>
                 ${r.regUrl ? `<div class="ritt-detail-item">${regLinkHTML(r, 'card-reg')}</div>` : ''}
                 ${r.prepUrl ? `<div class="ritt-detail-item">${prepLinkHTML(r, 'card-prep')}</div>` : ''}
-            </div>`;
-        el.appendChild(card);
+            </div>
+        </div>`;
+}
+
+function buildRaceCards(races, startingNumber = 0) {
+    let counter = startingNumber;
+    return races.map(r => buildRaceCard(r, hasLocation(r) ? ++counter : counter)).join('');
+}
+
+function buildSidebar() {
+    const el = document.getElementById('rittList');
+    const groups = groupedRitts();
+    const upcomingWithLocation = groups.upcoming.filter(hasLocation).length;
+    const shouldOpenCompleted = completedOpen || groups.upcoming.length === 0;
+
+    el.innerHTML = `
+        <section aria-labelledby="upcoming-heading">
+            <div class="ritt-section-header">
+                <h2 id="upcoming-heading">Kommende ritt</h2>
+                <span class="ritt-section-count">${groups.upcoming.length} ritt</span>
+            </div>
+            ${groups.upcoming.length
+                ? buildRaceCards(groups.upcoming)
+                : '<div class="ritt-empty">Ingen kommende ritt i denne kategorien.</div>'}
+        </section>
+        <details class="completed-races" ${shouldOpenCompleted ? 'open' : ''}>
+            <summary>Gjennomførte ritt <span class="ritt-section-count">${groups.completed.length} ritt</span></summary>
+            <div>
+                ${groups.completed.length
+                    ? buildRaceCards(groups.completed, upcomingWithLocation)
+                    : '<div class="ritt-empty">Ingen gjennomførte ritt i denne kategorien.</div>'}
+            </div>
+        </details>`;
+
+    el.querySelector('.completed-races').addEventListener('toggle', event => {
+        completedOpen = event.currentTarget.open;
     });
 }
 
@@ -945,6 +1045,8 @@ function highlightCard(id) {
     document.querySelectorAll('.ritt-card').forEach(c => c.classList.remove('highlighted'));
     const card = document.querySelector(`.ritt-card[data-id="${id}"]`);
     if (card) {
+        const completedSection = card.closest('.completed-races');
+        if (completedSection) completedSection.open = true;
         card.classList.add('highlighted');
         card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -958,9 +1060,9 @@ function filterRitt(catKey, btn) {
     Object.values(markers).forEach(m => map.removeLayer(m));
     const pts = [];
     let n = 0;
-    ritts.forEach(r => {
+    const groups = groupedRitts();
+    [...groups.upcoming, ...groups.completed].forEach(r => {
         if (!hasLocation(r)) return;
-        if (catKey !== 'all' && r.catKey !== catKey) return;
         n++;
         markers[r.id].setIcon(createIcon(getCat(r.catKey).color, n));
         markers[r.id].addTo(map);
