@@ -2,17 +2,13 @@
 
 Bruk denne som innholdsstruktur når du lager en side for ett bestemt ritt.
 
-## Helgeoversikt
+## Grunnlag
 
 - Ritt:
-- Dato:
+- Konkurransedatoer:
 - Sted:
-- Overnatting:
-- Innsjekk / utsjekk:
-- Transport:
-- Vis klassene i faktisk startrekkefølge per dag: ja / nei
-- Skal siden ha kart: ja / nei
-- Skal koordinater vises i teksten: ja / nei
+- Disiplin per dag:
+- Er dette terrengritt (XCO/XCC/annet): ja / nei
 - Skal siden bare lenkes fra terminliste: ja / nei
 - Viktige lenker:
 
@@ -20,16 +16,22 @@ Bruk denne som innholdsstruktur når du lager en side for ett bestemt ritt.
 
 - Disiplin:
 - Dato:
-- Gjelder for klasser / ryttere:
+- TVK-klasser / ryttere:
 - Arena:
 - Startsted:
 - Mål:
-- Adresse eller koordinater:
-- Kjøretid fra overnatting:
-- Anbefalt avreise:
 - Oppvarmingsregel: Rittguide-standard / egen plan
 - Når publiseres individuelle starttider:
 - Status: Bekreftet / Foreløpig / Avventer EQ Timing
+
+### Trening I Løypa (terrengritt)
+
+- Offisiell trening:
+- Andre tillatte treningstider:
+- Hvilken løype / hvilke klasser:
+- Krav om startnummer:
+- Andre viktige regler:
+- Kilde: Arrangørinnbydelse / teknisk guide / ikke publisert
 
 ### Klassevis plan
 
@@ -43,16 +45,22 @@ Bruk denne som innholdsstruktur når du lager en side for ett bestemt ritt.
 
 - Disiplin:
 - Dato:
-- Gjelder for klasser / ryttere:
+- TVK-klasser / ryttere:
 - Arena:
 - Startsted:
 - Mål:
-- Adresse eller koordinater:
-- Kjøretid fra overnatting:
-- Anbefalt avreise:
 - Oppvarmingsregel: Rittguide-standard / egen plan
 - Når publiseres individuelle starttider:
 - Status: Bekreftet / Foreløpig / Avventer EQ Timing
+
+### Trening I Løypa (terrengritt)
+
+- Offisiell trening:
+- Andre tillatte treningstider:
+- Hvilken løype / hvilke klasser:
+- Krav om startnummer:
+- Andre viktige regler:
+- Kilde: Arrangørinnbydelse / teknisk guide / ikke publisert
 
 ### Klassevis plan
 
@@ -62,27 +70,28 @@ Bruk denne som innholdsstruktur når du lager en side for ett bestemt ritt.
 - Oppvarming starter:
 - Kommentar:
 
-## Kart Og Navigasjon
+## Valgfrie Tillegg
 
+- Overnatting:
+- Innsjekk / utsjekk:
+- Transport:
+- Kjøretid og anbefalt avreise:
+- Skal siden ha kart: ja / nei
 - Samlet helgekart eller delkart:
 - Google Maps-lenker:
 - Skal lenkene bruke brukerens posisjon eller fast startpunkt:
 - Er reisetider referanseverdier fra hotell/base:
-
-## Praktiske Beskjeder
-
-- Parkering:
-- Sekretariat / startnummer:
-- Mat og drikke:
-- Hva må sjekkes senere:
-- Unnga synlig kilde-klausul i siden: ja / nei
+- Vær: ja / nei
 
 ## Før Publisering
 
 - Er alle etapper med?
 - Er hver dag sortert i faktisk startrekkefolge?
+- Er klasser uten TVK-ryttere utelatt når deltakerdata finnes?
+- Har hver klasse med ulik starttid sin egen rad?
+- Er treningstider hentet fra arrangørkilde for terrengritt?
 - Er alle klokkeslett enten bekreftet eller tydelig merket som uavklarte?
 - Er oppvarming satt etter Rittguide-standard eller eksplisitt brukeronske?
-- Er det lett å se når laget må reise?
+- Er valgfrie seksjoner utelatt når de ikke er nødvendige?
 - Er kart, popup-lenker og koordinatvisning tilpasset brukerens ønske?
 - Er EQ Timing-lenker eller arrangørlenker lagt ved?

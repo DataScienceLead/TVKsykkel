@@ -26,26 +26,12 @@ HALDEN_EVENTS = [
         "label": "XCO lørdag",
         "event_id": 81510,
         "dashboard_url": "https://live.eqtiming.com/81510#dashboard",
-        "rows": [
-            ("09:15", "M/K 10", ("10",)),
-            ("09:30", "M/K 11-12", ("11-12",)),
-            ("10:40", "M/K 13-14", ("13-14",)),
-            ("11:30", "M15-16", ("15-16",)),
-            ("13:00-14:50", "Junior og elite", ("junior", "elite", "senior")),
-        ],
     },
     {
         "key": "xcc",
         "label": "XCC søndag",
         "event_id": 81511,
         "dashboard_url": "https://live.eqtiming.com/81511#dashboard",
-        "rows": [
-            ("09:30", "M/K 10", ("10",)),
-            ("10:20", "M/K 11-12", ("11-12",)),
-            ("11:00", "M/K 13-14", ("13-14",)),
-            ("12:00", "M/K 15-16", ("15-16",)),
-            ("13:00-14:00", "Junior og elite", ("junior", "elite", "senior")),
-        ],
     },
 ]
 
@@ -224,29 +210,24 @@ def build_detail_html(
     return "\n".join(parts)
 
 
-def group_event_rows(event: dict[str, Any], entries: list[Entry]) -> dict[str, list[Entry]]:
-    grouped = {label: [] for _, label, _ in event["rows"]}
+def group_event_rows(entries: list[Entry]) -> dict[tuple[str, str], list[Entry]]:
+    grouped: dict[tuple[str, str], list[Entry]] = {}
     for entry in entries:
-        normalized_class = normalize(entry.class_name)
-        for _, label, needles in event["rows"]:
-            if any(needle in normalized_class for needle in needles):
-                grouped[label].append(entry)
-                break
+        grouped.setdefault((entry.start_time, entry.class_name), []).append(entry)
     return grouped
 
 
 def build_table_rows(event: dict[str, Any], entries: list[Entry]) -> str:
-    grouped = group_event_rows(event, entries)
+    grouped = group_event_rows(entries)
     rows = []
-    for time_text, label, _ in event["rows"]:
-        event_entries = grouped[label]
+    for (time_text, class_name), event_entries in grouped.items():
         status_html = "<br>".join(
             escape(f"{entry.name} ({entry.class_name})") for entry in event_entries
-        ) or "Ingen TVK-navn publisert"
+        )
         rows.append(
             "                                    <tr>\n"
             f"                                        <td>{escape(time_text)}</td>\n"
-            f"                                        <td>{escape(label)}</td>\n"
+            f"                                        <td>{escape(class_name)}</td>\n"
             f"                                        <td>{status_html}</td>\n"
             "                                    </tr>"
         )
@@ -287,10 +268,8 @@ def update_halden_html(
     replacements = {
         "tvk-hero-status": hero_status,
         "tvk-notice": notice_html,
-        "tvk-summary-status": summary_status,
         "tvk-xco-rows": build_table_rows(config["events"][0], entries_by_event["xco"]),
         "tvk-xcc-rows": build_table_rows(config["events"][1], entries_by_event["xcc"]),
-        "tvk-detail-status": build_detail_html(config["name"], config["events"], entries_by_event, timestamp_text),
     }
     for marker, replacement in replacements.items():
         html = replace_between_markers(html, marker, replacement)

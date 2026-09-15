@@ -393,6 +393,38 @@
 
         .rider-table tr:last-child td { border-bottom: none; }
 
+        .training-schedule {
+            border-left: 4px solid var(--tvk-red);
+            background: #f7f9fc;
+            padding: 14px 16px;
+        }
+
+        .training-schedule h4 {
+            color: var(--tvk-blue);
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .training-schedule ul {
+            list-style: none;
+            display: grid;
+            gap: 5px;
+        }
+
+        .training-schedule li {
+            color: var(--ink);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .training-schedule strong { color: var(--tvk-blue); }
+
+        .training-note {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #65779c;
+        }
+
         .status-item {
             border-radius: 14px;
             padding: 14px 16px;
@@ -708,7 +740,7 @@
                 <div class="hero-item">
                     <span class="hero-item-label">TVK-påmeldte</span>
                     <!-- tvk-hero-status:start -->
-                    <div class="hero-item-value">10 TVK-påmeldinger funnet per 10. september 2026 kl. 21:50 (5 i XCO, 5 i XCC).</div>
+                    <div class="hero-item-value">18 TVK-påmeldinger funnet per 15. september 2026 kl. 13:36 (9 i XCO, 9 i XCC).</div>
     <!-- tvk-hero-status:end -->
                 </div>
                 <div class="hero-item">
@@ -723,41 +755,12 @@
 <main class="page">
     <!-- tvk-notice:start -->
     <div class="notice">
-        Starttider og deltakerstatus er hentet fra EQ Timing 10. september 2026 kl. 21:50. Overnatting, avreise og eventuell TVK-lagbase er markert som foreløpig inntil mer praktisk info er avklart.
+        Starttider og deltakerstatus er hentet fra EQ Timing 15. september 2026 kl. 13:36. Overnatting, avreise og eventuell TVK-lagbase er markert som foreløpig inntil mer praktisk info er avklart.
     </div>
     <!-- tvk-notice:end -->
 
     <div class="grid">
         <div class="stack">
-            <section class="card">
-                <div class="section-head">
-                    <div>
-                        <h2>Rask oversikt</h2>
-                        <p>Det viktigste for helga</p>
-                    </div>
-                </div>
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <span class="summary-item-label">Lørdag 19. september</span>
-                        <div class="summary-item-value">XCO hele dagen. For de yngste starter M/K 10 kl. 09:15 og M/K 11-12 kl. 09:30. Rankingklassene fortsetter fra kl. 10:40, og elite/junior er lagt til ettermiddagen.</div>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-item-label">Søndag 20. september</span>
-                        <div class="summary-item-value">XCC med ny startrekkefølge. M/K 10 er satt til kl. 09:30, M/K 11-12 til kl. 10:20 og M/K 15-16 til kl. 12:00. Elite er publisert til kl. 14:00.</div>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-item-label">Oppvarming</span>
-                        <div class="summary-item-value">Bruk TVK-standard fra rittguiden: 25 min for 11-12 år, og 40 min for 13 år og opp i XCO/XCC. Legg inn litt ekstra tid til arenaforberedelser og løypekikk.</div>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-item-label">TVK-status</span>
-                        <!-- tvk-summary-status:start -->
-                        <div class="summary-item-value">10 TVK-ryttere er nå synlige i deltakerlistene. Bruk TVK-statusen under for navn, klasser og starttider fra siste oppdatering 10. september 2026 kl. 21:50.</div>
-    <!-- tvk-summary-status:end -->
-                    </div>
-                </div>
-            </section>
-
             <section class="card">
                 <div class="section-head">
                     <div>
@@ -780,27 +783,13 @@
                             </div>
                         </div>
                         <div class="stage-body">
-                            <div class="time-grid">
-                                <div class="time-box">
-                                    <span class="label">Første start</span>
-                                    <div class="value">09:15</div>
-                                    <div class="note">M/K 10 starter dagen. M/K 11-12 følger kl. 09:30.</div>
-                                </div>
-                                <div class="time-box">
-                                    <span class="label">Rankingstart</span>
-                                    <div class="value">10:40</div>
-                                    <div class="note">M/K 13-14 kl. 10:40 og M15-16 kl. 11:30.</div>
-                                </div>
-                                <div class="time-box">
-                                    <span class="label">Junior</span>
-                                    <div class="value">13:00 / 14:50</div>
-                                    <div class="note">Kvinner junior kl. 13:00. Menn junior er publisert til kl. 14:50.</div>
-                                </div>
-                                <div class="time-box">
-                                    <span class="label">Elite</span>
-                                    <div class="value">14:45</div>
-                                    <div class="note">Menn elite ligger sist i publisert utdrag. Beregn god tid for arena og startnummer.</div>
-                                </div>
+                            <div class="training-schedule">
+                                <h4>Løypetrening</h4>
+                                <ul>
+                                    <li><strong>XCO:</strong> Før 08:45 og offisiell trening 12:30–13:00</li>
+                                    <li><strong>XCC:</strong> Etter 17:30</li>
+                                </ul>
+                                <div class="training-note">Startnummer skal være montert under offisiell trening. Det er ikke tillatt å trene i løypa mens ritt pågår.</div>
                             </div>
 
                             <table class="rider-table">
@@ -814,29 +803,34 @@
                                 <!-- tvk-xco-rows:start -->
                                 <tbody>
                                     <tr>
-                                        <td>09:15</td>
-                                        <td>M/K 10</td>
-                                        <td>Ingen TVK-navn publisert</td>
-                                    </tr>
-                                    <tr>
-                                        <td>09:30</td>
-                                        <td>M/K 11-12</td>
-                                        <td>Ingen TVK-navn publisert</td>
+                                        <td>09:00</td>
+                                        <td>M8-9</td>
+                                        <td>Magnus Kråkvik (M8-9)</td>
                                     </tr>
                                     <tr>
                                         <td>10:40</td>
-                                        <td>M/K 13-14</td>
-                                        <td>Even Norbeck Erlandsen (M13-14)<br>Peder Vatterholm Jernberg (M13-14)</td>
+                                        <td>M13-14</td>
+                                        <td>Even Norbeck Erlandsen (M13-14)<br>Marius Setyo Kråkvik (M13-14)<br>Peder Vatterholm Jernberg (M13-14)</td>
                                     </tr>
                                     <tr>
                                         <td>11:30</td>
                                         <td>M15-16</td>
-                                        <td>Simon Thorsø Hiedanpää (M15-16)</td>
+                                        <td>Sander Krangnes (M15-16)<br>Simon Thorsø Hiedanpää (M15-16)</td>
                                     </tr>
                                     <tr>
-                                        <td>13:00-14:50</td>
-                                        <td>Junior og elite</td>
-                                        <td>Agnes Vatterholm Jernberg (K Senior)<br>Oliver Vatterholm Jernberg (M Junior)</td>
+                                        <td>13:00</td>
+                                        <td>K Senior</td>
+                                        <td>Agnes Vatterholm Jernberg (K Senior)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:00</td>
+                                        <td>K15-16</td>
+                                        <td>Thea Sofie Berg (K15-16)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14:50</td>
+                                        <td>M Junior</td>
+                                        <td>Oliver Vatterholm Jernberg (M Junior)</td>
                                     </tr>
                                 </tbody>
     <!-- tvk-xco-rows:end -->
@@ -857,27 +851,13 @@
                             </div>
                         </div>
                         <div class="stage-body">
-                            <div class="time-grid">
-                                <div class="time-box">
-                                    <span class="label">Første start</span>
-                                    <div class="value">09:30</div>
-                                    <div class="note">M/K 10 starter først. M/K 11-12 er publisert til kl. 10:20.</div>
-                                </div>
-                                <div class="time-box">
-                                    <span class="label">Rankingstart</span>
-                                    <div class="value">11:00</div>
-                                    <div class="note">M/K 13-14 kl. 11:00 og M/K 15-16 kl. 12:00.</div>
-                                </div>
-                                <div class="time-box">
-                                    <span class="label">Junior</span>
-                                    <div class="value">13:00</div>
-                                    <div class="note">Kvinner junior er bekreftet til kl. 13:00 i publisert deltakerliste.</div>
-                                </div>
-                                <div class="time-box">
-                                    <span class="label">Elite</span>
-                                    <div class="value">14:00</div>
-                                    <div class="note">Menn elite ligger som seneste bekreftede tidspunkt i tilgjengelig EQ Timing-utdrag.</div>
-                                </div>
+                            <div class="training-schedule">
+                                <h4>Løypetrening</h4>
+                                <ul>
+                                    <li><strong>XCC:</strong> Før 08:45</li>
+                                    <li><strong>Offisiell trening:</strong> 11:30–12:00 og 13:30–14:00</li>
+                                </ul>
+                                <div class="training-note">Startnummer skal være montert under offisiell trening. Det er ikke tillatt å trene i løypa mens ritt pågår.</div>
                             </div>
 
                             <table class="rider-table">
@@ -891,29 +871,34 @@
                                 <!-- tvk-xcc-rows:start -->
                                 <tbody>
                                     <tr>
-                                        <td>09:30</td>
-                                        <td>M/K 10</td>
-                                        <td>Ingen TVK-navn publisert</td>
-                                    </tr>
-                                    <tr>
-                                        <td>10:20</td>
-                                        <td>M/K 11-12</td>
-                                        <td>Ingen TVK-navn publisert</td>
+                                        <td>09:00</td>
+                                        <td>M8-9</td>
+                                        <td>KRÅKVIK Magnus (M8-9)</td>
                                     </tr>
                                     <tr>
                                         <td>11:00</td>
-                                        <td>M/K 13-14</td>
-                                        <td>ERLANDSEN Even Norbeck (M13-14)<br>JERNBERG Peder Vatterholm (M13-14)</td>
+                                        <td>M13-14</td>
+                                        <td>ERLANDSEN Even Norbeck (M13-14)<br>JERNBERG Peder Vatterholm (M13-14)<br>KRÅKVIK Marius Setyo (M13-14)</td>
                                     </tr>
                                     <tr>
                                         <td>12:00</td>
-                                        <td>M/K 15-16</td>
-                                        <td>HIEDANPÄÄ Simon Thorsø (M15-16)</td>
+                                        <td>M15-16</td>
+                                        <td>HIEDANPÄÄ Simon Thorsø (M15-16)<br>KRANGNES Sander (M15-16)</td>
                                     </tr>
                                     <tr>
-                                        <td>13:00-14:00</td>
-                                        <td>Junior og elite</td>
-                                        <td>JERNBERG Agnes Vatterholm (K Senior)<br>JERNBERG Oliver Vatterholm (M Junior)</td>
+                                        <td>12:30</td>
+                                        <td>K Senior</td>
+                                        <td>JERNBERG Agnes Vatterholm (K Senior)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:00</td>
+                                        <td>K15-16</td>
+                                        <td>BERG Thea Sofie (K15-16)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14:30</td>
+                                        <td>M Junior</td>
+                                        <td>JERNBERG Oliver Vatterholm (M Junior)</td>
                                     </tr>
                                 </tbody>
     <!-- tvk-xcc-rows:end -->
@@ -922,51 +907,9 @@
                     </article>
                 </div>
             </section>
-
-            <section class="card">
-                <div class="section-head">
-                    <div>
-                        <h2>TVK-status og avklaringer</h2>
-                        <p>Det som fortsatt må på plass</p>
-                    </div>
-                </div>
-                <div class="status-list">
-                    <!-- tvk-detail-status:start -->
-                    <div class="status-item">
-                        <strong>TVK-påmeldte</strong>
-                        <p>Oppdatert automatisk fra EQ Timing 10. september 2026 kl. 21:50. Fant 10 TVK-påmeldinger for Halden.</p>
-                        <p><strong>XCO lørdag:</strong><br>10:40 - Even Norbeck Erlandsen (M13-14, Registrert)<br>10:40 - Peder Vatterholm Jernberg (M13-14, Registrert)<br>11:30 - Simon Thorsø Hiedanpää (M15-16, Registrert)<br>13:00 - Agnes Vatterholm Jernberg (K Senior, Registrert)<br>14:50 - Oliver Vatterholm Jernberg (M Junior, Registrert)</p>
-                        <p><strong>XCC søndag:</strong><br>11:00 - ERLANDSEN Even Norbeck (M13-14, Registrert)<br>11:00 - JERNBERG Peder Vatterholm (M13-14, Registrert)<br>12:00 - HIEDANPÄÄ Simon Thorsø (M15-16, Registrert)<br>12:30 - JERNBERG Agnes Vatterholm (K Senior, Registrert)<br>14:30 - JERNBERG Oliver Vatterholm (M Junior, Registrert)</p>
-                    </div>
-    <!-- tvk-detail-status:end -->
-                    <div class="status-item">
-                        <strong>Overnatting</strong>
-                        <p>Hotell, hytte eller annen base er ikke bestemt. Derfor er ikke kjøretid, avreise eller morgenlogistikk regnet ut ennå. Til en foreløpig hotelljakt brukes Halden sentrum som søkepunkt.</p>
-                    </div>
-                    <div class="status-item">
-                        <strong>Lagstelt</strong>
-                        <p>Arrangøren har eget EQ Timing-oppsett for lagstelt. Hvis TVK trenger base på arenaen, bruk lagstelt-lenken over og avklar plassering med laget.</p>
-                    </div>
-                </div>
-            </section>
         </div>
 
         <aside class="stack">
-            <section class="card">
-                <div class="section-head">
-                    <div>
-                        <h2>Praktisk</h2>
-                        <p>Det viktigste på arena</p>
-                    </div>
-                </div>
-                <ul class="info-list">
-                    <li>Hent startnummer tidlig og regn inn tid til å se løypa før oppvarming.</li>
-                    <li>For XCO og XCC fra 13 år og oppover er 40 min oppvarming TVK-standard hvis ikke trener sier noe annet.</li>
-                    <li>For 11-12 år brukes 25 min oppvarming og enkel gjennomkjøring av viktige partier i løypa.</li>
-                    <li>Ta med varme klær til mellom start og målgang. Halden i slutten av september kan fort bli kjølig på morgenen.</li>
-                </ul>
-            </section>
-
             <section class="card">
                 <div class="section-head">
                     <div>

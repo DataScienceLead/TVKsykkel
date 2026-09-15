@@ -1,6 +1,6 @@
 ---
 name: ritt-prep-page
-description: 'Lag eller oppdater en forberedende nettside for et ritt, etapperitt eller tempohelg. Use when you need race prep info such as overnatting, startsted, starttid, flere etapper, reisevei fra overnatting til start, avreisetid, oppvarmingstid, EQ Timing startlister, tempo, bakketempo, eller en samlet helgeplan.'
+description: 'Lag eller oppdater en spisset forberedelsesside for et ritt, etapperitt eller tempohelg. Use when you need race-day schedules, TVK start times, MTB/XCO/XCC training times, løypebefaring, startsted, oppvarming, EQ Timing startlister, eller valgfri reiselogistikk.'
 argument-hint: 'Rittnavn og kjente detaljer om overnatting, etapper eller starttider'
 user-invocable: true
 ---
@@ -9,11 +9,13 @@ user-invocable: true
 
 Bruk denne ferdigheten når du skal lage eller oppdatere en rittspesifikk nettside med alt utøverne og de foresatte trenger for en helg: overnatting, etapper, startsteder, oppmøtetider, oppvarming og lenker til oppdatert EQ Timing-informasjon.
 
-Målet er en praktisk side som svarer på tre spørsmål:
+Målet er en kort, praktisk side som først svarer på:
 
-1. Hvor skal vi bo, og når må vi reise?
-2. Hvor og når starter hver etappe eller klasse?
-3. Når må rytterne være klare til oppvarming og start?
+1. Hva skjer på hver konkurransedag?
+2. Når starter klassene og rytterne fra TVK?
+3. Når er oppvarming eller offisiell løypetrening?
+
+Overnatting, reise, vær, kart og generell praktisk informasjon er tillegg, ikke standardinnhold.
 
 ## Når Ferdigheten Skal Brukes
 
@@ -34,9 +36,9 @@ Målet er en praktisk side som svarer på tre spørsmål:
 - Hvis siden trenger værdata, bruk [race-weather-data](./../race-weather-data/SKILL.md)
 - Bruk [assets/ritt-prep-template.md](./assets/ritt-prep-template.md) som minimumsstruktur for innholdet
 
-## Nødvendige Inndata
+## Inndata
 
-Samle inn eller avklar dette før siden ferdigstilles:
+Samle alltid inn rittnavn, konkurransedatoer, disiplin, arena, relevante TVK-klasser og starttider. Samle bare inn overnatting, transport, kart og reisetider når brukeren ønsker denne informasjonen på siden.
 
 - rittnavn
 - datoer for hele rittet
@@ -45,8 +47,8 @@ Samle inn eller avklar dette før siden ferdigstilles:
 - hvor siden skal kunne finnes:
    - kun via terminliste
    - også andre steder hvis brukeren uttrykkelig ber om det
-- overnatting: navn, adresse, innsjekk, utsjekt, eller tydelig beskjed om at bosted ikke er avklart ennå
-- transportmåte: bil, minibuss eller annet
+- valgfri overnatting: navn, adresse, innsjekk og utsjekk
+- valgfri transportmåte: bil, minibuss eller annet
 - om siden skal ha kart:
    - ingen kart
    - ett samlet helgekart
@@ -62,6 +64,8 @@ Samle inn eller avklar dette før siden ferdigstilles:
   - starttid for aktuell klasse eller tydelig markering om at starttid ikke er publisert ennå
   - ønsket oppmøtetid
    - ønsket oppvarmingsvindu, eller beskjed om at Rittguide-standard skal brukes
+- om rittet er terrengritt, for eksempel XCO eller XCC
+- arrangørens treningstider eller løypebefaring per dag for terrengritt, inkludert regler og klassebegrensninger
 - om Google Maps-lenker skal være med, og i så fall om de skal bruke:
    - brukerens posisjon
    - et fast startpunkt som hotell eller klubbhus
@@ -88,7 +92,13 @@ Hvis brukeren ikke har all informasjon klar, skal du ikke gjette. Merk heller fe
    Lag én egen blokk per konkurransedag eller etappe. For hvert punkt skal siden gjøre det tydelig hva som skjer den dagen og hva rytteren må forholde seg til.
 
 5. Sorter klasseinformasjonen i praktisk dagsrekkefølge.
-   Innen hver dag skal klasser og ryttere vises i den rekkefølgen de faktisk starter. Knytt oppvarming og eventuelle avreisetider direkte til hver klasse, slik at siden kan leses kronologisk gjennom dagen.
+   Innen hver dag skal klasser og ryttere vises i den rekkefølgen de faktisk starter. Når TVK-deltakerdata finnes, vis bare klasser med TVK-ryttere. Bruk én rad per faktiske klasse og starttid; ikke slå sammen junior, elite/senior eller kjønn med ulike starttider.
+
+5a. Hold standardvisningen spisset.
+   Vis dagsplanene som hovedinnhold. Ikke legg til «Rask oversikt», «Praktisk», «TVK-status og avklaringer» eller tilsvarende samleseksjoner med mindre brukeren ber om dem. Unngå å gjenta starttider i både kort, tabeller og brødtekst.
+
+5b. Legg inn treningstider for terrengritt.
+   For XCO, XCC og andre terrengritt skal arrangørens innbydelse eller tekniske guide kontrolleres for offisiell trening, løypebefaring og andre tillatte treningsvinduer. Plasser tidene i den aktuelle dagsblokken før starttidene. Ta med nødvendige regler, som krav om startnummer og at trening er forbudt mens ritt pågår. Ikke bruk generelle oppvarmingsråd som erstatning for arrangørens treningstider.
 
 6. Bygg tidslinjen baklengs fra start.
    For hver etappe:
@@ -119,7 +129,7 @@ Hvis brukeren ikke har all informasjon klar, skal du ikke gjette. Merk heller fe
    Hvis brukeren vil ha vær på siden, knytt været til faktiske etapper, startsteder eller arenaer i stedet for et generisk stedsvarsel når det er flere relevante punkter. Bruk [race-weather-data](./../race-weather-data/SKILL.md).
 
 12. Skriv siden for praktisk bruk.
-   Presentasjonen skal være lett å skanne på mobil før avreise. Prioriter konkrete klokkeslett, adresser, avreisetider og korte forklaringer fremfor lange avsnitt. Ikke legg inn unødig metatekst som forklarer hvor informasjonen er hentet fra, med mindre brukeren eksplisitt ber om det.
+   Presentasjonen skal være lett å skanne på mobil før start. Prioriter konkurransedato, disiplin, treningstid, klasse, rytter og starttid. Legg bare til adresser og avreisetider når de er relevante og avklart. Ikke legg inn unødig metatekst som forklarer hvor informasjonen er hentet fra.
 
 13. Koble siden til terminlisten når brukeren ønsker det.
    Ikke legg rittsiden i hovednavigasjonen. Hvis siden skal være tilgjengelig fra terminlisteflaten, foretrekk en løsning der lenken styres fra delt rittdata i [data/ritt.js](./../../../data/ritt.js) og rendres i [terminliste.html](./../../../terminliste.html), i stedet for å hardkode lenken bare ett sted.
@@ -178,9 +188,19 @@ Hvis brukeren ikke har all informasjon klar, skal du ikke gjette. Merk heller fe
 
 ### Flere Ryttere Eller Klasser
 
-- Hvis siden gjelder hele laget, vis tydelig hvilken klasse eller hvilke ryttere hvert klokkeslett gjelder for
+- Hvis TVK-deltakerdata finnes, utelat klasser uten TVK-ryttere
+- Vis tydelig hvilken klasse og hvilke ryttere hvert klokkeslett gjelder for
 - Hvis ulike ryttere har ulike starttider, bruk tabell eller punktliste per rytter eller klasse
+- Hold junior, elite/senior og kjønn i separate rader når starttidene er forskjellige
 - Sorter innen hver dag i den rekkefølgen klassene faktisk starter, slik at oppvarming og start kan leses ovenfra og ned
+
+### Terrengsykkelritt
+
+- Behandle XCO og XCC som terrengsykkelritt
+- Hent treningstidene fra arrangørens innbydelse eller tekniske guide, ikke fra EQ Timing-startlisten
+- Vis treningstidene under riktig konkurransedag og skill mellom offisiell trening og andre tillatte tidsrom
+- Ta med korte sikkerhets- og adgangsvilkår som påvirker rytterne
+- Hvis treningstidene ikke er publisert, skriv «Treningstider ikke publisert» og lenk til kilden som skal kontrolleres
 
 ### Rittside Skal Kun Vises Fra Terminlisten
 
@@ -193,13 +213,15 @@ Hvis brukeren ikke har all informasjon klar, skal du ikke gjette. Merk heller fe
 Ferdigheten er ferdig når siden:
 
 - har korrekt rittnavn, dato og sted
-- viser overnatting og praktisk reiseinformasjon
 - dekker alle kjente etapper eller konkurransedager
+- bruker konkurransedagene som hovedstruktur uten overflødige oversikts- eller statusseksjoner
 - skiller tydelig mellom arena, start og mål når dette er egne punkter
 - tydelig skiller mellom bekreftet og manglende startinformasjon
-- gjør avreisetid og oppvarmingsstart eksplisitt
+- viser bare klasser med TVK-ryttere når deltakerdata finnes, med separate rader per klasse og starttid
+- viser kildeverifiserte treningstider per dag for terrengsykkelritt, eller markerer at de ikke er publisert
+- gjør oppvarmingsstart eksplisitt, og avreisetid når reiselogistikk er ønsket
 - bruker Rittguide-standard for oppvarming hvis ikke annet er avtalt
-- bruker kart og koordinater på en måte som passer brukerens ønske om detaljnivå
+- bruker kart og koordinater på en måte som passer brukerens ønske om detaljnivå når kart er ønsket
 - bare eksponerer rittsiden der brukeren ønsker det, uten å legge den i hovedmenyen
 - inneholder lenker til EQ Timing eller arrangørside der brukeren senere må sjekke oppdateringer
 - bruker lokal oppdaterer for TVK-status når bruker ønsker automatisk EQ Timing-oppdatering på en statisk side

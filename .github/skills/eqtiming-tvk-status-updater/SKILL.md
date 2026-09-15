@@ -51,7 +51,9 @@ Dette er riktig løsning når:
    I dette repoet er et lite Python-script passende. Scriptet bør:
    - hente JSON fra ett eller flere event-ID-er
    - filtrere på TVK-klubbnavn
-   - gruppere ryttere per dag, klasse eller tabellrad etter behov
+   - gruppere ryttere per dag, faktisk klasse og starttid
+   - bare generere rader for klasser med TVK-ryttere
+   - holde junior, elite/senior og kjønn adskilt når starttidene er forskjellige
    - skrive resultatet tilbake til tydelig markerte seksjoner i HTML
 
 5. Bruk markører i HTML-en.
@@ -87,6 +89,7 @@ Ferdigheten er ferdig når:
 - CORS-begrensningen er avklart tidlig og ikke ignorert
 - HTML-en oppdateres via tydelige markører i stedet for skjørt søk/erstatt på tilfeldig tekst
 - scriptet støtter både dry-run og faktisk oppdatering
+- klasseoversikten inneholder ingen tomme rader eller sammenslåtte klasser med ulike starttider
 - siden viser siste oppdateringstid
 - den oppdaterte siden er verifisert enten i browser eller ved målrettet lesing av HTML
 
