@@ -143,6 +143,121 @@
         }
 
         /* ===========================
+           PERSONLIG TRENINGSDAGBOK
+           =========================== */
+        .training-diary {
+            background: #ffffff;
+            border: 1px solid #dce3ed;
+            border-top: 4px solid #E2071D;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(25, 71, 148, 0.08);
+        }
+
+        .diary-header, .diary-toolbar, .diary-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .diary-header { padding: 24px 28px; border-bottom: 1px solid #e2e8f0; }
+        .diary-header h2 { font-size: 22px; margin-bottom: 4px; }
+        .diary-header p, .diary-summary p { color: #4a6aa5; font-size: 13px; }
+
+        .diary-setup { padding: 28px; }
+        .diary-setup h3 { font-size: 18px; margin-bottom: 6px; }
+        .diary-setup > p { color: #4a6aa5; font-size: 13px; line-height: 1.6; margin-bottom: 22px; }
+
+        .setup-field { display: grid; gap: 7px; max-width: 340px; margin-bottom: 24px; font-size: 13px; font-weight: 700; }
+        .setup-field select, .availability-row input[type="text"], .hours-input {
+            border: 1px solid #b8c7de;
+            border-radius: 6px;
+            background: #fff;
+            color: #194794;
+            font: inherit;
+            padding: 10px 12px;
+        }
+
+        .availability-labels, .availability-row {
+            display: grid;
+            grid-template-columns: 150px 90px minmax(180px, 1fr);
+            gap: 12px;
+            align-items: center;
+        }
+
+        .availability-labels { color: #4a6aa5; font-size: 11px; font-weight: 700; padding: 0 10px 8px; }
+        .availability-row { padding: 9px 10px; border-top: 1px solid #edf1f6; }
+        .availability-row input[type="text"] { width: 100%; }
+        .availability-toggle { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; }
+        .availability-toggle input, .complete-control input { width: 18px; height: 18px; accent-color: #194794; }
+        .hours-input { width: 78px; }
+
+        .diary-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+        .diary-button, .icon-button, .segment-button {
+            border: 1px solid #b8c7de;
+            border-radius: 6px;
+            background: #fff;
+            color: #194794;
+            cursor: pointer;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            min-height: 40px;
+            padding: 9px 14px;
+        }
+        .diary-button.primary { background: #194794; border-color: #194794; color: #fff; }
+        .diary-button.danger { color: #b20a1c; border-color: rgba(226, 7, 29, 0.3); }
+        .diary-button:hover, .icon-button:hover, .segment-button:hover { border-color: #194794; }
+        button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(46, 125, 209, 0.4); outline-offset: 2px; }
+
+        .diary-dashboard { padding: 20px 28px 28px; }
+        .diary-toolbar { margin-bottom: 20px; flex-wrap: wrap; }
+        .diary-segments { display: inline-flex; padding: 3px; background: #edf1f6; border-radius: 7px; }
+        .segment-button { border: 0; min-height: 34px; padding: 6px 14px; background: transparent; color: #4a6aa5; }
+        .segment-button.active { background: #fff; color: #194794; box-shadow: 0 1px 4px rgba(25, 71, 148, 0.12); }
+        .diary-navigation { display: flex; align-items: center; gap: 8px; }
+        .icon-button { width: 40px; padding: 8px; font-size: 18px; }
+
+        .diary-summary { background: #F4F6F9; padding: 16px 18px; margin-bottom: 16px; }
+        .diary-summary strong { display: block; font-size: 15px; margin-bottom: 3px; }
+        .diary-alert { background: #fff6e5; border: 1px solid #e8c77a; color: #714f08; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
+        .diary-alert ul { margin: 8px 0 0 18px; }
+
+        .day-focus { display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: stretch; }
+        .day-focus-date { background: #194794; color: #fff; padding: 20px; display: flex; flex-direction: column; justify-content: center; }
+        .day-focus-date span { font-size: 12px; text-transform: capitalize; opacity: 0.8; }
+        .day-focus-date strong { font-size: 21px; margin-top: 4px; }
+
+        .diary-week-list { border-top: 1px solid #e2e8f0; }
+        .diary-day-row { display: grid; grid-template-columns: 105px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
+        .diary-day-row.is-today .diary-day-heading { border-left: 3px solid #E2071D; padding-left: 9px; }
+        .diary-day-heading { display: flex; flex-direction: column; justify-content: center; padding-left: 12px; }
+        .diary-day-heading strong { font-size: 13px; }
+        .diary-day-heading span { color: #4a6aa5; font-size: 11px; margin-top: 3px; }
+
+        .diary-workout { min-height: 92px; border: 1px solid #dce3ed; border-left: 4px solid #b8c7de; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .diary-workout.is-complete { background: #f1faf5; }
+        .intensity-border-low { border-left-color: #2e7dd1; }
+        .intensity-border-medium { border-left-color: #22a05a; }
+        .intensity-border-high { border-left-color: #E2071D; }
+        .intensity-border-max { border-left-color: #8e24aa; }
+        .intensity-border-rest { border-left-color: #8a9cc2; }
+        .workout-main h4 { color: #194794; font-size: 14px; margin: 7px 0 4px; line-height: 1.4; }
+        .workout-main p, .diary-workout-empty span { color: #4a6aa5; font-size: 12px; line-height: 1.4; }
+        .workout-tags { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+        .moved-note { color: #806000; background: #fff6e5; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+        .complete-control { display: flex; align-items: center; gap: 7px; color: #194794; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .diary-workout-empty { border-left-color: #cbd5e1; color: #64748b; }
+        .diary-empty { padding: 36px 20px; text-align: center; border: 1px dashed #b8c7de; background: #f8fafc; }
+        .diary-empty strong { display: block; font-size: 16px; }
+        .diary-empty p { color: #4a6aa5; font-size: 13px; margin-top: 7px; }
+        .storage-message { margin: 0 28px 20px; padding: 12px 14px; background: #fff6e5; color: #714f08; font-size: 12px; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+        [hidden] { display: none !important; }
+
+        /* ===========================
            ALDERSGRUPPE-KORT
            =========================== */
         .age-groups {
@@ -558,6 +673,17 @@
             .page-header h1 { font-size: 28px; }
             .content { padding: 24px 16px; }
             .exercise-grid { grid-template-columns: 1fr; }
+            .diary-header, .diary-summary { align-items: flex-start; flex-direction: column; }
+            .diary-header, .diary-setup, .diary-dashboard { padding-left: 18px; padding-right: 18px; }
+            .availability-labels { display: none; }
+            .availability-row { grid-template-columns: 1fr 76px; }
+            .availability-row label:last-child { grid-column: 1 / -1; }
+            .day-focus { grid-template-columns: 1fr; }
+            .day-focus-date { min-height: 90px; }
+            .diary-day-row { grid-template-columns: 1fr; gap: 8px; }
+            .diary-day-heading { flex-direction: row; justify-content: space-between; }
+            .diary-workout { align-items: flex-start; flex-direction: column; gap: 14px; }
+            .complete-control { width: 100%; padding-top: 12px; border-top: 1px solid #e2e8f0; }
         }
     </style>
 </head>
@@ -589,6 +715,56 @@
 </div>
 
 <div class="content">
+
+    <section class="training-diary" id="trainingDiary" aria-labelledby="diaryTitle">
+        <div class="diary-header">
+            <div>
+                <h2 id="diaryTitle">Min treningsdagbok</h2>
+                <p id="profileSummary">Velg plan og tilgjengelighet</p>
+            </div>
+            <button class="diary-button" id="editProfile" type="button">Endre plan</button>
+        </div>
+
+        <div class="storage-message" id="diaryStorageMessage" role="status" hidden></div>
+
+        <div class="diary-setup" id="diarySetup" hidden>
+            <h3>Tilpass grunnplanen</h3>
+            <p>Velg aldersplan og når du vanligvis har tid. Planen flytter bare økter som er godkjent for flytting, og øker aldri treningsmengden. Valgene lagres kun i denne nettleseren.</p>
+            <label class="setup-field" for="diaryGroup">Min aldersplan
+                <select id="diaryGroup">
+                    <option value="u15">U15 · 13–14 år</option>
+                    <option value="u17">U17 · 15–16 år</option>
+                    <option value="u19">Junior / U19 · 17–18 år</option>
+                </select>
+            </label>
+            <div class="availability-labels" aria-hidden="true"><span>Dag</span><span>Maks timer</span><span>Fast aktivitet</span></div>
+            <div id="availabilityRows"></div>
+            <div class="diary-actions">
+                <button class="diary-button primary" id="saveProfile" type="button">Lagre og vis planen</button>
+                <button class="diary-button" id="cancelProfile" type="button">Avbryt</button>
+                <button class="diary-button danger" id="resetDiary" type="button">Nullstill lokale data</button>
+            </div>
+        </div>
+
+        <div class="diary-dashboard" id="diaryDashboard" hidden>
+            <div class="diary-toolbar">
+                <div class="diary-segments" role="tablist" aria-label="Dagbokvisning">
+                    <button class="segment-button active" type="button" role="tab" data-view="day">I dag</button>
+                    <button class="segment-button" type="button" role="tab" data-view="week">Denne uken</button>
+                </div>
+                <div class="diary-navigation" aria-label="Velg periode">
+                    <button class="icon-button" type="button" data-navigate="-1" aria-label="Forrige periode">‹</button>
+                    <button class="diary-button" type="button" id="goToday">I dag</button>
+                    <button class="icon-button" type="button" data-navigate="1" aria-label="Neste periode">›</button>
+                </div>
+            </div>
+            <div class="diary-summary">
+                <div><strong id="diaryPeriod"></strong><p id="diaryWeekMeta"></p></div>
+            </div>
+            <div class="diary-alert" id="diaryConflicts" role="alert" hidden></div>
+            <div id="diaryContent" aria-live="polite"></div>
+        </div>
+    </section>
 
     <!-- ============================
          GENERELL INFO
@@ -752,65 +928,6 @@
 
         
         
-    </div>
-
-    <!-- ============================
-         EKSEMPEL UKEPLAN
-         ============================ -->
-    <div class="week-plan">
-        <h3><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><use href="#icon-calendar"/></svg>Eksempel ukeplan — U15</h3>
-        <div class="week-row">
-            <div class="week-day">Mandag</div>
-            <div class="week-activity">
-                <span class="activity-type type-ride">Sykkel</span>
-                Fellestrening TVK - Terrengsykling i Nilsbyen
-            </div>
-        </div>
-        <div class="week-row">
-            <div class="week-day">Tirsdag</div>
-            <div class="week-activity">
-                <span class="activity-type type-ride">Sykkel</span>
-                Fellestrening TVK — intervaller eller teknikk (1,5 t)
-            </div>
-        </div>
-        <div class="week-row">
-            <div class="week-day">Onsdag</div>
-            <div class="week-activity">
-                <span class="activity-type type-strength">Styrke</span>
-                Egentreningsprogram — kjernestyrke og bein (45 min)
-            </div>
-        </div>
-        <div class="week-row">
-            <div class="week-day">Torsdag</div>
-            <div class="week-activity">
-                <span class="activity-type type-ride">Sykkel</span>
-                Fellestrening TVK - intervaller eller teknikk (1,5 t)
-            </div>
-        </div>
-        <div class="week-row">
-            <div class="week-day">Fredag</div>
-            <div class="week-activity">
-                <span class="activity-type type-rest">Hvile</span>
-                Lett tøying eller hvile før helg
-            </div>
-        </div>
-        <div class="week-row">
-            <div class="week-day">Lørdag</div>
-            <div class="week-activity">
-                <span class="activity-type type-ride">Sykkel</span>
-                Rolig tur på landevei eller terrenget (1-3 t)
-            </div>
-        </div>
-        <div class="week-row">
-            <div class="week-day">Søndag</div>
-            <div class="week-activity">
-                <span class="activity-type type-rest">Hvile</span>
-                Fri dag eller rolig aktivitet
-            </div>
-        </div>
-
-
-
     </div>
 
     <!-- ============================
@@ -1167,6 +1284,10 @@
 <div class="footer">
     <strong>Trondhjems Velocipedklubb</strong> — Sesong 2026 | Stiftet 1893
 </div>
+
+<script src="data/trening.js"></script>
+<script src="planer/trening-core.js"></script>
+<script src="planer/trening.js"></script>
 
 </body>
 </html>

@@ -386,6 +386,75 @@ Alternativ trening for de som ikke skal sykle NC i Lillehammer: Langtur på 2-3 
 
 ---
 
+## Oktober – høsttrening
+
+Etter sesongen bygges formen rolig opp igjen med moderat totalmengde og to kontrollerte sone 3-økter hver uke. Hold dragene jevne og avslutt mens du fortsatt har god kontroll. Øktene kan gjennomføres på sykkel eller som alternativ utholdenhetstrening når vær og føre tilsier det.
+
+**Periode:** 5. oktober – 1. november
+**Struktur:** 3 moderate uker + 1 roligere uke
+
+---
+
+**Uke 1 – moderat (5. – 11. oktober)**
+
+| Dag      | Økt                                                          | Tid         |
+|----------|--------------------------------------------------------------|-------------|
+| Mandag   | Fri eller lett restitusjonsøkt                               | 0–1 t       |
+| Tirsdag  | Sone 3-intervaller: 4 × 7 min (pause 2 min) – 28 min        | 1,5–2 t     |
+| Onsdag   | Rolig langkjøring sone 1–2                                   | 1,5–2 t     |
+| Torsdag  | Basisstyrke + rolig sykkeltur                                | 1–1,5 t     |
+| Fredag   | Sone 3-intervaller: 8 × 3 min (pause 1 min) – 30 min       | 1,5–2 t     |
+| Lørdag   | Langkjøring sone 1–2                                         | 2–2,5 t     |
+| Søndag   | Rolig sykkeltur eller alternativ trening                     | 1–1,5 t     |
+
+**Totalbelastning:** 8,5–12,5 timer
+
+**Uke 2 – moderat (12. – 18. oktober)**
+
+| Dag      | Økt                                                          | Tid         |
+|----------|--------------------------------------------------------------|-------------|
+| Mandag   | Fri eller lett restitusjonsøkt                               | 0–1 t       |
+| Tirsdag  | Sone 3-intervaller: 4 × 7 min (pause 2 min) – 35 min        | 1,5–2 t     |
+| Onsdag   | Rolig langkjøring sone 1–2                                   | 1,5–2,5 t   |
+| Torsdag  | Basisstyrke + rolig sykkeltur                                | 1–1,5 t     |
+| Fredag   | Sone 3-intervaller: 9 × 3 min (pause 1 min) – 30 min       | 1,5–2 t     |
+| Lørdag   | Langkjøring sone 1–2                                         | 2–3 t       |
+| Søndag   | Rolig sykkeltur eller alternativ trening                     | 1–1,5 t     |
+
+**Totalbelastning:** 8,5–13,5 timer
+
+**Uke 3 – moderat (19. – 25. oktober)**
+
+| Dag      | Økt                                                          | Tid         |
+|----------|--------------------------------------------------------------|-------------|
+| Mandag   | Fri eller lett restitusjonsøkt                               | 0–1 t       |
+| Tirsdag  | Sone 3-intervaller: 5 × 7 min (pause 2 min) – 35 min        | 1,5–2 t     |
+| Onsdag   | Rolig langkjøring sone 1–2                                   | 2–2,5 t     |
+| Torsdag  | Basisstyrke + rolig sykkeltur                                | 1–1,5 t     |
+| Fredag   | Sone 3-intervaller: 10 × 3 min (pause 1 min) – 30 min       | 1,5–2 t     |
+| Lørdag   | Langkjøring sone 1–2                                         | 2,5–3 t     |
+| Søndag   | Rolig sykkeltur eller alternativ trening                     | 1–1,5 t     |
+
+**Totalbelastning:** 9,5–13,5 timer
+
+**Uke 4 – rolig (26. oktober – 1. november)**
+
+| Dag      | Økt                                                          | Tid         |
+|----------|--------------------------------------------------------------|-------------|
+| Mandag   | Fri                                                          | 0 t         |
+| Tirsdag  | Sone 3-intervaller: 4 × 7 min (pause 2 min) – 28 min        | 1,5–2 t     |
+| Onsdag   | Rolig sykkeltur sone 1–2                                     | 1–1,5 t     |
+| Torsdag  | Basisstyrke + rolig sykkeltur                                | 1–1,5 t     |
+| Fredag   | Fri eller lett restitusjonsøkt                               | 0–1 t       |
+| Lørdag   | Langkjøring sone 1–2                                         | 1,5–2 t     |
+| Søndag   | Rolig sykkeltur eller alternativ trening                     | 1–1,5 t     |
+
+**Totalbelastning:** 6–9,5 timer
+
+*Kommentar: Den rolige uken skal gi overskudd inn mot november. Hold begge sone 3-øktene kontrollerte; én god økt er nok dersom du kjenner deg sliten.*
+
+---
+
 **Basisstyrke**
 
 Dette er øvelser du kan gjøre hjemme i stua etter endt økt. Forslag til
