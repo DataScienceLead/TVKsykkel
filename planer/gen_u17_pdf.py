@@ -483,6 +483,72 @@ story.append(p(
     "Alternativ trening (løping, ballspill, fottur) er velkomment.", note_style
 ))
 
+# ══════════════════════════════════════════════════════════
+# 6. OKTOBER – HØSTTRENING
+# ══════════════════════════════════════════════════════════
+story.append(PageBreak())
+story.append(p("Oktober – høsttrening", h2_style))
+story.append(p(
+    "Etter sesongen bygges formen rolig opp igjen med moderat totalmengde og to "
+    "kontrollerte sone 3-økter hver uke. Hold dragene jevne og avslutt mens du fortsatt "
+    "har god kontroll. Øktene kan gjennomføres på sykkel eller som alternativ "
+    "utholdenhetstrening når vær og føre tilsier det."
+))
+story.append(p("<b>Periode:</b> 5. oktober – 1. november"))
+story.append(p("<b>Struktur:</b> 3 moderate uker + 1 roligere uke"))
+
+story.append(p("<b>Uke 1 – moderat (5. – 11. oktober)</b>"))
+story.append(week_table([
+    ("Mandag",  "Fri eller lett restitusjonsøkt",                                "0–1 t"),
+    ("Tirsdag", "Sone 3-intervaller: 4 × 7 min (pause 2 min) – 28 min",         "1,5–2 t"),
+    ("Onsdag",  "Rolig langkjøring sone 1–2",                                    "1,5–2 t"),
+    ("Torsdag", "Basisstyrke + rolig sykkeltur",                                 "1–1,5 t"),
+    ("Fredag",  "Sone 3-intervaller: 10 × 3 min (pause 1 min) – 30 min",        "1,5–2 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                          "2–2,5 t"),
+    ("Søndag",  "Rolig sykkeltur eller alternativ trening",                      "1–1,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 8,5–12,5 timer", total_style))
+
+story.append(p("<b>Uke 2 – moderat (12. – 18. oktober)</b>"))
+story.append(week_table([
+    ("Mandag",  "Fri eller lett restitusjonsøkt",                                "0–1 t"),
+    ("Tirsdag", "Sone 3-intervaller: 5 × 7 min (pause 2 min) – 35 min",         "1,5–2 t"),
+    ("Onsdag",  "Rolig langkjøring sone 1–2",                                    "1,5–2,5 t"),
+    ("Torsdag", "Basisstyrke + rolig sykkeltur",                                 "1–1,5 t"),
+    ("Fredag",  "Sone 3-intervaller: 9 × 3 min (pause 1 min) – 30 min",         "1,5–2 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                          "2–3 t"),
+    ("Søndag",  "Rolig sykkeltur eller alternativ trening",                      "1–1,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 8,5–13,5 timer", total_style))
+
+story.append(p("<b>Uke 3 – moderat (19. – 25. oktober)</b>"))
+story.append(week_table([
+    ("Mandag",  "Fri eller lett restitusjonsøkt",                                "0–1 t"),
+    ("Tirsdag", "Sone 3-intervaller: 5 × 7 min (pause 2 min) – 35 min",         "1,5–2 t"),
+    ("Onsdag",  "Rolig langkjøring sone 1–2",                                    "2–2,5 t"),
+    ("Torsdag", "Basisstyrke + rolig sykkeltur",                                 "1–1,5 t"),
+    ("Fredag",  "Sone 3-intervaller: 10 × 3 min (pause 1 min) – 30 min",        "1,5–2 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                          "2,5–3 t"),
+    ("Søndag",  "Rolig sykkeltur eller alternativ trening",                      "1–1,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 9,5–13,5 timer", total_style))
+
+story.append(p("<b>Uke 4 – rolig (26. oktober – 1. november)</b>"))
+story.append(week_table([
+    ("Mandag",  "Fri",                                                            "0 t"),
+    ("Tirsdag", "Sone 3-intervaller: 4 × 7 min (pause 2 min) – 28 min",         "1,5–2 t"),
+    ("Onsdag",  "Rolig sykkeltur sone 1–2",                                      "1–1,5 t"),
+    ("Torsdag", "Basisstyrke + rolig sykkeltur",                                 "1–1,5 t"),
+    ("Fredag",  "Fri eller lett restitusjonsøkt",                                "0–1 t"),
+    ("Lørdag",  "Langkjøring sone 1–2",                                          "1,5–2 t"),
+    ("Søndag",  "Rolig sykkeltur eller alternativ trening",                      "1–1,5 t"),
+]))
+story.append(p("<b>Totalbelastning:</b> 6–9,5 timer", total_style))
+story.append(p(
+    "Kommentar: Den rolige uken skal gi overskudd inn mot november. Hold begge sone "
+    "3-øktene kontrollerte; én god økt er nok dersom du kjenner deg sliten.", note_style
+))
+
 # ════════════════════════════════════════════════════════# 6. BASISSTYRKE
 # ══════════════════════════════════════════════════════════
 story.append(hr())
