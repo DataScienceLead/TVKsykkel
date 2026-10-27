@@ -1,12 +1,11 @@
-**Treningsplan for TVK 15--16 -- sesongen 2026**
+**Treningsplan for TVK 15--16 -- sesongen 2027**
 
 Dette er en skisse som dere kan bruke når dere skal legge opp treningen.
 Legg opp 4-ukers sykluser -- 3 harde uker, der både mengde og intensitet
-øker gradvis, og syklusen avsluttes med en rolig uke (med 8--12 timer og
-kun 1 intervalløkt).\
+øker gradvis, og syklusen avsluttes med en rolig uke (med 8--10 timer og
+kun en intervalløkt).\
 \
-Har dere spørsmål til øktene send meg en e-post
-(joakim.prestmo@gmail.com). Når dere lager treningsplan ønsker jeg at
+Har dere spørsmål til øktene send meg en e-post. Når dere lager treningsplan ønsker jeg at
 den er så konkret og presis som mulig. Det er også viktig at dere
 tilpasser treningen til hvor mye dere har trent tidligere og hvor mye
 trening dere har tid og krefter til -- dere skal jo også følge skolen.
@@ -14,35 +13,78 @@ trening dere har tid og krefter til -- dere skal jo også følge skolen.
 **Opptreningsperiode**
 
 Fokus i denne perioden er å bygge en solid base. Dette gjør vi gjennom
-lange intervaller på og under terskelen, i tillegg til langkjøring. Alt
-treningsmetoder er løping, ski, fotturer i fjellet eller marka, intensiv
+lange intervaller på og under terskelen, i tillegg til langkjøring. Det er veldig 
+fint å benytte de milde dagene i november til å sykle langtur i skogen eller på grusvei. 
+
+Forslag til alternative treningsmetoder er løping, ski, fotturer i fjellet eller marka, intensiv
 ballspill eller svømming.
 
+Intervallene er foreslått slik at dere velger om dere vil ha litt kortere intervaller og flere repetisjoner, eller lengre og færre. Eksempel for en økt med følgende forslag sone 4 (6--8 min × 3--5) **Korte intervaller**: Uke 1: 6 min x 4, Uke 2: 6 x 5 min, Uke 3: 7 min x 5 eller **lengre intervaller**: Uke 1: 8 min x 3, Uke 2: 8 min x 4, Uke 3: 8 min x 5. 
+
 **November**
+Vi starter opp med fokus på mengde og styrke. Intervallene skal ha moderat intensitet. 
+
+**Mandag:** Fri eller restitusjonsøkt 0--1 t
+
+**Tirsdag:** Intervaller -- sone 4 (6--8 min × 3--5) 1,5 t
+
+**Onsdag:** Styrke og rolig langkjøring 1,5--2 t
+
+**Torsdag:** Intervaller -- sone 3 (8--12 min × 3--5) 1,5 t
+
+**Fredag:** Rolig langkjøring 1--1,5 t
+
+**Lørdag:** Styrke (40 min) og langkjøring 1--2 t
+
+**Søndag:** Langkjøring 2--3,5 t
+
+**9--14 timer**
+
+**Desember**
+Vi øker lengden på langturen og litt hardere intervaller
+
+**Mandag:** Fri eller restitusjonsøkt 0--1 t
+
+**Tirsdag:** Intervaller -- sone 4 (6--10 min × 3--6) 1 t
+
+**Onsdag:** Styrke (40 min) og rolig langkjøring 2--2.5 t
+
+**Torsdag:** Intervaller -- sone 3 (10--15 min × 3--5) 1,5 t
+
+**Fredag:** Rolig langkjøring 1--1,5 t
+
+**Lørdag:** Styrke (40 min) og langkjøring 1,5--2,5 t
+
+**Søndag:** Langkjøring 2,5--3,5 t
+
+**10--16 timer**
+
+**Januar**
+Det begynner å bli lysere dager og det er ofte godt skiføre. Minst en av de halvlange turene og en intervalløkt bør være på sykkel. 
 
 **Mandag:** Fri eller restitusjonsøkt 0--1 t
 
 **Tirsdag:** Intervaller -- sone 4 (6--10 min × 3--5) 1 t
 
-**Onsdag:** Styrke og rolig langkjøring 1,5--2 t
+**Onsdag:** Styrke og rolig langkjøring 1,5--2,5 t
 
 **Torsdag:** Intervaller -- sone 3 (10--15 min × 3--4) 1,5 t
 
 **Fredag:** Rolig langkjøring 1--1,5 t
 
-**Lørdag:** Styrke og langkjøring 1,5--2,5 t
+**Lørdag:** Styrke (40 min) og intervaller sone 4 (3--6 min x 4--8) 2 t
 
-**Søndag:** Langkjøring 2--3 t
+**Søndag:** Langkjøring 2--3,5 t
 
-**9--12 timer**
+**12--18 timer**
 
 **Oppkjøringsperiode**
 
 Fokus i denne perioden blir å øke O₂-opptaket og watt på terskel. Derfor
 reduseres volumet, og intensiteten økes. Nå bør en større del av øktene
 foregå på sykkel. I februar kan fremdeles mange av øktene gjennomføres
-på ski, men to av intervallene og en langtur skal være på sykkel (hvis
-været tillater det). I mars bør skiene legges bort. Vi trapper ned
+på ski, men to av intervallene og en langtur bør være på sykkel (hvis
+været tillater det). I mars begyner det å bli på tide å legge skiene bort. Vi trapper ned
 styrketreningen til beinstyrke én gang i uka, i tillegg kommer en
 basisøkt som dere kan ta hjemme i stua.
 
@@ -50,20 +92,20 @@ basisøkt som dere kan ta hjemme i stua.
 
 **Mandag:** Restitusjonsøkt 0--1,5 t
 
-**Tirsdag:** Intervaller -- sone 4 (6--10 min × 4--8) 1 t
+**Tirsdag:** Intervaller -- sone 4 lav (6--10 min × 4--8) 1 t
 
 **Onsdag:** Styrke (basis) og rolig langkjøring 2--3 t
 
-**Torsdag:** Intervaller -- sone 5 (5--7 min × 4--8) 1 t
+**Torsdag:** Intervaller -- sone 4 (5--7 min × 4--8) 1 t
 
 **Fredag:** Rolig langkjøring (styrketråkkspurter) 0--2 t
 
-**Lørdag:** Styrke og intervaller sone 4 høy (15/15: 5--8 min × 5--7)
+**Lørdag:** Styrke og intervaller sone 4 høy (15/15: 4--6 min × 5--7)
 1--2 t
 
-**Søndag:** Langkjøring 3 t
+**Søndag:** Langkjøring 2,5-4 t
 
-**10--13 timer**
+**10--15 timer**
 
 **Mars**
 
@@ -77,11 +119,11 @@ basisøkt som dere kan ta hjemme i stua.
 
 **Fredag:** Rolig langkjøring (spurttrening) 0--2 t
 
-**Lørdag:** Styrke og intervaller sone 5 (30/30: 4 min × 5--8) 1--2 t
+**Lørdag:** Styrke og intervaller sone 5 (40/20: 4 min × 5--8) 1--2 t
 
-**Søndag:** Langkjøring 2--3 t
+**Søndag:** Langkjøring 2--4 t
 
-**10--14 timer**
+**10--16 timer**
 
 **Rittforberedelse**
 
