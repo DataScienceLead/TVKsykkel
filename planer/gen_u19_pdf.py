@@ -1,578 +1,379 @@
 #!/usr/bin/env python3
-"""Genererer treningsplan-u19.pdf fra treningsplan-u19.md (via reportlab)."""
+"""Generate a training-plan PDF from Markdown using local Chrome."""
 
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import cm
-from reportlab.lib import colors
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, HRFlowable,
-    PageBreak, Table, TableStyle, ListFlowable, ListItem,
+from __future__ import annotations
+
+import html
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+from pathlib import Path
+
+
+PLAN = Path(__file__).with_name("treningsplan-u19.md")
+OUTPUT = PLAN.with_suffix(".pdf")
+CHROME_MACOS = Path(
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 )
-from reportlab.lib.enums import TA_CENTER
-
-TVK_BLUE = colors.HexColor("#194794")
-TVK_RED  = colors.HexColor("#E2071D")
-ROW_ALT  = colors.HexColor("#E8ECF5")
-
-base = getSampleStyleSheet()
-
-title_style = ParagraphStyle("title", parent=base["Title"],
-    textColor=TVK_BLUE, fontSize=18, spaceAfter=4, alignment=TA_CENTER)
-subtitle_style = ParagraphStyle("subtitle", parent=base["Normal"],
-    textColor=TVK_RED, fontSize=11, spaceAfter=10, alignment=TA_CENTER)
-h2_style = ParagraphStyle("h2", parent=base["Heading2"],
-    textColor=TVK_BLUE, fontSize=13, spaceBefore=14, spaceAfter=4)
-h3_style = ParagraphStyle("h3", parent=base["Heading3"],
-    textColor=TVK_RED, fontSize=11, spaceBefore=10, spaceAfter=3)
-body_style = ParagraphStyle("body", parent=base["Normal"],
-    fontSize=9, leading=13, spaceAfter=4)
-total_style = ParagraphStyle("total", parent=body_style,
-    fontName="Helvetica-Bold", textColor=TVK_BLUE, spaceAfter=6)
-note_style = ParagraphStyle("note", parent=body_style,
-    fontName="Helvetica-Oblique", textColor=colors.HexColor("#555555"), spaceAfter=8)
-
-# Litt smalere Økt-kolonne pga mer tekst i U19
-COL_W = [3*cm, 10.5*cm, 3*cm]
 
 
-def week_table(rows, col_widths=None):
-    cw = col_widths or COL_W
-    header = [Paragraph("<b>Dag</b>", body_style),
-              Paragraph("<b>Økt</b>", body_style),
-              Paragraph("<b>Tid</b>", body_style)]
-    data = [header] + [
-        [Paragraph(d, body_style), Paragraph(o, body_style), Paragraph(t, body_style)]
-        for d, o, t in rows
-    ]
-    tbl = Table(data, colWidths=cw, repeatRows=1)
-    tbl.setStyle(TableStyle([
-        ("BACKGROUND",     (0, 0), (-1, 0),  TVK_BLUE),
-        ("TEXTCOLOR",      (0, 0), (-1, 0),  colors.white),
-        ("FONTNAME",       (0, 0), (-1, 0),  "Helvetica-Bold"),
-        ("FONTSIZE",       (0, 0), (-1, -1), 9),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, ROW_ALT]),
-        ("GRID",           (0, 0), (-1, -1), 0.4, colors.HexColor("#CCCCCC")),
-        ("LEFTPADDING",    (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING",   (0, 0), (-1, -1), 5),
-        ("TOPPADDING",     (0, 0), (-1, -1), 3),
-        ("BOTTOMPADDING",  (0, 0), (-1, -1), 3),
-        ("VALIGN",         (0, 0), (-1, -1), "TOP"),
-    ]))
-    return tbl
+def inline_markup(text: str) -> str:
+    text = html.escape(text, quote=False)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"(?<!\*)\*([^*]+?)\*(?!\*)", r"<em>\1</em>", text)
+    text = re.sub(r"(?<!_)_([^_]+?)_(?!_)", r"<em>\1</em>", text)
+    return text
 
 
-def zone_table():
-    header = [Paragraph("<b>Sone</b>", body_style),
-              Paragraph("<b>Navn</b>", body_style),
-              Paragraph("<b>Beskrivelse</b>", body_style)]
-    rows = [
-        ("1–2", "Rolig",          "Lett pust, kan holde en samtale. Brukes på rolige turer og restitusjon."),
-        ("3",   "Terskel lav",    "Kontrollert anstrenging, noe tyngre pust. Lange intervaller."),
-        ("4",   "Terskel",        "Tydelig anstrenging, vanskelig å snakke. Klassiske 4-minutters intervaller."),
-        ("5",   "Supra-terskel",  "Hardt, holder 3–7 min. Øker VO₂max."),
-        ("6",   "Maks",           "Fullgass, 1–2 min. Brukes sparsomt."),
-    ]
-    data = [header] + [
-        [Paragraph(s, body_style), Paragraph(n, body_style), Paragraph(b, body_style)]
-        for s, n, b in rows
-    ]
-    tbl = Table(data, colWidths=[1.5*cm, 3.5*cm, 11.5*cm])
-    tbl.setStyle(TableStyle([
-        ("BACKGROUND",     (0, 0), (-1, 0),  TVK_BLUE),
-        ("TEXTCOLOR",      (0, 0), (-1, 0),  colors.white),
-        ("FONTNAME",       (0, 0), (-1, 0),  "Helvetica-Bold"),
-        ("FONTSIZE",       (0, 0), (-1, -1), 9),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, ROW_ALT]),
-        ("GRID",           (0, 0), (-1, -1), 0.4, colors.HexColor("#CCCCCC")),
-        ("LEFTPADDING",    (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING",   (0, 0), (-1, -1), 5),
-        ("TOPPADDING",     (0, 0), (-1, -1), 3),
-        ("BOTTOMPADDING",  (0, 0), (-1, -1), 3),
-        ("VALIGN",         (0, 0), (-1, -1), "TOP"),
-    ]))
-    return tbl
+def table_cells(line: str) -> list[str]:
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
 
 
-def hr():
-    return HRFlowable(width="100%", thickness=1, color=TVK_BLUE, spaceAfter=6, spaceBefore=4)
+def render_table(lines: list[str]) -> str:
+    rows = [table_cells(line) for line in lines]
+    if len(rows) > 1 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in rows[1]):
+        rows.pop(1)
+
+    header = rows[0]
+    if header and header[0].casefold() == "sone":
+        table_class = "zone-table"
+    elif len(header) == 4:
+        table_class = "summary-table"
+    else:
+        table_class = "week-table"
+
+    head = "".join(f"<th>{inline_markup(cell)}</th>" for cell in header)
+    body = "".join(
+        "<tr>" + "".join(f"<td>{inline_markup(cell)}</td>" for cell in row) + "</tr>"
+        for row in rows[1:]
+    )
+    return (
+        f'<table class="{table_class}"><thead><tr>{head}</tr></thead>'
+        f"<tbody>{body}</tbody></table>"
+    )
 
 
-def p(text, style=None):
-    return Paragraph(text, style or body_style)
+def render_markdown(markdown: str) -> str:
+    lines = markdown.splitlines()
+    blocks: list[str] = []
+    index = 0
+
+    while index < len(lines):
+        line = lines[index].strip()
+        if not line:
+            index += 1
+            continue
+
+        if line.startswith("|"):
+            table_lines = []
+            while index < len(lines) and lines[index].strip().startswith("|"):
+                table_lines.append(lines[index])
+                index += 1
+            table = render_table(table_lines)
+            total_index = index
+            while total_index < len(lines) and not lines[total_index].strip():
+                total_index += 1
+            if (
+                total_index < len(lines)
+                and lines[total_index].strip().startswith("**Totalbelastning:**")
+            ):
+                total = inline_markup(lines[total_index].strip())
+                blocks.append(
+                    f'<div class="table-total">{table}<p>{total}</p></div>'
+                )
+                index = total_index + 1
+            else:
+                blocks.append(table)
+            continue
+
+        heading = re.match(r"^(#{1,3})\s+(.+)$", line)
+        if heading:
+            level = len(heading.group(1))
+            blocks.append(
+                f"<h{level}>{inline_markup(heading.group(2))}</h{level}>"
+            )
+            index += 1
+            continue
+
+        if re.fullmatch(r"(?:-{3,}|\*{3,}|_{3,})", line):
+            blocks.append('<hr class="section-rule">')
+            index += 1
+            continue
+
+        if re.match(r"^\d+\.\s+", line):
+            items = []
+            while index < len(lines):
+                item = re.match(r"^\s*\d+\.\s+(.+)$", lines[index])
+                if not item:
+                    if (
+                        not lines[index].strip()
+                        and index + 1 < len(lines)
+                        and re.match(r"^\s*\d+\.\s+", lines[index + 1])
+                    ):
+                        index += 1
+                        continue
+                    break
+                item_text = item.group(1).strip()
+                index += 1
+                while index < len(lines) and re.match(r"^\s{2,}\S", lines[index]):
+                    item_text += " " + lines[index].strip()
+                    index += 1
+                items.append(f"<li>{inline_markup(item_text)}</li>")
+            blocks.append("<ol>" + "".join(items) + "</ol>")
+            continue
+
+        paragraph = [lines[index]]
+        index += 1
+        while index < len(lines):
+            next_line = lines[index].strip()
+            if (
+                not next_line
+                or next_line.startswith("|")
+                or re.match(r"^#{1,3}\s+", next_line)
+                or re.fullmatch(r"(?:-{3,}|\*{3,}|_{3,})", next_line)
+                or re.match(r"^\d+\.\s+", next_line)
+            ):
+                break
+            paragraph.append(lines[index])
+            index += 1
+        rendered_lines = []
+        for line_index, raw_line in enumerate(paragraph):
+            rendered_lines.append(inline_markup(raw_line.rstrip()))
+            if line_index + 1 < len(paragraph):
+                rendered_lines.append("<br>" if raw_line.endswith("  ") else " ")
+        blocks.append("<p>" + "".join(rendered_lines) + "</p>")
+
+    return "\n".join(blocks)
 
 
-# ── Story ────────────────────────────────────────────────────────────────────
-story = []
+def find_chrome() -> str:
+    configured = os.environ.get("CHROME_BIN")
+    if configured:
+        return configured
+    for candidate in ("google-chrome", "chrome", "chromium", "chromium-browser"):
+        executable = shutil.which(candidate)
+        if executable:
+            return executable
+    if CHROME_MACOS.is_file():
+        return str(CHROME_MACOS)
+    raise FileNotFoundError(
+        "Chrome/Chromium was not found. Set CHROME_BIN to its executable path."
+    )
 
-story.append(Spacer(1, 0.3*cm))
-story.append(p("Treningsplan for TVK Junior/U19 – sesongen 2026", title_style))
-story.append(p("Trondhjems Velocipedklubb (17–18 år)", subtitle_style))
-story.append(hr())
 
-story.append(p(
-    "Dette er en skisse som dere kan bruke når dere skal legge opp treningen. "
-    "Legg opp 4-ukers sykluser – 3 harde uker, der både mengde og intensitet øker "
-    "gradvis, og syklusen avsluttes med en rolig uke (med 9–12 timer og kun 1 intervalløkt)."
-))
-story.append(p(
-    "Har dere spørsmål til øktene, send en e-post til joakim.prestmo@gmail.com. "
-    "Når dere lager treningsplan ønsker jeg at den er så konkret og presis som mulig. "
-    "Det er også viktig at dere tilpasser treningen til hvor mye dere har trent tidligere "
-    "og hvor mye trening dere har tid og krefter til – dere skal jo også følge skolen."
-))
-for k, v in [
-    ("<b>Aldersgruppe:</b>",        "U19 (17–18 år)"),
-    ("<b>Typisk ukebelastning:</b>", "12–20 timer"),
-    ("<b>Antall økter per uke:</b>", "6–8"),
-]:
-    story.append(p(f"{k} {v}"))
+def stop_chrome(process: subprocess.Popen[bytes]) -> None:
+    if process.poll() is None:
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
 
-story.append(Spacer(1, 0.3*cm))
 
-# ══════════════════════════════════════════════════════════
-# 1. OPPTRENINGSPERIODE
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Opptreningsperiode", h2_style))
-story.append(p(
-    "Fokus i denne perioden er å bygge en solid base. Dette gjør vi gjennom lange "
-    "intervaller på og under terskelen, i tillegg til langkjøring. Alle treningsmetoder "
-    "er løping, ski, fotturer i fjellet eller marka, intensivt ballspill eller svømming."
-))
+def is_complete_pdf(path: Path) -> bool:
+    if not path.is_file() or path.stat().st_size == 0:
+        return False
+    with path.open("rb") as pdf:
+        start = pdf.read(5)
+        pdf.seek(max(0, path.stat().st_size - 1024))
+        end = pdf.read()
+    return start == b"%PDF-" and b"%%EOF" in end
 
-story.append(p("November", h3_style))
-story.append(week_table([
-    ("Mandag",  "Fri eller restitusjonsøkt",                              "0–1 t"),
-    ("Tirsdag", "Intervaller – sone 4 (6–10 min × 3–6)",                 "1,5 t"),
-    ("Onsdag",  "Styrke og rolig langkjøring",                            "2 t"),
-    ("Torsdag", "Intervaller – sone 3 (10–20 min × 3–5)",                "2 t"),
-    ("Fredag",  "Rolig langkjøring",                                      "1–2 t"),
-    ("Lørdag",  "Styrke og langkjøring (styrketråkk og spin-ups)",        "2–3 t"),
-    ("Søndag",  "Langkjøring",                                            "3–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 11–15 timer", total_style))
-story.append(p(
-    "Kommentar: Minst en av intervalløktene på sykkel og en av langkjøringene. "
-    "Styrketreningen denne måneden skal i hovedsak være med flere repetisjoner – "
-    "det er viktig å lære seg teknikk og få inn bevegelsesmønsteret.", note_style
-))
 
-story.append(p("Desember", h3_style))
-story.append(week_table([
-    ("Mandag",  "Fri eller restitusjonsøkt",                                               "0–1 t"),
-    ("Tirsdag", "Intervaller – sone 4 (6–10 min × 3–6)",                                  "1–2 t"),
-    ("Onsdag",  "Styrke og rolig langkjøring",                                             "2–3 t"),
-    ("Torsdag", "Intervaller – sone 3 høy (10–20 min × 3–6)",                             "2 t"),
-    ("Fredag",  "Rolig langkjøring",                                                       "0–2 t"),
-    ("Lørdag",  "Styrke og intervaller sone 3/4 (5–8 min × 5–7, lav frekvens ca. 70 rpm)","3–4 t"),
-    ("Søndag",  "Langkjøring",                                                             "3–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 12–17 timer", total_style))
-story.append(p(
-    "Kommentar: Nå begynner det å bli kaldt ute og langturene kan gjerne være på ski. "
-    "Nå begynner vi med maksimalstyrke.", note_style
-))
+def generate_pdf(
+    plan: Path = PLAN,
+    output: Path = OUTPUT,
+    footer_label: str = "TVK U19",
+) -> None:
+    markdown = plan.read_text(encoding="utf-8")
+    title_match = re.search(r"^#\s+(.+)$", markdown, re.MULTILINE)
+    title = title_match.group(1) if title_match else "TVK U19 treningsplan"
+    year_match = re.search(r"sesongen\s+(\d{4})", title, re.IGNORECASE)
+    year = year_match.group(1) if year_match else ""
+    body = render_markdown(markdown)
+    document = f"""<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<title>{html.escape(title)}</title>
+<style>
+  @page {{
+    size: A4;
+    margin: 17mm 16mm 18mm;
+    @bottom-right {{
+      content: "{html.escape(footer_label)} · {year} · " counter(page);
+      color: #194794;
+      font: 8pt Arial, sans-serif;
+    }}
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{
+    color: #20242b;
+    font: 9pt/1.38 Arial, "Helvetica Neue", sans-serif;
+  }}
+  h1 {{
+    color: #194794;
+    font-size: 19pt;
+    line-height: 1.15;
+    text-align: center;
+    margin: 0 0 16pt;
+  }}
+  h2 {{
+    color: #194794;
+    font-size: 14pt;
+    margin: 18pt 0 6pt;
+    break-after: avoid-page;
+  }}
+  h3 {{
+    color: #e2071d;
+    font-size: 11pt;
+    margin: 12pt 0 5pt;
+    break-after: avoid-page;
+  }}
+  p {{ margin: 0 0 7pt; }}
+  strong {{ color: #194794; }}
+  em {{ color: #555; }}
+  hr.section-rule {{
+    border: 0;
+    border-top: 1px solid #194794;
+    margin: 12pt 0 5pt;
+  }}
+  table {{
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 4pt 0 6pt;
+    font-size: 8.3pt;
+    line-height: 1.25;
+    break-inside: avoid-page;
+  }}
+  .table-total {{
+    break-before: avoid-page;
+    break-inside: avoid-page;
+  }}
+  thead {{ display: table-header-group; }}
+  th {{
+    background: #194794;
+    color: white;
+    font-weight: bold;
+    text-align: left;
+  }}
+  th, td {{
+    border: 0.5pt solid #c9cdd5;
+    padding: 4pt 5pt;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }}
+  tbody tr:nth-child(even) {{ background: #e8ecf5; }}
+  .week-table th:first-child, .week-table td:first-child {{ width: 15%; }}
+  .week-table th:last-child, .week-table td:last-child {{ width: 15%; }}
+  .summary-table th:first-child, .summary-table td:first-child {{ width: 18%; }}
+  .summary-table th:last-child, .summary-table td:last-child {{ width: 20%; }}
+  .zone-table th:first-child, .zone-table td:first-child {{ width: 11%; }}
+  .zone-table th:nth-child(2), .zone-table td:nth-child(2) {{ width: 24%; }}
+  tr {{ break-inside: avoid; }}
+  ol {{ margin: 2pt 0 8pt; padding-left: 22pt; break-inside: avoid-page; }}
+  li {{ margin: 0 0 3pt; }}
+  @media print {{
+    h2, h3 {{ break-after: avoid; }}
+    table {{ break-inside: avoid; }}
+  }}
+</style>
+</head>
+<body>
+<main>{body}</main>
+</body>
+</html>"""
 
-story.append(p("Januar", h3_style))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                         "0–1,5 t"),
-    ("Tirsdag", "Intervaller – sone 4 (6–10 min × 4–8)",                  "2 t"),
-    ("Onsdag",  "Styrke og rolig langkjøring",                             "2–3 t"),
-    ("Torsdag", "Intervaller – sone 4 lav (10–15 min × 3–7)",             "2 t"),
-    ("Fredag",  "Rolig langkjøring",                                       "0–3 t"),
-    ("Lørdag",  "Styrke og intervaller sone 4 (15/15: 5–8 min × 5–7)",    "3 t"),
-    ("Søndag",  "Langkjøring",                                             "3–5 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 14–19 timer", total_style))
+    chrome = find_chrome()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f"{output.stem}-pdf-") as temp_dir:
+        temp_path = Path(temp_dir)
+        html_path = temp_path / "plan.html"
+        candidate_pdf = temp_path / "plan.pdf"
+        stderr_path = temp_path / "chrome-stderr.log"
+        html_path.write_text(document, encoding="utf-8")
+        command = [
+            chrome,
+            "--headless=new",
+            "--disable-gpu",
+            "--disable-extensions",
+            "--disable-background-networking",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "--no-pdf-header-footer",
+            f"--user-data-dir={temp_path / 'chrome-profile'}",
+            f"--print-to-pdf={candidate_pdf}",
+            html_path.resolve().as_uri(),
+        ]
+        with stderr_path.open("w", encoding="utf-8") as stderr:
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.DEVNULL,
+                stderr=stderr,
+            )
+            deadline = time.monotonic() + 120
+            previous_size = -1
+            stable_checks = 0
+            finished_writing = False
 
-# ══════════════════════════════════════════════════════════
-# 2. OPPKJØRINGSPERIODE
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Oppkjøringsperiode", h2_style))
-story.append(p(
-    "Fokus i denne perioden blir å øke O₂-opptaket og watt på terskel. Volumet reduseres noe, "
-    "og intensiteten økes. Nå bør en større del av øktene foregå på sykkel. I februar kan "
-    "fremdeles mange av øktene gjennomføres på ski, men to av intervallene og en langtur skal "
-    "være på sykkel (hvis været tillater det). I mars bør skiene legges bort. Vi trapper ned "
-    "styrketreningen til beinstyrke én gang i uka, i tillegg kommer en basisøkt hjemme i stua."
-))
+            while time.monotonic() < deadline:
+                if process.poll() is not None:
+                    break
+                size = (
+                    candidate_pdf.stat().st_size
+                    if candidate_pdf.is_file()
+                    else -1
+                )
+                if size > 0 and size == previous_size:
+                    stable_checks += 1
+                    if stable_checks >= 4:
+                        # Chrome on macOS can stay alive after finishing the PDF.
+                        finished_writing = True
+                        stop_chrome(process)
+                        break
+                else:
+                    stable_checks = 0
+                previous_size = size
+                time.sleep(0.5)
+            else:
+                stop_chrome(process)
+                raise TimeoutError("Chrome did not finish rendering the PDF.")
 
-story.append(p("Februar", h3_style))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                                    "0–1,5 t"),
-    ("Tirsdag", "Intervaller – sone 4 (6–10 min × 4–8)",                             "1–2 t"),
-    ("Onsdag",  "Styrke (basis) og rolig langkjøring",                                "2–3 t"),
-    ("Torsdag", "Intervaller – sone 5 (5–7 min × 4–8)",                              "1–2 t"),
-    ("Fredag",  "Rolig langkjøring (styrketråkkspurter)",                             "0–3 t"),
-    ("Lørdag",  "Styrke og intervaller sone 4 høy (15/15: 5–8 min × 5–7)",           "2–3 t"),
-    ("Søndag",  "Langkjøring",                                                        "3–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 13–18 timer", total_style))
+            if process.poll() is not None and process.returncode == 0:
+                finished_writing = True
+            if not finished_writing or not is_complete_pdf(candidate_pdf):
+                details = stderr_path.read_text(encoding="utf-8").strip()
+                raise RuntimeError(
+                    "Chrome failed to create a complete PDF."
+                    + (f"\nChrome output: {details}" if details else "")
+                )
 
-story.append(p("Mars", h3_style))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                                    "0–1,5 t"),
-    ("Tirsdag", "Intervaller – sone 4 (8–10 min × 4–6)",                             "1–2 t"),
-    ("Onsdag",  "Styrke (basis) og rolig langkjøring",                                "2–3 t"),
-    ("Torsdag", "Intervaller – sone 5 (5–7 min × 4–8)",                              "1–2 t"),
-    ("Fredag",  "Rolig langkjøring (spurttrening)",                                   "0–3 t"),
-    ("Lørdag",  "Styrke og intervaller sone 5 (30/30: 4–6 min × 5–8)",               "2–3 t"),
-    ("Søndag",  "Langkjøring",                                                        "3–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 12–17 timer", total_style))
+        with tempfile.NamedTemporaryFile(
+            dir=output.parent,
+            prefix=f".{output.stem}-",
+            suffix=".pdf",
+            delete=False,
+        ) as staged_file:
+            staged_path = Path(staged_file.name)
+        try:
+            shutil.copy2(candidate_pdf, staged_path)
+            if not is_complete_pdf(staged_path):
+                raise RuntimeError("The staged PDF is incomplete.")
+            staged_path.replace(output)
+        finally:
+            staged_path.unlink(missing_ok=True)
 
-# ══════════════════════════════════════════════════════════
-# 3. RITTFORBEREDELSE
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Rittforberedelse", h2_style))
-story.append(p(
-    "I perioden før sesongen begynner skikkelig er fokus todelt. Det første er å øke "
-    "syretoleransen, og i tillegg har det nå endelig blitt mulig å ta frem raceren. "
-    "Antall langturer økes. Antall intervalløkter reduseres, men intensiteten øker. "
-    "Viktig å opprettholde en styrkeøkt i uka."
-))
+    print(f"PDF generated from {plan.name}: {output}")
 
-story.append(p("April", h3_style))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                        "0–1,5 t"),
-    ("Tirsdag", "Intervaller – sone 4 (6–8 min × 4–6)",                  "2 t"),
-    ("Onsdag",  "Styrke (basis) og rolig langkjøring",                    "2–3 t"),
-    ("Torsdag", "Langkjøring (styrketråkkspurter)",                       "1–3 t"),
-    ("Fredag",  "Intervaller – sone 5 (30/30: 4–6 min × 4–6)",           "2 t"),
-    ("Lørdag",  "Styrke og langkjøring (kort styrkeøkt + langtur)",       "2–4 t"),
-    ("Søndag",  "Langkjøring (spurttrening)",                             "3–5 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 14–20 timer", total_style))
 
-# ══════════════════════════════════════════════════════════
-# 4. VÅRSESONG
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Vårsesong", h2_style))
-story.append(p(
-    "I vårsesongen som strekker seg fra slutten av april til slutten av juni er det viktig "
-    "å ikke slippe opp for mye. Det er nødvendig å trene tilstrekkelig mellom rittene. "
-    "Det er enklest hvis en prioriterer ritt og bruker noen mindre viktige ritt som trening "
-    "(altså at dere ikke legger inn hvile i forkant av rittene)."
-))
+def main() -> None:
+    generate_pdf()
 
-story.append(p("Mai – Juni – rittuke", h3_style))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                              "0–1,5 t"),
-    ("Tirsdag", "Rolig langkjøring",                                            "1–2 t"),
-    ("Onsdag",  "Intervaller (5 × 5 min)",                                      "2–3 t"),
-    ("Torsdag", "Langkjøring",                                                  "1–3 t"),
-    ("Fredag",  "Intervaller – sone 6 (1–2 min × 3–5, lang pause)",             "1 t"),
-    ("Lørdag",  "Ritt",                                                         "2–4 t"),
-    ("Søndag",  "Ritt",                                                         "2–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 12–16 timer", total_style))
 
-story.append(p("Mai – Juni – treningsuke", h3_style))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                              "0–1,5 t"),
-    ("Tirsdag", "Intervaller sone 3+: 3 × 15–20 min",                          "1–2 t"),
-    ("Onsdag",  "Langkjøring",                                                  "2–4 t"),
-    ("Torsdag", "Intervaller sone 4+: 4 × 5 min",                              "1–3 t"),
-    ("Fredag",  "Rolig tur",                                                    "1 t"),
-    ("Lørdag",  "Langkjøring",                                                  "2–4 t"),
-    ("Søndag",  "Langkjøring med sone 4-intervaller: 4 × 8 min",               "2–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 15–20 timer", total_style))
-
-# ══════════════════════════════════════════════════════════
-# 5. SOMMER – VOLUMBLOKK
-# ══════════════════════════════════════════════════════════
-story.append(PageBreak())
-story.append(p("Sommer – volumblokk", h2_style))
-story.append(p(
-    "I denne perioden er det to tre-ukers blokker med fokus på å øke aerob kapasitet og "
-    "terskelstyrke. I blokk 1 er det tre intervalløkter i harde uker (2 × sone 3, 1 × sone 4). "
-    "I blokk 2 legges det til en fjerde intervalløkt – en 30/15-økt i sone 4 høy – for ytterligere "
-    "å stimulere den aerobe kapasiteten. Øktene bør gjennomføres på sykkel, men 1 økt i uka kan "
-    "med fordel være alternativ trening slik som løping eller rulleski."
-))
-story.append(p("<b>Periode:</b> 29. juni – 8. august"))
-story.append(p("<b>Struktur:</b> 2 harde uker + 1 rolig uke × 2 blokker"))
-
-# Blokk 1
-story.append(p("Blokk 1", h3_style))
-
-story.append(p("<b>Uke 1 – hard (29. juni – 5. juli)</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1,5 t"),
-    ("Tirsdag", "Sone 3-intervaller: 4 × 10 min (pause 3 min) – 40 min",           "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "3–4 t"),
-    ("Torsdag", "Sone 4-intervaller: 4 × 5 min (pause 3 min) – 20 min",            "2–2,5 t"),
-    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "3–4 t"),
-    ("Søndag",  "Sone 3-intervaller: 4 × 12 min (pause 3 min) – 48 min",           "2–2,5 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 13–18 timer", total_style))
-
-story.append(p("<b>Uke 2 – hard (6. juli – 12. juli)</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1,5 t"),
-    ("Tirsdag", "Sone 3-intervaller: 4 × 12 min (pause 3 min) – 48 min",           "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "3,5–4,5 t"),
-    ("Torsdag", "Sone 4-intervaller: 5 × 6 min (pause 3 min) – 30 min",            "2–2,5 t"),
-    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "3,5–4,5 t"),
-    ("Søndag",  "Sone 3-intervaller: 3 × 15 min (pause 3–4 min) – 45 min",         "2–2,5 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 14–19 timer", total_style))
-
-story.append(p("<b>Uke 3 – rolig (13. juli – 19. juli)</b>"))
-story.append(week_table([
-    ("Mandag",  "Fri",                                                               "0 t"),
-    ("Tirsdag", "Sone 3-intervaller: 3 × 10 min (pause 3 min) – 30 min",           "2–2,5 t"),
-    ("Onsdag",  "Rolig sykkeltur sone 1–2",                                         "2–2,5 t"),
-    ("Torsdag", "Sone 4-intervaller: 4 × 5 min (pause 3 min) – 20 min",            "2–2,5 t"),
-    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "2–3 t"),
-    ("Søndag",  "Rolig sykkeltur",                                                  "1–2 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 10–14 timer", total_style))
-
-# Blokk 2
-story.append(p("Blokk 2", h3_style))
-story.append(p(
-    "I blokk 2 kommer en ekstra intervalløkt på fredagen: 30/15-intervaller i sone 4 høy. "
-    "Det vil si 30 sekunder hardt etterfulgt av 15 sekunder rolig, gjentatt i serier à 5–6 minutter."
-))
-
-story.append(p("<b>Uke 4 – hard (20. juli – 26. juli)</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1,5 t"),
-    ("Tirsdag", "Sone 3-intervaller: 4 × 12 min (pause 3 min) – 48 min",           "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "3–4 t"),
-    ("Torsdag", "Sone 4-intervaller: 4 × 6 min (pause 3 min) – 24 min",            "2–2,5 t"),
-    ("Fredag",  "Sone 4 høy 30/15: 4 × 6 min (pause 4 min)",                       "1,5–2 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "3–4 t"),
-    ("Søndag",  "Sone 3-intervaller: 3 × 15 min (pause 3–4 min) – 45 min",         "2–2,5 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 13,5–19 timer", total_style))
-
-story.append(p("<b>Uke 5 – hard (27. juli – 2. august)</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1,5 t"),
-    ("Tirsdag", "Sone 3-intervaller: 4 × 13 min (pause 3 min) – 52 min",           "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "3,5–5 t"),
-    ("Torsdag", "Sone 4-intervaller: 5 × 7 min (pause 3 min) – 35 min",            "2–2,5 t"),
-    ("Fredag",  "Sone 4 høy 30/15: 5 × 6 min (pause 4 min)",                       "1,5–2 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "3,5–5 t"),
-    ("Søndag",  "Sone 3-intervaller: 4 × 13 min (pause 3–4 min) – 52 min",         "2,5–3 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 15–21 timer", total_style))
-
-story.append(p("<b>Uke 6 – rolig (3. august – 8. august)</b>"))
-story.append(week_table([
-    ("Mandag",  "Fri",                                                               "0 t"),
-    ("Tirsdag", "Sone 3-intervaller: 3 × 10 min (pause 3 min) – 30 min",           "2–2,5 t"),
-    ("Onsdag",  "Rolig sykkeltur sone 1–2",                                         "2–2,5 t"),
-    ("Torsdag", "Sone 4-intervaller: 3 × 6 min (pause 3 min) – 18 min",            "2–2,5 t"),
-    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "2–3 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 9–12 timer", total_style))
-
-# ══════════════════════════════════════════════════════════# 5B. SENSOMMER – VO₂ OG RITTPERIODE
-# ════════════════════════════════════════════════════════
-story.append(PageBreak())
-story.append(p("Sensommer – VO₂ og rittperiode", h2_style))
-story.append(p(
-    "Fra midten av august starter en sju ukers periode med tre viktige ritt: "
-    "NC terreng i Nilsbyen 5.–6. september, Lillehammer sykkelfestival 11.–13. september "
-    "og NC i Halden 19.–20. september. Perioden er delt i to bolker der bolk 1 avsluttes "
-    "med NC terreng, og bolk 2 dekker de to påfølgende ritt-helgene."
-))
-story.append(p(
-    "Fokus i hele perioden er å <b>prioritere O₂-opptak og rittform</b>. Terskelarbeidet "
-    "vedlikeholdes, mens andelen sone 5-intervaller økes sammenlignet med sommer-volumblokken. "
-    "De to første ukene skal ha ekstra mengde – bruk gjerne øvre halvdel av tidsintervallet "
-    "på langturene – slik at grunnformen løftes før første ritthelg."
-))
-story.append(p("<b>Periode:</b> 17. august – 4. oktober"))
-story.append(p("<b>Struktur:</b> 2 harde uker + 1 rittuke (bolk 1) → 2 rittuker + 1 rolig uke + 1 overgangsuke (bolk 2)"))
-
-# Bolk 1
-story.append(p("Bolk 1 – VO₂ og volum (17. august – 6. september)", h3_style))
-
-story.append(p("<b>Uke 1 – hard/høy mengde (17. – 23. august)</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1,5 t"),
-    ("Tirsdag", "Sone 5 VO₂: 5 × 5 min (pause 3 min) – 25 min",                     "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "3,5–4,5 t"),
-    ("Torsdag", "Sone 4-intervaller: 4 × 8 min (pause 3 min) – 32 min",             "2–2,5 t"),
-    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "4–5 t"),
-    ("Søndag",  "Langtur m/ sone 3-intervaller: 4 × 15 min (pause 3 min) – 60 min", "2,5–3 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 15–20 timer", total_style))
-story.append(p(
-    "Kommentar: Første uke etter oppkjøring – hold VO₂-økta stram og kontrollert, ikke overdriv siste to drag. "
-    "Mengden ligger tett opp mot toppuke i sommer-volumblokken.", note_style
-))
-
-story.append(p("<b>Uke 2 – hard/høy mengde (24. – 30. august)</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt eller fri",                                        "0–1,5 t"),
-    ("Tirsdag", "Sone 5 VO₂: 6 × 4 min (pause 3 min) – 24 min",                     "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring sone 1–2",                                       "3,5–4,5 t"),
-    ("Torsdag", "Sone 4-intervaller: 5 × 7 min (pause 3 min) – 35 min",             "2–2,5 t"),
-    ("Fredag",  "Sone 4 høy 30/15: 4 × 6 min (pause 4 min)",                        "1,5–2 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "4–5 t"),
-    ("Søndag",  "Langtur m/ sone 3-intervaller: 3 × 20 min (pause 4 min) – 60 min", "2,5–3 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 15,5–20,5 timer", total_style))
-story.append(p(
-    "Kommentar: Peakuke i bolk 1 – fire intervalløkter og høy volum. Hvis du kjenner deg tung på lørdag, "
-    "kutt langturen med en time i stedet for å droppe søndagens sone 3-intervaller.", note_style
-))
-
-story.append(p("<b>Uke 3 – rittuke (31. august – 6. september) – NC terreng Nilsbyen 5.–6. sept.</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                                  "0–1,5 t"),
-    ("Tirsdag", "Sone 5 VO₂: 5 × 4 min (pause 3 min) – 20 min",                     "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring m/ 4–5 × 30 sek spurter",                         "2–3 t"),
-    ("Torsdag", "Rolig sykkeltur",                                                   "1–1,5 t"),
-    ("Fredag",  "Åpnere: 45 min lett + 3 × 1 min sone 5 + 2 × 20 sek spurt",          "1–1,5 t"),
-    ("Lørdag",  "NC terreng Nilsbyen – ritt",                                        "2–4 t"),
-    ("Søndag",  "NC terreng Nilsbyen – ritt",                                        "2–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 10–17 timer", total_style))
-
-# Bolk 2
-story.append(p("Bolk 2 – Rittperiode (7. september – 4. oktober)", h3_style))
-
-story.append(p("<b>Uke 4 – rittuke (7. – 13. september) – Lillehammer sykkelfestival 11.–13. sept.</b>"))
-story.append(p(
-    "Lillehammer sykkelfestival går fra fredag til søndag, så åpnerne legges på torsdag."
-))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                                  "0–1,5 t"),
-    ("Tirsdag", "Sone 5 VO₂: 4 × 5 min (pause 3 min) – 20 min",                     "2–2,5 t"),
-    ("Onsdag",  "Rolig langkjøring",                                                "1,5–2,5 t"),
-    ("Torsdag", "Åpnere: 45 min lett + 3 × 1 min sone 5 + 2 × 20 sek spurt",          "1–1,5 t"),
-    ("Fredag",  "Lillehammer sykkelfestival – ritt",                                 "2–4 t"),
-    ("Lørdag",  "Lillehammer sykkelfestival – ritt",                                 "2–4 t"),
-    ("Søndag",  "Lillehammer sykkelfestival – ritt",                                 "2–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 10,5–19 timer", total_style))
-story.append(p(
-    "Kommentar: Tre rittdager på rad er tøft – spis og drikk godt underveis, og legg deg tidlig etter hver etappe. "
-    "Bruk lettere gir enn du «tror du klarer» de første 15 minuttene på fredag.", note_style
-))
-
-story.append(p("<b>Uke 5 – rittuke (14. – 20. september) – NC Halden 19.–20. sept.</b>"))
-story.append(week_table([
-    ("Mandag",  "Restitusjonsøkt",                                                  "0–1,5 t"),
-    ("Tirsdag", "Rolig langkjøring",                                                "1,5–2,5 t"),
-    ("Onsdag",  "Sone 5 VO₂: 5 × 4 min (pause 3 min) – 20 min",                     "2–2,5 t"),
-    ("Torsdag", "Rolig langkjøring m/ 4 × 30 sek spurter",                           "2–3 t"),
-    ("Fredag",  "Åpnere: 45 min lett + 3 × 1 min sone 5 + 2 × 20 sek spurt",          "1–1,5 t"),
-    ("Lørdag",  "NC Halden – ritt",                                                  "2–4 t"),
-    ("Søndag",  "NC Halden – ritt",                                                  "2–4 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 11–18 timer", total_style))
-story.append(p(
-    "Kommentar: Etter Lillehammer prioriteres restitusjon mandag og tirsdag. "
-    "VO₂-økta flyttes til onsdag for å gi mest mulig avstand til rittet på lørdag.", note_style
-))
-
-story.append(p("<b>Uke 6 – rolig uke (21. – 27. september)</b>"))
-story.append(week_table([
-    ("Mandag",  "Fri",                                                               "0 t"),
-    ("Tirsdag", "Sone 3-intervaller: 3 × 10 min (pause 3 min) – 30 min",            "2–2,5 t"),
-    ("Onsdag",  "Rolig sykkeltur",                                                   "2–2,5 t"),
-    ("Torsdag", "Sone 4-intervaller: 3 × 6 min (pause 3 min) – 18 min",             "2–2,5 t"),
-    ("Fredag",  "Basisøkt + rolig sykkeltur",                                       "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2",                                             "3–4 t"),
-    ("Søndag",  "Rolig sykkeltur",                                                  "1–2 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 11–15 timer", total_style))
-
-story.append(p("<b>Uke 7 – overgangsuke (28. september – 4. oktober)</b>"))
-story.append(week_table([
-    ("Mandag",  "Fri",                                                               "0 t"),
-    ("Tirsdag", "Rolig sykkeltur eller alternativ trening",                          "1–1,5 t"),
-    ("Onsdag",  "Sone 3-intervaller: 3 × 12 min (pause 3 min) – 36 min",            "1,5–2 t"),
-    ("Torsdag", "Fri eller basisøkt",                                               "0–1 t"),
-    ("Fredag",  "Rolig sykkeltur",                                                   "1–1,5 t"),
-    ("Lørdag",  "Langkjøring sone 1–2 (gjerne på grus/terreng)",                     "2–3 t"),
-    ("Søndag",  "Rolig tur eller alternativ trening",                                "1–2 t"),
-]))
-story.append(p("<b>Totalbelastning:</b> 7–11 timer", total_style))
-story.append(p(
-    "Kommentar: Bruk uka til å reflektere over sesongen og gli gradvis over i høst-/basetrening. "
-    "Alternativ trening (løping, ballspill, fottur) er velkomment.", note_style
-))
-
-# ════════════════════════════════════════════════════════# 6. BASISSTYRKE
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Basisstyrke", h2_style))
-story.append(p(
-    "Dette er øvelser du kan gjøre hjemme i stua etter endt økt. "
-    "Forslag til øvelser (her er det bare fantasien som setter grenser):"
-))
-styrke = [
-    "<b>Sit-ups</b> (3 × 15 repetisjoner)",
-    "<b>Rygg-hev</b> (3 × 10 rep.) – ligg på mage og hev overkropp og bein",
-    "<b>Push-ups</b> (3 × 10–15 rep.) – blir det tungt, start med knærne i gulvet",
-    "<b>Spenst-hopp</b> (3 × 10 rep.) – maks innsats, gå dypt",
-    "<b>Glute-bridge</b> (3 × 10 rep.)",
-    "<b>Sideveis sit-up</b> (3 × 10 rep.)",
-    "<b>Hang-ups, ett-bens knebøy, ett-bens markløft</b>",
-]
-story.append(ListFlowable(
-    [ListItem(Paragraph(i, body_style), leftIndent=12, bulletIndent=0) for i in styrke],
-    bulletType="bullet", leftIndent=20,
-))
-
-# ══════════════════════════════════════════════════════════
-# 7. BEVEGELIGHETSTRENING
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Bevegelighetstrening", h2_style))
-story.append(p(
-    "Det er viktig for å kunne sitte riktig på sykkelen og holde god teknikk selv om man er "
-    "sliten, at man har trent styrke i mage/rygg og tøyd godt. En sterk overkropp gjør at det "
-    "er lettere å sitte rolig på sykkelen, og ikke minst ved spurter vil man klare å opprettholde "
-    "teknikk og kraft. For å sitte fremoverlent trenger man smidig muskulatur."
-))
-story.append(p("Forslag til øvelser:"))
-tøy = ["Bakside lår", "Fremside lår", "Setemuskulatur", "Hofteleddsbøyer",
-       "Legger", "Nakke", "Lange ryggstrekkeren", "Bryst", "Overgang bryst og rygg"]
-story.append(ListFlowable(
-    [ListItem(Paragraph(i, body_style), leftIndent=12, bulletIndent=0) for i in tøy],
-    bulletType="bullet", leftIndent=20,
-))
-
-# ══════════════════════════════════════════════════════════
-# 8. SONEFORKLARING
-# ══════════════════════════════════════════════════════════
-story.append(hr())
-story.append(p("Soneforklaring", h2_style))
-story.append(zone_table())
-
-story.append(Spacer(1, 0.5*cm))
-story.append(p("Lykke til med sesongen! 🚴", ParagraphStyle(
-    "closing", parent=body_style, alignment=TA_CENTER,
-    textColor=TVK_BLUE, fontSize=10, fontName="Helvetica-Bold"
-)))
-
-# ── Generer PDF ─────────────────────────────────────────────────────────────────
-OUT = "planer/treningsplan-u19.pdf"
-doc = SimpleDocTemplate(
-    OUT, pagesize=A4,
-    leftMargin=2*cm, rightMargin=2*cm,
-    topMargin=2*cm, bottomMargin=2*cm,
-    title="Treningsplan TVK Junior/U19 2026",
-    author="Trondhjems Velocipedklubb",
-)
-doc.build(story)
-print(f"PDF generert: {OUT}")
+if __name__ == "__main__":
+    main()
